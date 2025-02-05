@@ -5,20 +5,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import zw.co.zetdc.businessplanning.entities.Activity;
 import zw.co.zetdc.businessplanning.payload.request.ActivityRequest;
+import zw.co.zetdc.businessplanning.repository.ActivityRepository;
 import zw.co.zetdc.businessplanning.service.ActivityService;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
+
+
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ActivityServiceImpl implements ActivityService {
 
-    private List<Activity> activityList = new ArrayList<>();
+    private final ActivityRepository activityRepository; // Repository for database operations
 
     @Override
+    @Transactional
     public Activity createActivity(ActivityRequest activityRequest) {
         Activity activity = Activity.builder()
                 .activityName(activityRequest.getActivityName())
@@ -30,36 +34,35 @@ public class ActivityServiceImpl implements ActivityService {
                 .remarks(activityRequest.getRemarks())
                 .build();
 
-        activityList.add(activity);
-        return activity;
+        return activityRepository.save(activity); // Save to database
     }
 
     @Override
     public Activity getActivityById(Long id) {
-        return activityList.stream()
-                .filter(a -> a.getId().equals(id))
-                .findFirst()
+        return activityRepository.findById(id)
                 .orElse(null); // Return null if not found
     }
 
     @Override
     public List<Activity> getAllActivities() {
-        return new ArrayList<>(activityList); // Return a copy of the list
+        return activityRepository.findAll(); // Fetch all from database
     }
 
     @Override
+    @Transactional
     public Activity updateActivity(Long id, ActivityRequest activityRequest) {
         Activity activity = getActivityById(id);
         if (activity != null) {
             copyNonNullProperties(activityRequest, activity);
-            return activity; // No need to set updatedAt and updatedBy manually if using Spring's auditing
+            return activityRepository.save(activity); // Save updated activity
         }
         return null; // Return null if not found
     }
 
     @Override
+    @Transactional
     public void deleteActivity(Long id) {
-        activityList.removeIf(activity -> activity.getId().equals(id));
+        activityRepository.deleteById(id); // Delete from database
     }
 
     private void copyNonNullProperties(ActivityRequest source, Activity target) {
@@ -73,7 +76,7 @@ public class ActivityServiceImpl implements ActivityService {
                         setter.invoke(target, value);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace(); // Handle exceptions appropriately in production code
+                    log.error("Error copying properties: {}", e.getMessage(), e); // Better logging
                 }
             }
         }
