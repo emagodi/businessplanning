@@ -24,14 +24,14 @@ public class ActivityController {
     private final ActivityService activityService;
 
     @PostMapping(value = "/create")
-    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SMITIRID' ,'MANAGER', 'HEAD')")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER' ,'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<Activity> createActivity(@RequestBody ActivityRequest activityRequest) {
         Activity createdActivity = activityService.createActivity(activityRequest);
         return new ResponseEntity<>(createdActivity, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "findById/{id}")
-    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SMITIRID' ,'MANAGER', 'HEAD')")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER' ,'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<Activity> getActivityById(@PathVariable Long id) {
         Activity activity = activityService.getActivityById(id);
         if (activity != null) {
@@ -42,14 +42,14 @@ public class ActivityController {
     }
 
     @GetMapping(value = "findAll")
-    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SMITIRID' ,'MANAGER', 'HEAD')")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER' ,'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<List<Activity>> getAllActivities() {
         List<Activity> activities = activityService.getAllActivities();
         return new ResponseEntity<>(activities, HttpStatus.OK);
     }
 
     @PutMapping(value = "update/{id}")
-    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SMITIRID' ,'MANAGER', 'HEAD')")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER' ,'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<Activity> updateActivity(@PathVariable Long id,
                                                    @RequestBody ActivityRequest activityRequest) {
         Activity updatedActivity = activityService.updateActivity(id, activityRequest);
@@ -61,7 +61,7 @@ public class ActivityController {
     }
 
     @DeleteMapping(value ="delete/{id}")
-    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SMITIRID' ,'MANAGER', 'HEAD')")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER' ,'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<Void> deleteActivity(@PathVariable Long id) {
         activityService.deleteActivity(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
