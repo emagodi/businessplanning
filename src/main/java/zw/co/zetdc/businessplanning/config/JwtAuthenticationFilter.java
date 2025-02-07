@@ -1,6 +1,6 @@
 package zw.co.zetdc.businessplanning.config;
 
-import io.micrometer.common.util.StringUtils;
+import io.micrometer.common.util.StringUtils; // Ensure this library is included in your dependencies
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,13 +16,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import zw.co.zetdc.businessplanning.service.JwtService;
 
-
 import java.io.IOException;
 
 /**
-    * Our jwt class extends OnePerRequestFilter to be executed on every http request
-    * We can also implement the Filter interface (jakarta EE), but Spring gives us a OncePerRequestFilter
-        class that extends the GenericFilterBean, which also implements the Filter interface.
+ * Our JWT class extends OncePerRequestFilter to be executed on every HTTP request.
+ * Spring provides a OncePerRequestFilter class that extends GenericFilterBean,
+ * which also implements the Filter interface.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -47,31 +46,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 request.getRequestURI().contains("/swagger-resources") ||
                 request.getRequestURI().contains("/swagger-ui") ||
                 request.getRequestURI().contains("/webjars") ||
-                request.getRequestURI().contains("/swagger-ui.html")||
-                request.getRequestURI().contains("/swagger-ui.html")){
+                request.getRequestURI().contains("/swagger-ui.html")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Try to get JWT from cookie or Authorization header
+        // Attempt to get the JWT from cookies or the Authorization header
         String jwt = jwtService.getJwtFromCookies(request);
         final String authHeader = request.getHeader("Authorization");
 
-        if ((jwt == null && (authHeader == null || !authHeader.startsWith("Bearer "))) || request.getRequestURI().contains("/auth")) {
+        // Check if JWT is not present and the request is for authentication
+        if (jwt == null && (authHeader == null || !authHeader.startsWith("Bearer ")) && !request.getRequestURI().contains("/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // If the JWT is not in the cookies but in the "Authorization" header
+        // If the JWT is not in the cookies but is in the Authorization header
         if (jwt == null && authHeader != null && authHeader.startsWith("Bearer ")) {
-            jwt = authHeader.substring(7); // Remove "Bearer "
+            jwt = authHeader.substring(7); // Remove "Bearer " prefix
         }
 
-        final String userEmail = jwtService.extractUserName(jwt);
+        // Validate the JWT and set the security context
+        try {
+            final String userEmail = jwtService.extractUserName(jwt);
 
-        // If userEmail is valid and there's no existing authentication
-        if (StringUtils.isNotEmpty(userEmail) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            try {
+            // If userEmail is valid and there's no existing authentication
+            if (StringUtils.isNotEmpty(userEmail) && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     // Update the Spring Security context
@@ -82,11 +82,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
-            } catch (UsernameNotFoundException e) {
-                System.err.println("User not found: " + userEmail); // Log the error
             }
+        } catch (UsernameNotFoundException e) {
+            System.err.println("User not found: " + e.getMessage()); // Consider using a logging framework
+        } catch (Exception e) {
+            System.err.println("Error processing JWT: " + e.getMessage()); // Log the error
         }
 
+        // Continue the filter chain
         filterChain.doFilter(request, response);
     }
 }
