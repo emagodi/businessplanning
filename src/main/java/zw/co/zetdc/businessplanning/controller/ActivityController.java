@@ -1,5 +1,6 @@
 package zw.co.zetdc.businessplanning.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import zw.co.zetdc.businessplanning.entities.Activity;
+import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.payload.request.ActivityRequest;
+import zw.co.zetdc.businessplanning.payload.request.TeamMemberRequest;
 import zw.co.zetdc.businessplanning.service.ActivityService;
 
 import java.util.List;
@@ -66,4 +69,17 @@ public class ActivityController {
         activityService.deleteActivity(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping(value = "/assignTeamMembers/{activityId}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<Activity> assignTeamMembers(@PathVariable Long activityId,
+                                                      @RequestBody List<Long> teamMemberIds) {
+        Activity updatedActivity = activityService.assignTeamMembers(activityId, teamMemberIds);
+        if (updatedActivity != null) {
+            return new ResponseEntity<>(updatedActivity, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

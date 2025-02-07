@@ -4,14 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import zw.co.zetdc.businessplanning.entities.Activity;
+import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.payload.request.ActivityRequest;
+import zw.co.zetdc.businessplanning.payload.request.TeamMemberRequest;
 import zw.co.zetdc.businessplanning.repository.ActivityRepository;
+import zw.co.zetdc.businessplanning.repository.TeamMemberRepository;
 import zw.co.zetdc.businessplanning.service.ActivityService;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
-
+import zw.co.zetdc.businessplanning.service.TeamMemberService;
 
 
 @Service
@@ -20,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ActivityServiceImpl implements ActivityService {
 
     private final ActivityRepository activityRepository; // Repository for database operations
+
+    private final TeamMemberRepository teamMemberRepository;
 
     @Override
     @Transactional
@@ -81,4 +86,17 @@ public class ActivityServiceImpl implements ActivityService {
             }
         }
     }
+
+    @Override
+    @Transactional
+    public Activity assignTeamMembers(Long activityId, List<Long> teamMemberIds) {
+        Activity activity = getActivityById(activityId);
+        if (activity != null) {
+            List<TeamMember> teamMembers = teamMemberRepository.findAllById(teamMemberIds);
+            activity.setAssignedTeamMembers(teamMembers);
+            return activityRepository.save(activity);
+        }
+        return null; // Return null if the activity is not found
+    }
+
 }

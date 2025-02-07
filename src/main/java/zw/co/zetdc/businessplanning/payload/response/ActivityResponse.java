@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import zw.co.zetdc.businessplanning.entities.TeamMember;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -19,14 +21,14 @@ public class ActivityResponse {
     private String activityName;
     private Double weeklyTarget;
     private Double actualWorkDone;
-    //    private String teamMembers;
     private Double percentageComplete;
     private Double actualExpenditure;
     private Double percentOfBudget;
     private String remarks;
-
     private LocalDateTime createdAt;
     private String createdBy;
     private LocalDateTime updatedAt;
     private String updatedBy;
+
+
 }
