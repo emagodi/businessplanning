@@ -28,5 +28,10 @@ public class TeamMember extends BaseEntity {
     @JsonIgnore // Prevents this relationship from being serialized
     private List<Scope> scopes;
 
+    @ManyToOne // Each team member belongs to one section
+    @JoinColumn(name = "section_id") // Foreign key column in TeamMember table
+    @JsonIgnore // Prevents this relationship from being serialized
+    private Section section; // Reference to the associated section
+
 
 }
