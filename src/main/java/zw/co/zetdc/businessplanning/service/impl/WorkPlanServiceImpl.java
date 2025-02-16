@@ -45,6 +45,8 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         workPlan.setActualExpenditure(workPlanRequest.getActualExpenditure()); // Add this line
         workPlan.setPercentOfBudget(workPlanRequest.getPercentOfBudget()); // Add this line
         workPlan.setRemarks(workPlanRequest.getRemarks()); // Add this line
+        workPlan.setSectionId(workPlanRequest.getSectionId());
+        workPlan.setDepartmentId(workPlanRequest.getDepartmentId());
 
         for (WorkPlanRequest.ScopeRequest scopeRequest : workPlanRequest.getScopes()) {
             Scope scope = new Scope();

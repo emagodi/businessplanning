@@ -27,6 +27,9 @@ public class WorkPlanResponse {
     private Double percentOfBudget;
     private String remarks;
 
+    private Long sectionId;
+    private Long departmentId;
+
     private List<Scope> scopes;
 
     private LocalDateTime createdAt;

@@ -29,6 +29,9 @@ public class WorkPlan extends BaseEntity {
     private Double percentOfBudget;
     private String remarks;
 
+    private Long sectionId;
+    private Long departmentId;
+
     @OneToMany(mappedBy = "workPlan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Scope> scopes = new ArrayList<>(); // Initialize the list

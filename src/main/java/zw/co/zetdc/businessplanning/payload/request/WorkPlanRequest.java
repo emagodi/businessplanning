@@ -22,6 +22,10 @@ public class WorkPlanRequest {
     private Double actualExpenditure;
     private Double percentOfBudget;
     private String remarks;
+
+    private Long sectionId;
+    private Long departmentId;
+
     private List<ScopeRequest> scopes; // List of scopes
 
     @Data
