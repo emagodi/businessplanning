@@ -16,6 +16,12 @@ import java.util.List;
 public class WorkPlanRequest {
     private String month;
     private String week;
+    private Double weeklyTarget;
+    private Double actualWorkDone;
+    private Double percentageComplete;
+    private Double actualExpenditure;
+    private Double percentOfBudget;
+    private String remarks;
     private List<ScopeRequest> scopes; // List of scopes
 
     @Data

@@ -22,6 +22,13 @@ public class WorkPlan extends BaseEntity {
     private String month;
     private String week;
 
+    private Double weeklyTarget;
+    private Double actualWorkDone;
+    private Double percentageComplete;
+    private Double actualExpenditure;
+    private Double percentOfBudget;
+    private String remarks;
+
     @OneToMany(mappedBy = "workPlan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Scope> scopes = new ArrayList<>(); // Initialize the list

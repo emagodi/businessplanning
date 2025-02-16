@@ -20,6 +20,12 @@ public class WorkPlanResponse {
 
     private String month;
     private String week;
+    private Double weeklyTarget;
+    private Double actualWorkDone;
+    private Double percentageComplete;
+    private Double actualExpenditure;
+    private Double percentOfBudget;
+    private String remarks;
 
     private List<Scope> scopes;
 

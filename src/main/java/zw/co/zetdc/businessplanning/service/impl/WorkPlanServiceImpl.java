@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import zw.co.zetdc.businessplanning.entities.Activity;
 import zw.co.zetdc.businessplanning.entities.Scope;
 import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
@@ -40,6 +39,12 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         WorkPlan workPlan = new WorkPlan();
         workPlan.setMonth(workPlanRequest.getMonth());
         workPlan.setWeek(workPlanRequest.getWeek());
+        workPlan.setWeeklyTarget(workPlanRequest.getWeeklyTarget()); // Add this line
+        workPlan.setActualWorkDone(workPlanRequest.getActualWorkDone()); // Add this line
+        workPlan.setPercentageComplete(workPlanRequest.getPercentageComplete()); // Add this line
+        workPlan.setActualExpenditure(workPlanRequest.getActualExpenditure()); // Add this line
+        workPlan.setPercentOfBudget(workPlanRequest.getPercentOfBudget()); // Add this line
+        workPlan.setRemarks(workPlanRequest.getRemarks()); // Add this line
 
         for (WorkPlanRequest.ScopeRequest scopeRequest : workPlanRequest.getScopes()) {
             Scope scope = new Scope();

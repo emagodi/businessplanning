@@ -30,7 +30,7 @@ public class WorkPlanController {
     private final WorkPlanService workPlanService;
 
     @PostMapping(value = "/create")
-    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('SUPERADMIN', 'ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<WorkPlan> createWorkPlan(@RequestBody WorkPlanRequest workPlanRequest) {
         // Log the incoming request for debugging
         System.out.println("Received WorkPlanRequest: " + workPlanRequest);
