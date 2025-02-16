@@ -35,6 +35,8 @@ public class RegisterRequest {
     @Column(length = 20)
     private Role role;
 
-    private Long companyId;
+    private Long sectionId;
+
+    private Long departmentId;
 
 }

@@ -46,36 +46,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final EmailService emailService;
     @Override
-    public AuthenticationResponse register(RegisterRequest request, boolean createdByAdmin, String token) {
+    public AuthenticationResponse register(RegisterRequest request) {
         // Generate a random password
         String generatedPassword = generateRandomPassword(12); // Adjust length as needed
-
-        Long companyId = null;
-
-        // If the user is created by an admin, get the admin's school ID
-        if (createdByAdmin && token != null) {
-            String username = jwtService.extractUserName(token);
-
-
-            System.out.println("TOKEN " + token);
-
-
-
-            User admin = userRepository.findByEmail(username).orElseThrow(() -> new AuthenticationException("Admin not found."));
-
-
-            System.out.println("ADMIN " + admin);
-
-            // Set schoolId from the admin's companyId
-            companyId = admin.getCompanyId();
-
-
-            System.out.println("Company ID " + companyId);
-
-        } else {
-            // If not created by admin, use the provided companyId
-            companyId = request.getCompanyId();
-        }
 
         // Create a new User object based on the RegisterRequest with the generated password
         var user = User.builder()
@@ -84,7 +57,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(generatedPassword)) // Save the encoded generated password
                 .role(request.getRole())
-                .companyId(companyId) // Set the companyId based on the admin or request
+                .sectionId(request.getSectionId()) // Set the sectionId from the request
+                .departmentId(request.getDepartmentId()) // Set the departmentId from the request
                 .temporaryPassword(true) // Set the temporary password flag
                 .build();
 
@@ -123,11 +97,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .password(generatedPassword) // Optionally include the generated password in the response
                 .refreshToken(refreshToken.getToken())
                 .roles(roles)
-                .companyId(user.getCompanyId())
+                .sectionId(user.getSectionId()) // Use sectionId
+                .departmentId(user.getDepartmentId()) // Use departmentId
                 .temporaryPassword(user.isTemporaryPassword())
                 .tokenType(TokenType.BEARER.name())
                 .message("User created successfully")
-                .createdByAdmin(createdByAdmin)
                 .build();
     }
 
@@ -185,7 +159,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .id(user.getId())
                     .firstname(user.getFirstname())
                     .lastname(user.getLastname())
-                    .companyId(user.getCompanyId())
+                    .sectionId(user.getSectionId())
+                    .departmentId(user.getDepartmentId())
                     .temporaryPassword(user.isTemporaryPassword())
                     .refreshToken(null) // No refresh token for temporary password users
                     .message("Please change your temporary password.") // Include a message field
@@ -210,7 +185,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .id(user.getId())
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())
-                .companyId(user.getCompanyId())
+                .sectionId(user.getSectionId())
+                .departmentId(user.getDepartmentId())
                 .temporaryPassword(user.isTemporaryPassword())
                 .message("User Authenticated Successfully")
                 .refreshToken(refreshToken)

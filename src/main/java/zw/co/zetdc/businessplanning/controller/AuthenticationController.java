@@ -55,22 +55,17 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     @Operation(summary = "Register New User",
-            description = "Create new user by posting firstname, lastname, email, password, role, etc. ")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request,
-                                      @RequestParam boolean createdByAdmin,
-                                      @RequestHeader Map<String, String> headers) {
-        String authorizationValue = null;
-
-        if (headers.get("authorization") != null && headers.get("authorization").length() > 7) {
-            authorizationValue = headers.get("authorization").substring(7);
-        }
-        System.out.println(createdByAdmin);
+            description = "Create new user by posting firstname, lastname, email, password, role, etc.")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         try {
-            AuthenticationResponse authenticationResponse = authenticationService.register(request, createdByAdmin, authorizationValue);
+            // Call the register method without admin logic
+            AuthenticationResponse authenticationResponse = authenticationService.register(request);
 
+            // Generate cookies for JWT and Refresh Token
             ResponseCookie jwtCookie = jwtService.generateJwtCookie(authenticationResponse.getAccessToken());
             ResponseCookie refreshTokenCookie = refreshTokenService.generateRefreshTokenCookie(authenticationResponse.getRefreshToken());
 
+            // Return the response with cookies
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                     .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())

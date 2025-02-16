@@ -27,7 +27,9 @@ public class AuthenticationResponse {
 
     private List<String> roles;
 
-    private Long companyId;
+    private Long sectionId;
+
+    private Long departmentId;
 
     private boolean temporaryPassword;
 

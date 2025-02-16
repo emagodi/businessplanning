@@ -34,7 +34,8 @@ public class DataLoader implements CommandLineRunner {
             superAdmin.setFirstname("Super");
             superAdmin.setLastname("Admin");
             superAdmin.setEmail("superadmin@zetdc.co.zw");
-            superAdmin.setCompanyId(0L);
+            superAdmin.setSectionId(0L);
+            superAdmin.setDepartmentId(0L);
             superAdmin.setPassword(passwordEncoder.encode("Password@123"));
             superAdmin.setRole(Role.ADMIN);
             superAdmin.setTemporaryPassword(false);

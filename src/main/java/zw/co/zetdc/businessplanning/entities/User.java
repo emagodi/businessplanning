@@ -45,7 +45,9 @@ public class User implements UserDetails { // make our app User a spring securit
     @Column(length = 20)
     private Role role;
 
-    private Long companyId;
+    private Long sectionId;
+
+    private Long departmentId;
 
     @OneToOne(mappedBy = "user")
     private ForgotPassword forgotPassword;
