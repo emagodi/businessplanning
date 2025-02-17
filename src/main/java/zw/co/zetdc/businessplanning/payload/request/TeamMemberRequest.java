@@ -16,4 +16,7 @@ public class TeamMemberRequest {
     private String email;
     private String ecNumber;
     private String designation;
+
+    private Long sectionId;
+    private Long departmentId;
 }

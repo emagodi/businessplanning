@@ -65,4 +65,16 @@ public class TeamMemberController {
         teamMemberService.deleteTeamMember(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/section/{sectionId}")
+    public ResponseEntity<List<TeamMember>> getTeamMembersBySectionId(@PathVariable Long sectionId) {
+        List<TeamMember> teamMembers = teamMemberService.getTeamMembersBySectionId(sectionId);
+        return ResponseEntity.ok(teamMembers);
+    }
+
+    @GetMapping("/department/{departmentId}")
+    public ResponseEntity<List<TeamMember>> getTeamMembersByDepartmentId(@PathVariable Long departmentId) {
+        List<TeamMember> teamMembers = teamMemberService.getTeamMembersByDepartmentId(departmentId);
+        return ResponseEntity.ok(teamMembers);
+    }
 }

@@ -23,9 +23,4 @@ public class Section extends BaseEntity {
     @JoinColumn(name = "department_id") // Foreign key column in Section table
     private Department department; // Reference to the associated department
 
-
-    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY) // Each section can have multiple team members
-    private List<TeamMember> assignedTeamMembers; // List of team members assigned to this section
-
-
 }

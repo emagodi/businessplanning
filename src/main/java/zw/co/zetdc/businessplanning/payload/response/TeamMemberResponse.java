@@ -12,6 +12,9 @@ public class TeamMemberResponse {
     private String ecNumber;
     private String designation;
 
+    private Long sectionId;
+    private Long departmentId;
+
     private LocalDateTime createdAt;
     private String createdBy;
     private LocalDateTime updatedAt;

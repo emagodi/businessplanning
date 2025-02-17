@@ -28,6 +28,8 @@ public class TeamMemberServiceImpl implements TeamMemberService {
                 .email(teamMemberRequest.getEmail())
                 .ecNumber(teamMemberRequest.getEcNumber())
                 .designation(teamMemberRequest.getDesignation())
+                .sectionId(teamMemberRequest.getSectionId())
+                .departmentId(teamMemberRequest.getDepartmentId())
                 .build();
 
         return teamMemberRepository.save(teamMember); // Save to database
@@ -76,6 +78,16 @@ public class TeamMemberServiceImpl implements TeamMemberService {
                 }
             }
         }
+    }
+
+    @Override
+    public List<TeamMember> getTeamMembersBySectionId(Long sectionId) {
+        return teamMemberRepository.findBySectionId(sectionId);
+    }
+
+    @Override
+    public List<TeamMember> getTeamMembersByDepartmentId(Long departmentId) {
+        return teamMemberRepository.findByDepartmentId(departmentId);
     }
 
 

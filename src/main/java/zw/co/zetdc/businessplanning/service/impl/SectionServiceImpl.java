@@ -96,16 +96,4 @@ public class SectionServiceImpl implements SectionService {
         }
     }
 
-    @Override
-    @Transactional
-    public void assignTeamMembersToSection(Long sectionId, List<Long> teamMemberIds) {
-        Section section = getSectionById(sectionId); // Get the section
-        if (section != null) {
-            List<TeamMember> teamMembers = teamMemberRepository.findAllById(teamMemberIds); // Fetch team members by IDs
-            for (TeamMember member : teamMembers) {
-                member.setSection(section); // Assign section to each team member
-            }
-            teamMemberRepository.saveAll(teamMembers); // Save updated team members
-        }
-    }
 }

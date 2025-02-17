@@ -19,6 +19,5 @@ public interface SectionService {
 
     void assignSectionsToDepartment(Long departmentId, List<Long> sectionIds);
 
-    public void assignTeamMembersToSection(Long sectionId, List<Long> teamMemberIds);
 
 }

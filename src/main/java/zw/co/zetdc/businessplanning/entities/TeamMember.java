@@ -24,14 +24,13 @@ public class TeamMember extends BaseEntity {
     private String ecNumber;
     private String designation;
 
+    private Long sectionId;
+    private Long departmentId;
+
     @ManyToMany(mappedBy = "assignedTeamMembers")
     @JsonIgnore // Prevents this relationship from being serialized
     private List<Scope> scopes;
 
-    @ManyToOne // Each team member belongs to one section
-    @JoinColumn(name = "section_id") // Foreign key column in TeamMember table
-    @JsonIgnore // Prevents this relationship from being serialized
-    private Section section; // Reference to the associated section
 
 
 }

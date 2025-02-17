@@ -19,4 +19,8 @@ public interface TeamMemberService {
 
     void deleteTeamMember(Long id);
 
+    public List<TeamMember> getTeamMembersBySectionId(Long sectionId);
+
+    public List<TeamMember> getTeamMembersByDepartmentId(Long departmentId);
+
 }

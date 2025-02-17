@@ -76,12 +76,4 @@ public class SectionController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Return 204 No Content on success
     }
 
-    @PostMapping(value = "/{sectionId}/assignTeamMembers")
-    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
-    public ResponseEntity<Void> assignTeamMembersToSection(@PathVariable Long sectionId,
-                                                           @RequestBody AssignTeamMembersRequest request) {
-        sectionService.assignTeamMembersToSection(sectionId, request.getTeamMemberIds());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Return 204 No Content on success
-    }
-
 }
