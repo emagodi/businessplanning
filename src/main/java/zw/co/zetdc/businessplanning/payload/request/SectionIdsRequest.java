@@ -1,6 +1,5 @@
 package zw.co.zetdc.businessplanning.payload.request;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class DepartmentRequest {
+public class SectionIdsRequest {
+    private List<Long> sectionIds;
 
-    private String name;
-
-    private List<Long> assignedSectionIds;
 }

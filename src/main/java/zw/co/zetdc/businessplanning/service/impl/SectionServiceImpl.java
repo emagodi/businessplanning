@@ -83,17 +83,6 @@ public class SectionServiceImpl implements SectionService {
         }
     }
 
-    @Override
-    @Transactional
-    public void assignSectionsToDepartment(Long departmentId, List<Long> sectionIds) {
-        Department department = departmentService.getDepartmentById(departmentId); // Get the department
-        if (department != null) {
-            List<Section> sections = sectionRepository.findAllById(sectionIds); // Fetch sections by IDs
-            for (Section section : sections) {
-                section.setDepartment(department); // Assign department to each section
-            }
-            sectionRepository.saveAll(sections); // Save updated sections
-        }
-    }
+
 
 }

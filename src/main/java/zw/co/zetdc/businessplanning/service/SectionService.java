@@ -17,7 +17,4 @@ public interface SectionService {
 
     void deleteSection(Long id);
 
-    void assignSectionsToDepartment(Long departmentId, List<Long> sectionIds);
-
-
 }

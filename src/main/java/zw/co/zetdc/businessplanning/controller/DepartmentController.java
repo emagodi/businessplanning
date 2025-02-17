@@ -1,6 +1,7 @@
 package zw.co.zetdc.businessplanning.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import zw.co.zetdc.businessplanning.entities.Department;
+import zw.co.zetdc.businessplanning.entities.Section;
+import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.payload.request.DepartmentRequest;
+import zw.co.zetdc.businessplanning.payload.request.SectionIdsRequest;
+import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.service.DepartmentService;
 
 import java.util.List;
@@ -65,5 +70,22 @@ public class DepartmentController {
     public ResponseEntity<Void> deleteDepartment(@PathVariable Long id) {
         departmentService.deleteDepartment(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/{id}/sections")
+    public ResponseEntity<Department> getDepartmentWithSections(@PathVariable Long id) {
+        Department department = departmentService.getDepartmentWithSections(id);
+        return department != null ? ResponseEntity.ok(department) : ResponseEntity.notFound().build();
+    }
+
+
+    @PostMapping("/department/{departmentId}/add/sections")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN')")
+    @Operation(summary = "Add section to department", description = "Add section by their IDs to the specified department")
+    public List<Section> addSectionsToDepartment(
+            @PathVariable("departmentId") Long departmentId,
+            @RequestBody SectionIdsRequest request
+    ) {
+        return departmentService.addSectionsToDepartment(departmentId, request);
     }
 }

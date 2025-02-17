@@ -5,11 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zw.co.zetdc.businessplanning.entities.Department;
+import zw.co.zetdc.businessplanning.entities.Section;
+import zw.co.zetdc.businessplanning.exception.NotFoundException;
 import zw.co.zetdc.businessplanning.payload.request.DepartmentRequest;
+import zw.co.zetdc.businessplanning.payload.request.SectionIdsRequest;
 import zw.co.zetdc.businessplanning.repository.DepartmentRepository;
+import zw.co.zetdc.businessplanning.repository.SectionRepository;
 import zw.co.zetdc.businessplanning.service.DepartmentService;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,6 +23,8 @@ import java.util.List;
 public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository; // Repository for database operations
+
+    private final SectionRepository sectionRepository;
 
     @Override
     @Transactional
@@ -73,4 +80,35 @@ public class DepartmentServiceImpl implements DepartmentService {
             }
         }
     }
+
+    @Override
+    public Department getDepartmentWithSections(Long departmentId) {
+        return departmentRepository.findById(departmentId).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public List<Section> addSectionsToDepartment(Long departmentId, SectionIdsRequest request) {
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new NotFoundException("Department with id:: " + departmentId + " not found"));
+
+        // Initialize the assignedSections list if it's not already done
+        if (department.getAssignedSections() == null) {
+            department.setAssignedSections(new ArrayList<>());
+        }
+
+        // Adding sections based on IDs received in the request
+        for (Long sectionId : request.getSectionIds()) {
+            Section section = sectionRepository.findById(sectionId)
+                    .orElseThrow(() -> new NotFoundException("Section with id:: " + sectionId + " not found"));
+            department.getAssignedSections().add(section);
+        }
+
+        // Save the department to persist the changes
+        departmentRepository.save(department);
+
+        return department.getAssignedSections(); // Return the updated list of sections
+    }
+
+
 }
