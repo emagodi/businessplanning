@@ -220,4 +220,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return workPlanRepository.findByDepartmentId(departmentId);
     }
 
+    @Override
+    public List<WorkPlan> getByCreatedBy(String createdBy) {
+        return workPlanRepository.findByCreatedBy(createdBy); // Implement the method
+    }
+
+
+
 }

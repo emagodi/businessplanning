@@ -128,4 +128,10 @@ public class WorkPlanController {
     public List<WorkPlan> getWorkPlansByDepartmentId(@PathVariable Long departmentId) {
         return workPlanService.getWorkPlansByDepartmentId(departmentId);
     }
+
+    @GetMapping("/findBy/{createdBy}")
+    public ResponseEntity<List<WorkPlan>> getByCreatedBy(@PathVariable String createdBy) {
+        List<WorkPlan> workPlans = workPlanService.getByCreatedBy(createdBy);
+        return ResponseEntity.ok(workPlans);
+    }
 }

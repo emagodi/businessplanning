@@ -42,4 +42,6 @@ public interface WorkPlanService {
     List<WorkPlan> getWorkPlansBySectionId(Long sectionId);
 
     List<WorkPlan> getWorkPlansByDepartmentId(Long departmentId);
+
+    List<WorkPlan> getByCreatedBy(String createdBy);
 }
