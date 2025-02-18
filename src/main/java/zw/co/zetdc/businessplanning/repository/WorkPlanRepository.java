@@ -9,5 +9,6 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
     List<WorkPlan> findByWeek(String week);
     List<WorkPlan> findByMonth(String month);
     List<WorkPlan> findByYear(String year);
+    List<WorkPlan> findByWeekAndMonthAndYear(String week, String month, String year);
 
 }

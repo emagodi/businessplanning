@@ -205,4 +205,9 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return workPlanRepository.findByYear(year);
     }
 
+    @Override
+    public List<WorkPlan> getWorkPlansByWeekMonthYear(String week, String month, String year) {
+        return workPlanRepository.findByWeekAndMonthAndYear(week, month, year);
+    }
+
 }

@@ -36,4 +36,6 @@ public interface WorkPlanService {
     public List<WorkPlan> getWorkPlansByMonth(String month);
 
     public List<WorkPlan> getWorkPlansByYear(String year);
+
+    List<WorkPlan> getWorkPlansByWeekMonthYear(String week, String month, String year);
 }

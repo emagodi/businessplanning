@@ -96,18 +96,26 @@ public class WorkPlanController {
         return workPlanService.addTeamMembersToScope(scopeId, request);
     }
 
-    @GetMapping("/find/week")
+    @GetMapping("/findBy/week")
     public List<WorkPlan> getWorkPlansByWeek(@RequestParam String week) {
         return workPlanService.getWorkPlansByWeek(week);
     }
 
-    @GetMapping("/find/month")
+    @GetMapping("/findBy/month")
     public List<WorkPlan> getWorkPlansByMonth(@RequestParam String month) {
         return workPlanService.getWorkPlansByMonth(month);
     }
 
-    @GetMapping("/find/year")
+    @GetMapping("/findBy/year")
     public List<WorkPlan> getWorkPlansByYear(@RequestParam String year) {
         return workPlanService.getWorkPlansByYear(year);
+    }
+
+    @GetMapping("/findBy/{week}/{month}/{year}")
+    public List<WorkPlan> getWorkPlansByWeekMonthYear(
+            @PathVariable String week,
+            @PathVariable String month,
+            @PathVariable String year) {
+        return workPlanService.getWorkPlansByWeekMonthYear(week, month, year);
     }
 }
