@@ -26,6 +26,11 @@ public class WorkPlanRequest {
     private Double percentOfBudget;
     private String remarks;
 
+    private Status status;
+    private Date startDate;
+    private Date targetCompletionDate;
+    private Date actualCompletionDate;
+
     private Long sectionId;
     private Long departmentId;
 

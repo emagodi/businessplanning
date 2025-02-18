@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.handlers.BaseEntity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -28,6 +30,13 @@ public class WorkPlan extends BaseEntity {
     private Double percentageComplete;
     private Double actualExpenditure;
     private Double percentOfBudget;
+
+
+    private Status status;
+    private Date startDate;
+    private Date targetCompletionDate;
+    private Date actualCompletionDate;
+
     private String remarks;
 
     private Long sectionId;

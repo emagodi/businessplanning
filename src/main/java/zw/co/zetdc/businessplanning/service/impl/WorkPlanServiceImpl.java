@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import zw.co.zetdc.businessplanning.entities.Scope;
 import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
+import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.exception.NotFoundException;
 import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
@@ -18,6 +19,7 @@ import zw.co.zetdc.businessplanning.service.WorkPlanService;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +51,10 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         workPlan.setRemarks(workPlanRequest.getRemarks()); // Add this line
         workPlan.setSectionId(workPlanRequest.getSectionId());
         workPlan.setDepartmentId(workPlanRequest.getDepartmentId());
+        workPlan.setStatus(workPlanRequest.getStatus());
+        workPlan.setStartDate(workPlanRequest.getStartDate());
+        workPlan.setTargetCompletionDate(workPlanRequest.getTargetCompletionDate());
+        workPlan.setActualCompletionDate(workPlanRequest.getActualCompletionDate());
 
         for (WorkPlanRequest.ScopeRequest scopeRequest : workPlanRequest.getScopes()) {
             Scope scope = new Scope();
