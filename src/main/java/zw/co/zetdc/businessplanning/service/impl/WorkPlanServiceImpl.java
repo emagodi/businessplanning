@@ -19,6 +19,7 @@ import zw.co.zetdc.businessplanning.service.WorkPlanService;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -39,6 +40,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         WorkPlan workPlan = new WorkPlan();
         workPlan.setMonth(workPlanRequest.getMonth());
         workPlan.setWeek(workPlanRequest.getWeek());
+        workPlan.setYear(workPlanRequest.getYear());
         workPlan.setWeeklyTarget(workPlanRequest.getWeeklyTarget()); // Add this line
         workPlan.setActualWorkDone(workPlanRequest.getActualWorkDone()); // Add this line
         workPlan.setPercentageComplete(workPlanRequest.getPercentageComplete()); // Add this line
@@ -188,5 +190,19 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return scope.getAssignedTeamMembers(); // Return the updated list of team members
     }
 
+    @Override
+    public List<WorkPlan> getWorkPlansByWeek(String week) {
+        return workPlanRepository.findByWeek(week);
+    }
+
+    @Override
+    public List<WorkPlan> getWorkPlansByMonth(String month) {
+        return workPlanRepository.findByMonth(month);
+    }
+
+    @Override
+    public List<WorkPlan> getWorkPlansByYear(String year) {
+        return workPlanRepository.findByYear(year);
+    }
 
 }

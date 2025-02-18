@@ -20,6 +20,7 @@ public class WorkPlanResponse {
 
     private String month;
     private String week;
+    private String year;
     private Double weeklyTarget;
     private Double actualWorkDone;
     private Double percentageComplete;

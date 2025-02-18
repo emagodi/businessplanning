@@ -30,4 +30,10 @@ public interface WorkPlanService {
     Scope assignTeamMembers(Long scopeId, List<Long> teamMemberIds);
 
     public List<TeamMember> addTeamMembersToScope(Long scopeId, TeamMemberIdsRequest request);
+
+    List<WorkPlan> getWorkPlansByWeek(String week);
+
+    public List<WorkPlan> getWorkPlansByMonth(String month);
+
+    public List<WorkPlan> getWorkPlansByYear(String year);
 }

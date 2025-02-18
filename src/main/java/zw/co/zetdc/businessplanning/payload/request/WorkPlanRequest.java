@@ -16,6 +16,7 @@ import java.util.List;
 public class WorkPlanRequest {
     private String month;
     private String week;
+    private String year;
     private Double weeklyTarget;
     private Double actualWorkDone;
     private Double percentageComplete;
