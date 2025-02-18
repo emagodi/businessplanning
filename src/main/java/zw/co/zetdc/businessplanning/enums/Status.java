@@ -2,11 +2,12 @@ package zw.co.zetdc.businessplanning.enums;
 
 public enum Status {
 
+    IN_PROGRESS,
+
+    COMPLETED,
+
     PENDING,
 
-    REJECTED,
-
-
-    RECEIVED
+    CANCELLED
 
 }

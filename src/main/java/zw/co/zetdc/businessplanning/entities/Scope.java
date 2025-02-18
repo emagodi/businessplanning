@@ -5,9 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.handlers.BaseEntity;
 
+import java.awt.dnd.DropTarget;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -21,6 +24,10 @@ import java.util.List;
 public class Scope extends BaseEntity {
 
     private String details;
+    private Status status;
+    private Date startDate;
+    private Date targetCompletionDate;
+    private Date actualCompletionDate;
 
     @ManyToOne
     @JoinColumn(name = "work_plan_id")

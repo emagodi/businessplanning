@@ -53,6 +53,10 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         for (WorkPlanRequest.ScopeRequest scopeRequest : workPlanRequest.getScopes()) {
             Scope scope = new Scope();
             scope.setDetails(scopeRequest.getDetails());
+            scope.setStatus(scopeRequest.getStatus());
+            scope.setStartDate(scopeRequest.getStartDate());
+            scope.setTargetCompletionDate(scopeRequest.getTargetCompletionDate());
+            scope.setActualCompletionDate(scopeRequest.getActualCompletionDate());
 
             // Set the workPlan reference in the scope
             scope.setWorkPlan(workPlan);
@@ -126,6 +130,10 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
         Scope scope = new Scope();
         scope.setDetails(request.getDetails());
+        scope.setStatus(request.getStatus());
+        scope.setStartDate(request.getStartDate());
+        scope.setTargetCompletionDate(request.getTargetCompletionDate());
+        scope.setActualCompletionDate(request.getActualCompletionDate());
         scope.setWorkPlan(existingWorkPlan);
 
         // Initialize the assignedTeamMembers list if it's not already done
