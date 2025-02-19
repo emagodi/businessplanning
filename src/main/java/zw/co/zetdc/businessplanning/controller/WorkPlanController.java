@@ -145,7 +145,7 @@ public class WorkPlanController {
     }
 
 
-    @GetMapping("/findBy/{departmentId}/{week}/{month}/{year}")
+    @GetMapping("/findBy/departmentId/{departmentId}/{week}/{month}/{year}")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public List<WorkPlan> getWorkPlansByDepartmentIdWeekMonthYear(
             @PathVariable Long departmentId,
@@ -155,7 +155,7 @@ public class WorkPlanController {
         return workPlanService.getWorkPlansByDepartmentIdWeekMonthYear(departmentId, week, month, year);
     }
 
-    @GetMapping("/findBy/{sectionId}/{week}/{month}/{year}")
+    @GetMapping("/findBy/sectionId/{sectionId}/{week}/{month}/{year}")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public List<WorkPlan> getWorkPlansBySectionIdWeekMonthYear(
             @PathVariable Long sectionId,
