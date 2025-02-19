@@ -69,13 +69,4 @@ public class SectionController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/findBy/{departmentId}")
-    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
-    public List<Section> getSectionsByDepartmentId(
-            @PathVariable Long departmentId) {
-        return sectionService.getSectionsByDepartmentId(departmentId);
-    }
-
-
-
 }

@@ -7,7 +7,4 @@ import zw.co.zetdc.businessplanning.entities.WorkPlan;
 import java.util.List;
 
 public interface SectionRepository extends JpaRepository<Section, Long> {
-
-    List<Section> findSectionByDepartmentId(Long departmentId);
-
 }

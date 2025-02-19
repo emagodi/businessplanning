@@ -84,9 +84,5 @@ public class SectionServiceImpl implements SectionService {
         }
     }
 
-    @Override
-    public List<Section> getSectionsByDepartmentId(Long departmentId) {
-        return sectionRepository.findSectionByDepartmentId(departmentId);
-    }
 
 }
