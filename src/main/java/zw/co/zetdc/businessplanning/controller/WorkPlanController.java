@@ -162,7 +162,7 @@ public class WorkPlanController {
             @PathVariable String week,
             @PathVariable String month,
             @PathVariable String year) {
-        return workPlanService.getWorkPlansByDepartmentIdWeekMonthYear(sectionId, week, month, year);
+        return workPlanService.getWorkPlansBySectionIdWeekMonthYear(sectionId, week, month, year);
     }
 
 
