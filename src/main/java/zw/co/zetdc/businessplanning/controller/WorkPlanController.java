@@ -125,13 +125,13 @@ public class WorkPlanController {
         return workPlanService.getWorkPlansByWeekMonthYear(week, month, year);
     }
 
-    @GetMapping("/findBy/{sectionId}")
+    @GetMapping("/findBy/sectionId/{sectionId}")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public List<WorkPlan> getWorkPlansBySectionId(@PathVariable Long sectionId) {
         return workPlanService.getWorkPlansBySectionId(sectionId);
     }
 
-    @GetMapping("/findBy/{departmentId}")
+    @GetMapping("/findBy/departmentId/{departmentId}")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public List<WorkPlan> getWorkPlansByDepartmentId(@PathVariable Long departmentId) {
         return workPlanService.getWorkPlansByDepartmentId(departmentId);
