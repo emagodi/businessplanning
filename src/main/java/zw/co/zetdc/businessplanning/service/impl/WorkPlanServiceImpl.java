@@ -240,5 +240,16 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     }
 
 
+    @Override
+    public List<WorkPlan> getWorkPlansByDepartmentIdWeekMonthYear(Long departmentId, String week, String month, String year) {
+        return workPlanRepository.findByDepartmentIdAndWeekAndMonthAndYear(departmentId, week, month, year);
+    }
+
+    @Override
+    public List<WorkPlan> getWorkPlansBySectionIdWeekMonthYear(Long sectionId, String week, String month, String year) {
+        return workPlanRepository.findBySectionIdAndWeekAndMonthAndYear(sectionId, week, month, year);
+    }
+
+
 
 }

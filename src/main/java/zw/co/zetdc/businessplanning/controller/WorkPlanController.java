@@ -16,6 +16,7 @@ import zw.co.zetdc.businessplanning.entities.WorkPlan;
 import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
+import zw.co.zetdc.businessplanning.service.DepartmentService;
 import zw.co.zetdc.businessplanning.service.WorkPlanService;
 
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 public class WorkPlanController {
 
     private final WorkPlanService workPlanService;
+    private final DepartmentService departmentService;
 
     @PostMapping(value = "/create")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('SUPERADMIN', 'ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
@@ -134,4 +136,25 @@ public class WorkPlanController {
         List<WorkPlan> workPlans = workPlanService.getByCreatedBy(createdBy);
         return ResponseEntity.ok(workPlans);
     }
+
+
+    @GetMapping("/findBy/{departmentId}/{week}/{month}/{year}")
+    public List<WorkPlan> getWorkPlansByDepartmentIdWeekMonthYear(
+            @PathVariable Long departmentId,
+            @PathVariable String week,
+            @PathVariable String month,
+            @PathVariable String year) {
+        return workPlanService.getWorkPlansByDepartmentIdWeekMonthYear(departmentId, week, month, year);
+    }
+
+    @GetMapping("/findBy/{sectionId}/{week}/{month}/{year}")
+    public List<WorkPlan> getWorkPlansBySectionIdWeekMonthYear(
+            @PathVariable Long sectionId,
+            @PathVariable String week,
+            @PathVariable String month,
+            @PathVariable String year) {
+        return workPlanService.getWorkPlansByDepartmentIdWeekMonthYear(sectionId, week, month, year);
+    }
+
+
 }

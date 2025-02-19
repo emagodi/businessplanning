@@ -14,4 +14,7 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
     List<WorkPlan> findByDepartmentId(Long departmentId);
     List<WorkPlan> findByCreatedBy(String createdBy);
 
+    List<WorkPlan> findByDepartmentIdAndWeekAndMonthAndYear(Long departmentId, String week, String month, String year);
+    List<WorkPlan> findBySectionIdAndWeekAndMonthAndYear(Long sectionId, String week, String month, String year);
+
 }

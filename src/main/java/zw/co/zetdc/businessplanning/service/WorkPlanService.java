@@ -44,4 +44,7 @@ public interface WorkPlanService {
     List<WorkPlan> getWorkPlansByDepartmentId(Long departmentId);
 
     List<WorkPlan> getByCreatedBy(String createdBy);
+
+    public List<WorkPlan> getWorkPlansByDepartmentIdWeekMonthYear(Long departmentId, String week, String month, String year);
+    public List<WorkPlan> getWorkPlansBySectionIdWeekMonthYear(Long sectionId, String week, String month, String year);
 }
