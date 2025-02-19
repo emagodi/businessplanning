@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import zw.co.zetdc.businessplanning.entities.Department;
 import zw.co.zetdc.businessplanning.entities.Section;  // Make sure to import the Section entity
 import zw.co.zetdc.businessplanning.entities.TeamMember;
+import zw.co.zetdc.businessplanning.entities.WorkPlan;
 import zw.co.zetdc.businessplanning.payload.request.SectionRequest;  // Make sure to import the SectionRequest payload
 import zw.co.zetdc.businessplanning.repository.SectionRepository;  // Make sure to import the Section repository
 import zw.co.zetdc.businessplanning.repository.TeamMemberRepository;
@@ -83,6 +84,9 @@ public class SectionServiceImpl implements SectionService {
         }
     }
 
-
+    @Override
+    public List<Section> getSectionsByDepartmentId(Long departmentId) {
+        return sectionRepository.findSectionByDepartmentId(departmentId);
+    }
 
 }

@@ -17,4 +17,6 @@ public interface SectionService {
 
     void deleteSection(Long id);
 
+    List<Section> getSectionsByDepartmentId(Long departmentId);
+
 }

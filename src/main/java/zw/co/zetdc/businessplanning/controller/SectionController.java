@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import zw.co.zetdc.businessplanning.entities.Section;  // Make sure to import the Section entity
+import zw.co.zetdc.businessplanning.entities.WorkPlan;
 import zw.co.zetdc.businessplanning.payload.request.AssignSectionsRequest;
 import zw.co.zetdc.businessplanning.payload.request.AssignTeamMembersRequest;
 import zw.co.zetdc.businessplanning.payload.request.SectionRequest;  // Make sure to import the SectionRequest payload
@@ -66,6 +67,13 @@ public class SectionController {
     public ResponseEntity<Void> deleteSection(@PathVariable Long id) {
         sectionService.deleteSection(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/findBy/{departmentId}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public List<Section> getSectionsByDepartmentId(
+            @PathVariable Long departmentId) {
+        return sectionService.getSectionsByDepartmentId(departmentId);
     }
 
 
