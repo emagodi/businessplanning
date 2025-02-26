@@ -4,11 +4,13 @@ import zw.co.zetdc.businessplanning.entities.Activity;
 import zw.co.zetdc.businessplanning.entities.Scope;
 import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
+import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
 
 import java.util.List;
+import java.util.Map;
 
 public interface WorkPlanService {
 
@@ -47,4 +49,25 @@ public interface WorkPlanService {
 
     public List<WorkPlan> getWorkPlansByDepartmentIdWeekMonthYear(Long departmentId, String week, String month, String year);
     public List<WorkPlan> getWorkPlansBySectionIdWeekMonthYear(Long sectionId, String week, String month, String year);
+
+    // Get overdue scopes for a work plan
+    List<Scope> getOverdueScopes(Long workPlanId, Status completedStatus);
+
+    // Get in-progress scopes for a work plan
+    List<Scope> getInProgressScopes(Long workPlanId, Status completedStatus);
+
+    // Get scopes grouped by status and team member for a work plan
+    Map<String, Map<String, Long>> getScopesGroupedByStatusPerTeamMember(Long workPlanId);
+
+    // Get time left for each scope in a work plan
+    List<Map<String, Object>> getTimeLeftForScopes(Long workPlanId);
+
+
+    List<Map<String, Object>> getOverdueScopesWithDays();
+
+    List<WorkPlan> getWorkPlansWithInProgressScopes();
+
+    List<Map<String, Object>> getTasksGroupedByStatusForTeamMember(Long teamMemberId);
+
+    List<Scope> getOverdueTasksForTeamMember(Long teamMemberId);
 }

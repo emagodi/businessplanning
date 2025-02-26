@@ -18,10 +18,11 @@ import zw.co.zetdc.businessplanning.repository.WorkPlanRepository;
 import zw.co.zetdc.businessplanning.service.WorkPlanService;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 
 @Service
@@ -59,6 +60,14 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         for (WorkPlanRequest.ScopeRequest scopeRequest : workPlanRequest.getScopes()) {
             Scope scope = new Scope();
             scope.setDetails(scopeRequest.getDetails());
+
+            if (scopeRequest.getStartDate() != null) {
+                if (scopeRequest.getStartDate().toInstant().isBefore(Instant.now())) {
+                    scope.setStatus(Status.IN_PROGRESS);
+                } else {
+                    scope.setStatus(Status.PENDING);
+                }
+            }
             scope.setStatus(scopeRequest.getStatus());
             scope.setStartDate(scopeRequest.getStartDate());
             scope.setTargetCompletionDate(scopeRequest.getTargetCompletionDate());
@@ -251,5 +260,100 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     }
 
 
+    // Get overdue scopes for a work plan
+    @Override
+    public List<Scope> getOverdueScopes(Long workPlanId, Status completedStatus) {
+        return scopeRepository.findOverdueScopesByWorkPlan(workPlanId, completedStatus);
+    }
+
+    // Get in-progress scopes for a work plan
+    @Override
+    public List<Scope> getInProgressScopes(Long workPlanId, Status completedStatus) {
+        return scopeRepository.findInProgressScopesByWorkPlan(workPlanId, completedStatus);
+    }
+
+    // Get scopes grouped by status and team member for a work plan
+    @Override
+    public Map<String, Map<String, Long>> getScopesGroupedByStatusPerTeamMember(Long workPlanId) {
+        List<Object[]> results = scopeRepository.findScopesGroupedByStatusAndTeamMemberByWorkPlan(workPlanId);
+
+        // Structure the response
+        Map<String, Map<String, Long>> groupedScopes = new HashMap<>();
+
+        for (Object[] result : results) {
+            String status = ((Status) result[0]).name(); // Convert Enum to String
+            String teamMember = ((TeamMember) result[1]).getFirstname() + ((TeamMember) result[1]).getLastname(); // Assuming TeamMember has a getName() method
+            Long count = (Long) result[2];
+
+            groupedScopes
+                    .computeIfAbsent(teamMember, k -> new HashMap<>())
+                    .put(status, count);
+        }
+
+        return groupedScopes;
+    }
+
+    // Get time left for each scope in a work plan
+    @Override
+    public List<Map<String, Object>> getTimeLeftForScopes(Long workPlanId) {
+        List<Scope> scopes = scopeRepository.findByWorkPlanId(workPlanId);
+
+        List<Map<String, Object>> response = new ArrayList<>();
+
+        for (Scope scope : scopes) {
+            long daysLeft = ChronoUnit.DAYS.between(LocalDate.now(), scope.getTargetCompletionDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+
+            Map<String, Object> scopeInfo = new HashMap<>();
+            scopeInfo.put("scopeId", scope.getId());
+            scopeInfo.put("details", scope.getDetails());
+            scopeInfo.put("daysLeft", daysLeft); // Will be negative if target date has passed
+            scopeInfo.put("status", scope.getStatus());
+
+            response.add(scopeInfo);
+        }
+
+        return response;
+    }
+
+
+    @Override
+    public List<Map<String, Object>> getOverdueScopesWithDays() {
+        List<Scope> overdueScopes = scopeRepository.findAllOverdueScopes();
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (Scope scope : overdueScopes) {
+            Map<String, Object> scopeDetails = new HashMap<>();
+            scopeDetails.put("scopeId", scope.getId());
+            scopeDetails.put("details", scope.getDetails());
+            scopeDetails.put("status", scope.getStatus());
+            scopeDetails.put("startDate", scope.getStartDate());
+            scopeDetails.put("targetCompletionDate", scope.getTargetCompletionDate());
+            scopeDetails.put("actualCompletionDate", scope.getActualCompletionDate());
+
+            // Calculate overdue days
+            long overdueDays = ChronoUnit.DAYS.between(scope.getTargetCompletionDate().toInstant(), Instant.now());
+            scopeDetails.put("overdueDays", overdueDays);
+
+            result.add(scopeDetails);
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public List<WorkPlan> getWorkPlansWithInProgressScopes() {
+        return workPlanRepository.findAllWorkPlansWithInProgressScopes();
+    }
+
+    @Override
+    public List<Map<String, Object>> getTasksGroupedByStatusForTeamMember(Long teamMemberId) {
+        return workPlanRepository.findTasksGroupedByStatusForTeamMember(teamMemberId);
+    }
+
+    @Override
+    public List<Scope> getOverdueTasksForTeamMember(Long teamMemberId) {
+        return workPlanRepository.findOverdueTasksForTeamMember(teamMemberId);
+    }
 
 }

@@ -7,11 +7,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import zw.co.zetdc.businessplanning.entities.Scope;
 import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberRequest;
 import zw.co.zetdc.businessplanning.service.TeamMemberService;
+import zw.co.zetdc.businessplanning.service.WorkPlanService;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "TASK TEAM MEMBERS ENDPOINTS", description = "The Task Team Member APIs. Contains operations like create member, find member by id etc.")
 @RestController
@@ -21,6 +24,8 @@ import java.util.List;
 public class TeamMemberController {
 
     private final TeamMemberService teamMemberService;
+    private final WorkPlanService workPlanService;
+
 
     @PostMapping(value = "/create")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
@@ -66,6 +71,8 @@ public class TeamMemberController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+
+
     @GetMapping("/section/{sectionId}")
     public ResponseEntity<List<TeamMember>> getTeamMembersBySectionId(@PathVariable Long sectionId) {
         List<TeamMember> teamMembers = teamMemberService.getTeamMembersBySectionId(sectionId);
@@ -76,5 +83,17 @@ public class TeamMemberController {
     public ResponseEntity<List<TeamMember>> getTeamMembersByDepartmentId(@PathVariable Long departmentId) {
         List<TeamMember> teamMembers = teamMemberService.getTeamMembersByDepartmentId(departmentId);
         return ResponseEntity.ok(teamMembers);
+    }
+
+    @GetMapping("/team-members/{teamMemberId}/tasks-grouped-by-status")
+    public ResponseEntity<List<Map<String, Object>>> getTasksGroupedByStatus(@PathVariable Long teamMemberId) {
+        List<Map<String, Object>> groupedTasks = workPlanService.getTasksGroupedByStatusForTeamMember(teamMemberId);
+        return ResponseEntity.ok(groupedTasks);
+    }
+
+    @GetMapping("/team-members/{teamMemberId}/overdue-tasks")
+    public ResponseEntity<List<Scope>> getOverdueTasksForTeamMember(@PathVariable Long teamMemberId) {
+        List<Scope> overdueTasks = workPlanService.getOverdueTasksForTeamMember(teamMemberId);
+        return ResponseEntity.ok(overdueTasks);
     }
 }

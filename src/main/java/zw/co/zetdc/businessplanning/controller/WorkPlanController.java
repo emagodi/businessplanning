@@ -13,6 +13,7 @@ import zw.co.zetdc.businessplanning.entities.Activity;
 import zw.co.zetdc.businessplanning.entities.Scope;
 import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
+import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
@@ -20,6 +21,7 @@ import zw.co.zetdc.businessplanning.service.DepartmentService;
 import zw.co.zetdc.businessplanning.service.WorkPlanService;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "WORK PLAN ENDPOINTS", description = "The Work Plan APIs. Contains operations like create Work Plan, find Work Plan by id, find Work Plan by status, add scope to work plan,etc.")
 @RestController
@@ -164,6 +166,58 @@ public class WorkPlanController {
             @PathVariable String year) {
         return workPlanService.getWorkPlansBySectionIdWeekMonthYear(sectionId, week, month, year);
     }
+    
+    // added by kuda
 
 
+    // Endpoint to get overdue scopes for a work plan
+    @GetMapping("/{workPlanId}/scopes/overdue")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Scope>> getOverdueScopes(@PathVariable Long workPlanId) {
+        // Assuming Status.COMPLETED is an enum value for completed status
+        Status completedStatus = Status.COMPLETED;
+        List<Scope> overdueScopes = workPlanService.getOverdueScopes(workPlanId, completedStatus);
+        return ResponseEntity.ok(overdueScopes);
+    }
+
+    // Endpoint to get in-progress scopes for a work plan
+    @GetMapping("/{workPlanId}/scopes/in-progress")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Scope>> getInProgressScopes(@PathVariable Long workPlanId) {
+        // Assuming Status.COMPLETED is an enum value for completed status
+        Status completedStatus = Status.COMPLETED;
+        List<Scope> inProgressScopes = workPlanService.getInProgressScopes(workPlanId, completedStatus);
+        return ResponseEntity.ok(inProgressScopes);
+    }
+
+    // Endpoint to get scopes grouped by status and team member for a work plan
+    @GetMapping("/{workPlanId}/scopes/grouped-by-status")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<Map<String, Map<String, Long>>> getScopesGroupedByStatusPerTeamMember(@PathVariable Long workPlanId) {
+        Map<String, Map<String, Long>> groupedScopes = workPlanService.getScopesGroupedByStatusPerTeamMember(workPlanId);
+        return ResponseEntity.ok(groupedScopes);
+    }
+
+    // Endpoint to get time left for each scope in a work plan
+    @GetMapping("/{workPlanId}/scopes/time-left")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Map<String, Object>>> getTimeLeftForScopes(@PathVariable Long workPlanId) {
+        List<Map<String, Object>> timeLeftScopes = workPlanService.getTimeLeftForScopes(workPlanId);
+        return ResponseEntity.ok(timeLeftScopes);
+    }
+
+
+    @GetMapping("/overdue")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Map<String, Object>>> getOverdueScopes() {
+        List<Map<String, Object>> overdueScopes = workPlanService.getOverdueScopesWithDays();
+        return ResponseEntity.ok(overdueScopes);
+    }
+
+    @GetMapping("/with-in-progress-scopes")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<WorkPlan>> getWorkPlansWithInProgressScopes() {
+        List<WorkPlan> workPlans = workPlanService.getWorkPlansWithInProgressScopes();
+        return ResponseEntity.ok(workPlans);
+    }
 }

@@ -42,4 +42,6 @@ public class Scope extends BaseEntity {
     )
     private List<TeamMember> assignedTeamMembers = new ArrayList<>(); // Initialize the list
 
+
+
 }
