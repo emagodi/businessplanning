@@ -25,7 +25,7 @@ public class WorkPlan extends BaseEntity {
     private String week;
     private String year;
 
-    private Double weeklyTarget;
+    private String weeklyTarget;
     private Double actualWorkDone;
     private Double percentageComplete;
     private Double actualExpenditure;
