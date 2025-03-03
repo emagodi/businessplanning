@@ -356,4 +356,21 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return workPlanRepository.findOverdueTasksForTeamMember(teamMemberId);
     }
 
+    @Override
+    public List<Scope> getScopesByTeamMemberId(Long teamMemberId) {
+        List<Scope> allScopes = scopeRepository.findAll(); // Fetch all scopes from the database
+        List<Scope> memberScopes = new ArrayList<>();
+
+        for (Scope scope : allScopes) {
+            for (TeamMember member : scope.getAssignedTeamMembers()) {
+                if (member.getId().equals(teamMemberId)) {
+                    memberScopes.add(scope);
+                    break; // No need to continue checking other members for this scope
+                }
+            }
+        }
+
+        return memberScopes;
+    }
+
 }
