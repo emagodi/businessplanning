@@ -74,26 +74,40 @@ public class TeamMemberController {
 
 
     @GetMapping("/section/{sectionId}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<List<TeamMember>> getTeamMembersBySectionId(@PathVariable Long sectionId) {
         List<TeamMember> teamMembers = teamMemberService.getTeamMembersBySectionId(sectionId);
         return ResponseEntity.ok(teamMembers);
     }
 
     @GetMapping("/department/{departmentId}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<List<TeamMember>> getTeamMembersByDepartmentId(@PathVariable Long departmentId) {
         List<TeamMember> teamMembers = teamMemberService.getTeamMembersByDepartmentId(departmentId);
         return ResponseEntity.ok(teamMembers);
     }
 
     @GetMapping("/team-members/{teamMemberId}/tasks-grouped-by-status")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<List<Map<String, Object>>> getTasksGroupedByStatus(@PathVariable Long teamMemberId) {
         List<Map<String, Object>> groupedTasks = workPlanService.getTasksGroupedByStatusForTeamMember(teamMemberId);
         return ResponseEntity.ok(groupedTasks);
     }
 
     @GetMapping("/team-members/{teamMemberId}/overdue-tasks")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<List<Scope>> getOverdueTasksForTeamMember(@PathVariable Long teamMemberId) {
         List<Scope> overdueTasks = workPlanService.getOverdueTasksForTeamMember(teamMemberId);
         return ResponseEntity.ok(overdueTasks);
+    }
+
+    @GetMapping("/{teamMemberId}/all-scopes")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Scope>> getScopesForTeamMember(@PathVariable Long teamMemberId) {
+        List<Scope> scopes = workPlanService.getScopesByTeamMemberId(teamMemberId);
+        if (scopes.isEmpty()) {
+            return ResponseEntity.notFound().build(); // Return 404 if no scopes found
+        }
+        return ResponseEntity.ok(scopes); // Return 200 with the list of scopes
     }
 }
