@@ -70,4 +70,6 @@ public interface WorkPlanService {
     List<Map<String, Object>> getTasksGroupedByStatusForTeamMember(Long teamMemberId);
 
     List<Scope> getOverdueTasksForTeamMember(Long teamMemberId);
+
+    List<Scope> getScopesByTeamMemberId(Long teamMemberId);
 }
