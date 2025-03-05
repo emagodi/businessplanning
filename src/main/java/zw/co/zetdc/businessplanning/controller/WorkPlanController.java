@@ -229,4 +229,13 @@ public class WorkPlanController {
         List<Scope> scopes = workPlanService.getScopesBySectionIdAndStatus(sectionId, status);
         return ResponseEntity.ok(scopes);
     }
+
+    @GetMapping("/scopes/department/{departmentId}/status/{status}")
+    @Operation(summary = "Get Scope By Department Id and Status",
+            description = "Get all scopes for a department with particular status")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Scope>> getScopesByDepartmentIdAndStatus(@PathVariable Long departmentId, @PathVariable Status status) {
+        List<Scope> scopes = workPlanService.getScopesByDepartmentIdAndStatus(departmentId, status);
+        return ResponseEntity.ok(scopes);
+    }
 }

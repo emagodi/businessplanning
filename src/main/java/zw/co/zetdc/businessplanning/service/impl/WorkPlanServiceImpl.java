@@ -378,4 +378,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return scopeRepository.findScopesBySectionIdAndStatus(sectionId, status);
     }
 
+    @Override
+    public List<Scope> getScopesByDepartmentIdAndStatus(Long departmentId, Status status) {
+        return scopeRepository.findScopesByDepartmentIdAndStatus(departmentId, status);
+    }
+
+
+
 }

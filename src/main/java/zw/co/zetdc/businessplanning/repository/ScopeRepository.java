@@ -74,5 +74,8 @@ List<Map<String, Object>> findTasksGroupedByStatusForTeamMember(@Param("teamMemb
 @Query("SELECT s FROM Scope s WHERE s.workPlan.sectionId = :sectionId AND s.status = :status")
 List<Scope> findScopesBySectionIdAndStatus(@Param("sectionId") Long sectionId, @Param("status") Status status);
 
+@Query("SELECT s FROM Scope s WHERE s.workPlan.departmentId = :departmentId AND s.status = :status")
+List<Scope> findScopesByDepartmentIdAndStatus(@Param("departmentId") Long departmentId, @Param("status") Status status);
+
 
 }
