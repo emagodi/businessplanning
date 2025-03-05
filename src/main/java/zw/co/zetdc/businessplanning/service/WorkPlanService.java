@@ -91,4 +91,6 @@ public interface WorkPlanService {
 
     public WorkPlanScopeResponse getWorkPlanByScopeId(Long scopeId);
 
+    public List<WorkPlan> getWorkPlansByYearAndDepartment(String year, Long departmentId, String quarter);
+
 }

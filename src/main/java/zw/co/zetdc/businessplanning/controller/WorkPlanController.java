@@ -298,4 +298,17 @@ public class WorkPlanController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/workplans/year/{year}/departmentId/{departmentId}/quarter/{quarter}")
+    @Operation(summary = "Get work plans by year, department id and quarter",
+            description = "Get all work plans for a particular quarter")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<WorkPlan>> getWorkPlansByYearAndDepartment(
+            @PathVariable String year,
+            @PathVariable Long departmentId,
+            @PathVariable String quarter) {
+
+        List<WorkPlan> workPlans = workPlanService.getWorkPlansByYearAndDepartment(year, departmentId, quarter);
+        return ResponseEntity.ok(workPlans);
+    }
+
 }

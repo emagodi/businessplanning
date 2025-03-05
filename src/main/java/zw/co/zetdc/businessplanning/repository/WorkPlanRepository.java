@@ -40,4 +40,12 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
             "AND s.status NOT IN ('COMPLETED', 'CANCELED')")
     List<Scope> findOverdueTasksForTeamMember(@Param("teamMemberId") Long teamMemberId);
 
+
+
+
+    @Query("SELECT wp FROM WorkPlan wp WHERE wp.year = :year AND wp.departmentId = :departmentId AND wp.month IN :months")
+    List<WorkPlan> findByYearAndDepartmentIdAndMonths(@Param("year") String year,
+                                                      @Param("departmentId") Long departmentId,
+                                                      @Param("months") List<String> months);
+
 }
