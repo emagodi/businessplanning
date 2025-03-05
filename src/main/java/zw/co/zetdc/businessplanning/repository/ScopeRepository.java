@@ -80,4 +80,7 @@ List<Scope> findScopesByDepartmentIdAndStatus(@Param("departmentId") Long depart
 @Query("SELECT COUNT(s) FROM Scope s WHERE s.workPlan.sectionId = :sectionId AND s.status = :status")
 Long countScopesBySectionIdAndStatus(@Param("sectionId") Long sectionId, @Param("status") Status status);
 
+@Query("SELECT COUNT(s) FROM Scope s WHERE s.workPlan.departmentId = :departmentId AND s.status = :status")
+Long countScopesByDepartmentIdAndStatus(@Param("departmentId") Long departmentId, @Param("status") Status status);
+
 }
