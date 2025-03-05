@@ -69,4 +69,10 @@ List<Scope> findOverdueTasksForTeamMember(@Param("teamMemberId") Long teamMember
         "WHERE tm.id = :teamMemberId " +
         "GROUP BY s.status")
 List<Map<String, Object>> findTasksGroupedByStatusForTeamMember(@Param("teamMemberId") Long teamMemberId);
+
+
+@Query("SELECT s FROM Scope s WHERE s.workPlan.sectionId = :sectionId AND s.status = :status")
+List<Scope> findScopesBySectionIdAndStatus(@Param("sectionId") Long sectionId, @Param("status") Status status);
+
+
 }

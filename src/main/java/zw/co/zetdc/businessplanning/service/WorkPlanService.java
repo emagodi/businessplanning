@@ -72,4 +72,7 @@ public interface WorkPlanService {
     List<Scope> getOverdueTasksForTeamMember(Long teamMemberId);
 
     List<Scope> getScopesByTeamMemberId(Long teamMemberId);
+
+    List<Scope> getScopesBySectionIdAndStatus(Long sectionId, Status status);
+
 }

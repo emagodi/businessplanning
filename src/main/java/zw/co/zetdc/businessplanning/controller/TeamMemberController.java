@@ -94,6 +94,7 @@ public class TeamMemberController {
         return ResponseEntity.ok(groupedTasks);
     }
 
+
     @GetMapping("/team-members/{teamMemberId}/overdue-tasks")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<List<Scope>> getOverdueTasksForTeamMember(@PathVariable Long teamMemberId) {
