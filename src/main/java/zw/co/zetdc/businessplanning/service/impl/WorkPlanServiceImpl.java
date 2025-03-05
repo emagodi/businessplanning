@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -444,18 +445,51 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         if (targetCompletionDate != null) {
             long daysOverdue = ChronoUnit.DAYS.between(targetCompletionDate, currentDate);
             if (daysOverdue > 0) {
-                response.setStatus("OVER_DUE");
+                response.setDueStatus("OVER_DUE");
                 response.setDaysOverdue(daysOverdue);
             } else {
-                response.setStatus("ON_TRACK");
+                response.setDueStatus("ON_TRACK");
                 response.setDaysOverdue(0);
             }
         } else {
-            response.setStatus("NO_DUE_DATE");
+            response.setDueStatus("NO_DUE_DATE");
             response.setDaysOverdue(0);
         }
 
         return response;
     }
+
+
+    @Override
+    public List<ScopeStatusResponse> getOverdueScopesByTeamMemberId(Long teamMemberId) {
+        TeamMember teamMember = teamMemberRepository.findById(teamMemberId)
+                .orElseThrow(() -> new NotFoundException("Team member not found with ID: " + teamMemberId));
+
+        List<Scope> scopes = scopeRepository.findByAssignedTeamMembersContaining(teamMember);
+
+        LocalDate currentDate = LocalDate.now();
+
+        return scopes.stream()
+                .filter(scope -> scope.getTargetCompletionDate() != null)
+                .map(scope -> {
+                    LocalDate targetCompletionDate = Instant.ofEpochMilli(scope.getTargetCompletionDate().getTime())
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate();
+
+                    long daysOverdue = ChronoUnit.DAYS.between(targetCompletionDate, currentDate);
+                    if (daysOverdue > 0) {
+                        ScopeStatusResponse response = new ScopeStatusResponse();
+                        response.setScope(scope);
+                        response.setDueStatus("OVER_DUE");
+                        response.setDaysOverdue(daysOverdue);
+                        return response;
+                    } else {
+                        return null; // Filter out non-overdue items
+                    }
+                })
+                .filter(response -> response != null) // Remove null responses
+                .collect(Collectors.toList());
+    }
+
 
 }

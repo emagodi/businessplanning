@@ -87,4 +87,6 @@ public interface WorkPlanService {
 
     public ScopeStatusResponse getScopeStatus(Long scopeId);
 
+    public List<ScopeStatusResponse> getOverdueScopesByTeamMemberId(Long teamMemberId);
+
 }

@@ -12,7 +12,7 @@ import zw.co.zetdc.businessplanning.entities.Scope;
 @Data
 public class ScopeStatusResponse {
     private Scope scope;
-    private String status;
+    private String dueStatus;
     private long daysOverdue;
 
 }

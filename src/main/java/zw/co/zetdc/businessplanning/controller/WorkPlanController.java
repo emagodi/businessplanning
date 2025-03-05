@@ -280,4 +280,13 @@ public class WorkPlanController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/scopes/overdue/team-member/{teamMemberId}")
+    @Operation(summary = "Get Overdue scopes for a team member",
+            description = "Get all overdue scopes for a team member using team member id")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<ScopeStatusResponse>> getOverdueScopesByTeamMemberId(@PathVariable Long teamMemberId) {
+        List<ScopeStatusResponse> responses = workPlanService.getOverdueScopesByTeamMemberId(teamMemberId);
+        return ResponseEntity.ok(responses);
+    }
+
 }

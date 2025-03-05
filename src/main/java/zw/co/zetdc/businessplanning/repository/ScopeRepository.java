@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import zw.co.zetdc.businessplanning.entities.Scope;
+import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.enums.Status;
 
 import java.util.List;
@@ -82,5 +83,8 @@ Long countScopesBySectionIdAndStatus(@Param("sectionId") Long sectionId, @Param(
 
 @Query("SELECT COUNT(s) FROM Scope s WHERE s.workPlan.departmentId = :departmentId AND s.status = :status")
 Long countScopesByDepartmentIdAndStatus(@Param("departmentId") Long departmentId, @Param("status") Status status);
+
+
+List<Scope> findByAssignedTeamMembersContaining(TeamMember teamMember);
 
 }
