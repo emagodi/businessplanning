@@ -77,4 +77,6 @@ public interface WorkPlanService {
 
     List<Scope> getScopesByDepartmentIdAndStatus(Long departmentId, Status status);
 
+    Long countScopesBySectionIdAndStatus(Long sectionId, Status status);
+
 }

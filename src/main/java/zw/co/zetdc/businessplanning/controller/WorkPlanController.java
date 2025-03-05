@@ -238,4 +238,13 @@ public class WorkPlanController {
         List<Scope> scopes = workPlanService.getScopesByDepartmentIdAndStatus(departmentId, status);
         return ResponseEntity.ok(scopes);
     }
+
+    @GetMapping("/scopes/section/{sectionId}/count/status/{status}")
+    @Operation(summary = "Count Scopes By Section Id and Status",
+            description = "Total scopes for a section with particular status")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<Long> countScopesBySectionIdAndStatus(@PathVariable Long sectionId, @PathVariable Status status) {
+        Long count = workPlanService.countScopesBySectionIdAndStatus(sectionId, status);
+        return ResponseEntity.ok(count);
+    }
 }
