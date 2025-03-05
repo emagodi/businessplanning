@@ -95,4 +95,6 @@ public interface WorkPlanService {
 
     public Long getWorkPlanCountByYearAndDepartment(String year, Long departmentId, String quarter);
 
+    public Long getWorkPlanCountByYearAndSection(String year, Long sectionId, String quarter);
+
 }

@@ -312,7 +312,7 @@ public class WorkPlanController {
     }
 
     @GetMapping("/workplans/count/year/{year}/departmentId/{departmentId}/quarter/{quarter}")
-    @Operation(summary = "Get number of work plans by year, department id and quarter",
+    @Operation(summary = "Get total number of work plans by year, department id and quarter",
             description = "Get total number of work plans for a particular quarter by department id")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<Long> getWorkPlanCountByYearAndDepartment(
@@ -321,6 +321,20 @@ public class WorkPlanController {
             @PathVariable String quarter) {
 
         Long count = workPlanService.getWorkPlanCountByYearAndDepartment(year, departmentId, quarter);
+        return ResponseEntity.ok(count); // Return count directly
+    }
+
+
+    @GetMapping("/workplans/count/year/{year}/sectionId/{sectionId}/quarter/{quarter}")
+    @Operation(summary = "Get total number of work plans by year, section id and quarter",
+            description = "Get total number of work plans for a particular quarter by section id")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<Long> getWorkPlanCountByYearAndSection(
+            @PathVariable String year,
+            @PathVariable Long sectionId,
+            @PathVariable String quarter) {
+
+        Long count = workPlanService.getWorkPlanCountByYearAndSection(year, sectionId, quarter);
         return ResponseEntity.ok(count); // Return count directly
     }
 

@@ -585,6 +585,40 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return workPlanRepository.countByYearAndDepartmentIdAndMonths(String.valueOf(year), departmentId, months);
     }
 
+    @Override
+    public Long getWorkPlanCountByYearAndSection(String year, Long sectionId, String quarter) {
+        List<String> months = new ArrayList<>();
+
+        // Determine the months based on the quarter
+        switch (quarter.toUpperCase()) {
+            case "Q1":
+                months.add("January");
+                months.add("February");
+                months.add("March");
+                break;
+            case "Q2":
+                months.add("April");
+                months.add("May");
+                months.add("June");
+                break;
+            case "Q3":
+                months.add("July");
+                months.add("August");
+                months.add("September");
+                break;
+            case "Q4":
+                months.add("October");
+                months.add("November");
+                months.add("December");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid quarter: " + quarter);
+        }
+
+        // Count work plans based on year, section, and months
+        return workPlanRepository.countByYearAndSectionIdAndMonths(String.valueOf(year), sectionId, months);
+    }
+
 
 
 }
