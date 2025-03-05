@@ -14,6 +14,7 @@ import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
 import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
+import zw.co.zetdc.businessplanning.payload.response.WorkPlanScopeResponse;
 import zw.co.zetdc.businessplanning.repository.ScopeRepository;
 import zw.co.zetdc.businessplanning.repository.TeamMemberRepository;
 import zw.co.zetdc.businessplanning.repository.WorkPlanRepository;
@@ -490,6 +491,32 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                 .filter(response -> response != null) // Remove null responses
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public WorkPlanScopeResponse getWorkPlanByScopeId(Long scopeId) {
+        // Fetch the scope by its ID
+        Scope scope = scopeRepository.findById(scopeId)
+                .orElseThrow(() -> new NotFoundException("Scope not found with ID: " + scopeId));
+
+        // Get the associated WorkPlan
+        WorkPlan workPlan = scope.getWorkPlan();
+        if (workPlan == null) {
+            throw new NotFoundException("WorkPlan not found for the given Scope ID: " + scopeId);
+        }
+
+        // Create the response object
+        WorkPlanScopeResponse response = new WorkPlanScopeResponse();
+        response.setWorkPlan(workPlan);
+
+        // Set only the specific scope in the response (not as a list)
+        response.setScope(scope);
+
+        // Set the assigned team members for the specific scope
+        response.setAssignedTeamMembers(scope.getAssignedTeamMembers());
+
+        return response; // Return the formatted response
+    }
+
 
 
 }

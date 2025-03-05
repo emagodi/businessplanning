@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import zw.co.zetdc.businessplanning.entities.Activity;
 import zw.co.zetdc.businessplanning.entities.Scope;
 import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
@@ -19,6 +18,7 @@ import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
 import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
+import zw.co.zetdc.businessplanning.payload.response.WorkPlanScopeResponse;
 import zw.co.zetdc.businessplanning.service.DepartmentService;
 import zw.co.zetdc.businessplanning.service.WorkPlanService;
 
@@ -287,6 +287,15 @@ public class WorkPlanController {
     public ResponseEntity<List<ScopeStatusResponse>> getOverdueScopesByTeamMemberId(@PathVariable Long teamMemberId) {
         List<ScopeStatusResponse> responses = workPlanService.getOverdueScopesByTeamMemberId(teamMemberId);
         return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/scopes/{scopeId}/workplan")
+    @Operation(summary = "Get scope details by id",
+            description = "Get all details of scope by id using scope id")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<WorkPlanScopeResponse> getWorkPlanByScopeId(@PathVariable Long scopeId) {
+        WorkPlanScopeResponse response = workPlanService.getWorkPlanByScopeId(scopeId);
+        return ResponseEntity.ok(response);
     }
 
 }

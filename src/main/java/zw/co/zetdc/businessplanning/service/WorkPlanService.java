@@ -1,6 +1,5 @@
 package zw.co.zetdc.businessplanning.service;
 
-import zw.co.zetdc.businessplanning.entities.Activity;
 import zw.co.zetdc.businessplanning.entities.Scope;
 import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
@@ -10,6 +9,7 @@ import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
 import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
+import zw.co.zetdc.businessplanning.payload.response.WorkPlanScopeResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -88,5 +88,7 @@ public interface WorkPlanService {
     public ScopeStatusResponse getScopeStatus(Long scopeId);
 
     public List<ScopeStatusResponse> getOverdueScopesByTeamMemberId(Long teamMemberId);
+
+    public WorkPlanScopeResponse getWorkPlanByScopeId(Long scopeId);
 
 }
