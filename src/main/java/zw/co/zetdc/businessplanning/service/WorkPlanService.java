@@ -6,8 +6,10 @@ import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
 import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
+import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
+import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -80,5 +82,9 @@ public interface WorkPlanService {
     Long countScopesBySectionIdAndStatus(Long sectionId, Status status);
 
     Long countScopesByDepartmentIdAndStatus(Long departmentId, Status status);
+
+    public Scope updateScope(Long scopeId, ScopeUpdateRequest scopeUpdateRequest);
+
+    public ScopeStatusResponse getScopeStatus(Long scopeId);
 
 }

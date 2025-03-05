@@ -10,8 +10,10 @@ import zw.co.zetdc.businessplanning.entities.WorkPlan;
 import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.exception.NotFoundException;
 import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
+import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
+import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
 import zw.co.zetdc.businessplanning.repository.ScopeRepository;
 import zw.co.zetdc.businessplanning.repository.TeamMemberRepository;
 import zw.co.zetdc.businessplanning.repository.WorkPlanRepository;
@@ -391,6 +393,69 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     @Override
     public Long countScopesByDepartmentIdAndStatus(Long departmentId, Status status) {
         return scopeRepository.countScopesByDepartmentIdAndStatus(departmentId, status);
+    }
+
+    @Override
+    @Transactional
+    public Scope updateScope(Long scopeId, ScopeUpdateRequest scopeUpdateRequest) {
+        Scope existingScope = scopeRepository.findById(scopeId)
+                .orElseThrow(() -> new NotFoundException("Scope not found with ID: " + scopeId));
+
+        copyNonNullProperties(scopeUpdateRequest, existingScope);
+
+        return scopeRepository.save(existingScope);
+    }
+
+    private void copyNonNullProperties(ScopeUpdateRequest source, Scope target) {
+        for (Method method : ScopeUpdateRequest.class.getDeclaredMethods()) {
+            if (method.getName().startsWith("get")) {
+                try {
+                    Object value = method.invoke(source);
+                    if (value != null) {
+                        String setterName = "set" + method.getName().substring(3);
+                        Method setter = Scope.class.getDeclaredMethod(setterName, method.getReturnType());
+                        setter.invoke(target, value);
+                    }
+                } catch (Exception e) {
+                    log.error("Error copying properties: {}", e.getMessage(), e); // Better logging
+                }
+            }
+        }
+    }
+
+    @Override
+    public ScopeStatusResponse getScopeStatus(Long scopeId) {
+        Scope scope = scopeRepository.findById(scopeId)
+                .orElseThrow(() -> new NotFoundException("Scope not found with ID: " + scopeId));
+
+        LocalDate currentDate = LocalDate.now();
+        LocalDate targetCompletionDate = null;
+
+        if (scope.getTargetCompletionDate() != null) {
+            // Convert Date to LocalDate
+            targetCompletionDate = Instant.ofEpochMilli(scope.getTargetCompletionDate().getTime())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        }
+
+        ScopeStatusResponse response = new ScopeStatusResponse();
+        response.setScope(scope);
+
+        if (targetCompletionDate != null) {
+            long daysOverdue = ChronoUnit.DAYS.between(targetCompletionDate, currentDate);
+            if (daysOverdue > 0) {
+                response.setStatus("OVER_DUE");
+                response.setDaysOverdue(daysOverdue);
+            } else {
+                response.setStatus("ON_TRACK");
+                response.setDaysOverdue(0);
+            }
+        } else {
+            response.setStatus("NO_DUE_DATE");
+            response.setDaysOverdue(0);
+        }
+
+        return response;
     }
 
 }

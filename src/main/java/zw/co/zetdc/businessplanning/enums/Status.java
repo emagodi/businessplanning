@@ -8,6 +8,8 @@ public enum Status {
 
     PENDING,
 
-    CANCELLED
+    CANCELLED,
+
+    RE_SCHEDULED
 
 }

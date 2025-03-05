@@ -15,8 +15,10 @@ import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
 import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
+import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
+import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
 import zw.co.zetdc.businessplanning.service.DepartmentService;
 import zw.co.zetdc.businessplanning.service.WorkPlanService;
 
@@ -255,6 +257,27 @@ public class WorkPlanController {
     public ResponseEntity<Long> countScopesByDepartmentIdAndStatus(@PathVariable Long departmentId, @PathVariable Status status) {
         Long count = workPlanService.countScopesByDepartmentIdAndStatus(departmentId, status);
         return ResponseEntity.ok(count);
+    }
+
+    @PutMapping("/scopes/update/{scopeId}")
+    @Operation(summary = "Update Scope",
+            description = "Update Scope")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<Scope> updateScope(
+            @PathVariable Long scopeId,
+            @RequestBody ScopeUpdateRequest scopeUpdateRequest) {
+
+        Scope updatedScope = workPlanService.updateScope(scopeId, scopeUpdateRequest);
+        return ResponseEntity.ok(updatedScope);
+    }
+
+    @GetMapping("/scopes/status/{scopeId}")
+    @Operation(summary = "Get Scope and Current Status Based On Date",
+            description = "Check if scope is still on track")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<ScopeStatusResponse> getScopeStatus(@PathVariable Long scopeId) {
+        ScopeStatusResponse response = workPlanService.getScopeStatus(scopeId);
+        return ResponseEntity.ok(response);
     }
 
 }
