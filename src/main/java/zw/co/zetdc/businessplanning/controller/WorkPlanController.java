@@ -311,4 +311,17 @@ public class WorkPlanController {
         return ResponseEntity.ok(workPlans);
     }
 
+    @GetMapping("/workplans/count/year/{year}/departmentId/{departmentId}/quarter/{quarter}")
+    @Operation(summary = "Get number of work plans by year, department id and quarter",
+            description = "Get total number of work plans for a particular quarter by department id")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<Long> getWorkPlanCountByYearAndDepartment(
+            @PathVariable String year,
+            @PathVariable Long departmentId,
+            @PathVariable String quarter) {
+
+        Long count = workPlanService.getWorkPlanCountByYearAndDepartment(year, departmentId, quarter);
+        return ResponseEntity.ok(count); // Return count directly
+    }
+
 }
