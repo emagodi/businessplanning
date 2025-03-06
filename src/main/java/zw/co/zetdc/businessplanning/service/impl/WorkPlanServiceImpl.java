@@ -621,7 +621,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
 
     @Override
-    public List<WorkPlan> getWorkPlansByYearAndSection(String year, Long sectionId, String quarter) {
+    public List<WorkPlan> getWorkPlansByYearAndSection(String year, Long sectionId, String quarter, Status status) {
         List<String> months = new ArrayList<>();
 
         // Determine the months based on the quarter
@@ -650,8 +650,8 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                 throw new IllegalArgumentException("Invalid quarter: " + quarter);
         }
 
-        // Fetch work plans based on year, section, and months
-        return workPlanRepository.findByYearAndSectionIdAndMonths(String.valueOf(year), sectionId, months);
+        // Fetch work plans based on year, section, months, and status
+        return workPlanRepository.findByYearAndSectionIdAndMonthsAndStatus(year, sectionId, months, status);
     }
 
 

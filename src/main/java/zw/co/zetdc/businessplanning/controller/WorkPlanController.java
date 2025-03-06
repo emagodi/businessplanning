@@ -341,16 +341,17 @@ public class WorkPlanController {
         return ResponseEntity.ok(count); // Return count directly
     }
 
-    @GetMapping("/workplans/year/{year}/sectionId/{sectionId}/quarter/{quarter}")
-    @Operation(summary = "Get all work plans by year, section id and quarter",
-            description = "Get all work plans for a particular quarter by section id")
+    @GetMapping("/workplans/year/{year}/sectionId/{sectionId}/quarter/{quarter}/status/{status}")
+    @Operation(summary = "Get all work plans by year, section id, quarter, and status",
+            description = "Get all work plans for a particular quarter by section id and status")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<List<WorkPlan>> getWorkPlansByYearAndSection(
             @PathVariable String year,
             @PathVariable Long sectionId,
-            @PathVariable String quarter) {
+            @PathVariable String quarter,
+            @PathVariable Status status) { // Use the Status enum here
 
-        List<WorkPlan> workPlans = workPlanService.getWorkPlansByYearAndSection(year, sectionId, quarter);
+        List<WorkPlan> workPlans = workPlanService.getWorkPlansByYearAndSection(year, sectionId, quarter, status);
         return ResponseEntity.ok(workPlans); // Return the list of work plans
     }
 
