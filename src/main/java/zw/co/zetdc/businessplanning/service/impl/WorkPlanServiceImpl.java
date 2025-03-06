@@ -552,7 +552,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     }
 
     @Override
-    public Long getWorkPlanCountByYearAndDepartment(String year, Long departmentId, String quarter) {
+    public Long getWorkPlanCountByYearAndDepartment(String year, Long departmentId, String quarter, Status status) {
         List<String> months = new ArrayList<>();
 
         // Determine the months based on the quarter
@@ -581,8 +581,8 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                 throw new IllegalArgumentException("Invalid quarter: " + quarter);
         }
 
-        // Count work plans based on year, department, and months
-        return workPlanRepository.countByYearAndDepartmentIdAndMonths(String.valueOf(year), departmentId, months);
+        // Count work plans based on year, department, months, and status
+        return workPlanRepository.countByYearAndDepartmentIdAndMonthsAndStatus(year, departmentId, months, status);
     }
 
     @Override

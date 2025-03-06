@@ -93,7 +93,7 @@ public interface WorkPlanService {
 
     List<WorkPlan> getWorkPlansByYearAndDepartment(String year, Long departmentId, String quarter, Status status);
 
-    public Long getWorkPlanCountByYearAndDepartment(String year, Long departmentId, String quarter);
+    Long getWorkPlanCountByYearAndDepartment(String year, Long departmentId, String quarter, Status status);
 
     public Long getWorkPlanCountByYearAndSection(String year, Long sectionId, String quarter);
 
