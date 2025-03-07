@@ -17,9 +17,7 @@ import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
 import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
-import zw.co.zetdc.businessplanning.payload.response.DepartmentWorkPlanSummaryResponse;
-import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
-import zw.co.zetdc.businessplanning.payload.response.WorkPlanScopeResponse;
+import zw.co.zetdc.businessplanning.payload.response.*;
 import zw.co.zetdc.businessplanning.service.DepartmentService;
 import zw.co.zetdc.businessplanning.service.WorkPlanService;
 
@@ -368,8 +366,28 @@ public class WorkPlanController {
         return ResponseEntity.ok(summary);
     }
 
+    @GetMapping("/workplans/summary/section/{sectionId}")
+    @Operation(summary = "Get summary of work plans for a section",
+            description = "Returns total work plans, completed, in-progress, cancelled, and rescheduled counts, and budget utilization for a given section.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<SectionWorkPlanSummaryResponse> getSectionWorkPlanSummary(
+            @PathVariable Long sectionId) {
 
+        SectionWorkPlanSummaryResponse summary = workPlanService.getWorkPlanSummaryBySection(sectionId);
+        return ResponseEntity.ok(summary);
+    }
 
+    @GetMapping("/workplans/performance/department/{departmentId}/quarter/{quarter}/year/{year}")
+    @Operation(summary = "Get work plan performance for a department",
+            description = "Returns total work plans, completed, in-progress, cancelled, and rescheduled counts, and budget utilization for a given department and quarter.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<WorkPlanPerformanceResponse> getWorkPlanPerformance(
+            @PathVariable Long departmentId,
+            @PathVariable String quarter,
+            @PathVariable String year) {
 
+        WorkPlanPerformanceResponse response = workPlanService.getPerformanceByDepartmentAndQuarter(departmentId, quarter, year);
+        return ResponseEntity.ok(response);
+    }
 
 }

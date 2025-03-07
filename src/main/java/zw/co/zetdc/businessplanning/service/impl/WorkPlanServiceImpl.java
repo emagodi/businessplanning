@@ -1,10 +1,12 @@
 package zw.co.zetdc.businessplanning.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zw.co.zetdc.businessplanning.entities.Scope;
+import zw.co.zetdc.businessplanning.entities.Section;
 import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
 import zw.co.zetdc.businessplanning.enums.Status;
@@ -13,10 +15,9 @@ import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
 import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
-import zw.co.zetdc.businessplanning.payload.response.DepartmentWorkPlanSummaryResponse;
-import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
-import zw.co.zetdc.businessplanning.payload.response.WorkPlanScopeResponse;
+import zw.co.zetdc.businessplanning.payload.response.*;
 import zw.co.zetdc.businessplanning.repository.ScopeRepository;
+import zw.co.zetdc.businessplanning.repository.SectionRepository;
 import zw.co.zetdc.businessplanning.repository.TeamMemberRepository;
 import zw.co.zetdc.businessplanning.repository.WorkPlanRepository;
 import zw.co.zetdc.businessplanning.service.WorkPlanService;
@@ -40,6 +41,8 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     private final ScopeRepository scopeRepository;
 
     private final TeamMemberRepository teamMemberRepository;
+
+    private final SectionRepository sectionRepository;
 
 
     @Override
@@ -703,5 +706,99 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     }
 
 
+    @Override
+    public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySection(Long sectionId) {
+        // Fetch work plans for the section
+        List<WorkPlan> workPlans = workPlanRepository.findBySectionId(sectionId);
+
+        // Get the section to retrieve the department IDs
+        Section section = sectionRepository.findById(sectionId)
+                .orElseThrow(() -> new EntityNotFoundException("Section not found"));
+
+        // If multiple departments are associated, you might want to decide which one to use
+        Long departmentId = section.getDepartments() != null && !section.getDepartments().isEmpty()
+                ? section.getDepartments().get(0).getId() // Get the first department's ID
+                : null;
+
+        // Initialize summary fields
+        Long totalWorkPlans = (long) workPlans.size();
+        Long completedWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.COMPLETED).count();
+        Long inProgressWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.IN_PROGRESS).count();
+        Long cancelledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.CANCELLED).count();
+        Long rescheduledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.RE_SCHEDULED).count();
+
+        // Calculate average percent of budget utilized
+        Double averagePercentOfBudgetUtilized = totalWorkPlans > 0 ?
+                workPlans.stream()
+                        .mapToDouble(WorkPlan::getPercentOfBudget)
+                        .average()
+                        .orElse(0) : 0;
+
+        // Calculate overall completion rate
+        Double overallCompletionRate = totalWorkPlans > 0 ?
+                (completedWorkPlans.doubleValue() / totalWorkPlans) * 100 : 0;
+
+        // Create the response object
+        SectionWorkPlanSummaryResponse summaryResponse = new SectionWorkPlanSummaryResponse();
+        summaryResponse.setSectionId(sectionId); // Set the section ID
+        summaryResponse.setTotalWorkPlans(totalWorkPlans);
+        summaryResponse.setCompletedWorkPlans(completedWorkPlans);
+        summaryResponse.setInProgressWorkPlans(inProgressWorkPlans);
+        summaryResponse.setCancelledWorkPlans(cancelledWorkPlans);
+        summaryResponse.setRescheduledWorkPlans(rescheduledWorkPlans);
+        summaryResponse.setAveragePercentOfBudgetUtilized(averagePercentOfBudgetUtilized);
+        summaryResponse.setOverallCompletionRate(overallCompletionRate); // Set the overall completion rate
+
+        return summaryResponse;
+    }
+
+    @Override
+    public WorkPlanPerformanceResponse getPerformanceByDepartmentAndQuarter(Long departmentId, String quarter, String year) {
+        List<String> months = new ArrayList<>();
+
+        switch (quarter.toUpperCase()) {
+            case "Q1":
+                months.addAll(Arrays.asList("January", "February", "March"));
+                break;
+            case "Q2":
+                months.addAll(Arrays.asList("April", "May", "June"));
+                break;
+            case "Q3":
+                months.addAll(Arrays.asList("July", "August", "September"));
+                break;
+            case "Q4":
+                months.addAll(Arrays.asList("October", "November", "December"));
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid quarter: " + quarter);
+        }
+
+        // Fetch work plans within the specified year and months
+        List<WorkPlan> workPlans = workPlanRepository.findByDepartmentIdAndMonthIn(year, departmentId, months);
+
+        // Calculate performance metrics
+        Long totalWorkPlans = (long) workPlans.size();
+        Long completedWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.COMPLETED).count();
+        Long inProgressWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.IN_PROGRESS).count();
+        Long cancelledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.CANCELLED).count();
+        Long rescheduledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.RE_SCHEDULED).count();
+        Double averagePercentOfBudgetUtilized = totalWorkPlans > 0 ?
+                workPlans.stream().mapToDouble(WorkPlan::getPercentOfBudget).average().orElse(0) : 0;
+        Double overallCompletionRate = totalWorkPlans > 0 ?
+                (completedWorkPlans.doubleValue() / totalWorkPlans) * 100 : 0;
+
+        return WorkPlanPerformanceResponse.builder()
+                .departmentId(departmentId)
+                .quarter(quarter)
+                .year(Integer.parseInt(year)) // Convert year to int
+                .totalWorkPlans(totalWorkPlans)
+                .completedWorkPlans(completedWorkPlans)
+                .inProgressWorkPlans(inProgressWorkPlans)
+                .cancelledWorkPlans(cancelledWorkPlans)
+                .rescheduledWorkPlans(rescheduledWorkPlans)
+                .averagePercentOfBudgetUtilized(averagePercentOfBudgetUtilized)
+                .overallCompletionRate(overallCompletionRate)
+                .build();
+    }
 
 }

@@ -8,9 +8,7 @@ import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
 import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
-import zw.co.zetdc.businessplanning.payload.response.DepartmentWorkPlanSummaryResponse;
-import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
-import zw.co.zetdc.businessplanning.payload.response.WorkPlanScopeResponse;
+import zw.co.zetdc.businessplanning.payload.response.*;
 
 import java.util.List;
 import java.util.Map;
@@ -102,4 +100,7 @@ public interface WorkPlanService {
 
     public DepartmentWorkPlanSummaryResponse getWorkPlanSummaryByDepartment(Long departmentId);
 
+    public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySection(Long sectionId);
+
+    public WorkPlanPerformanceResponse getPerformanceByDepartmentAndQuarter(Long departmentId, String quarter, String year);
 }
