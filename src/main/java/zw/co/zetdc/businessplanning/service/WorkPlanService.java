@@ -103,4 +103,6 @@ public interface WorkPlanService {
     public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySection(Long sectionId);
 
     public WorkPlanPerformanceResponse getPerformanceByDepartmentAndQuarter(Long departmentId, String quarter, String year);
+
+    public SectionWorkPlanPerformanceResponse getPerformanceBySectionAndQuarter(Long sectionId, String quarter, String year);
 }

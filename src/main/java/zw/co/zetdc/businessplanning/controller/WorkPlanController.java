@@ -390,4 +390,17 @@ public class WorkPlanController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/workplans/performance/section/{sectionId}/quarter/{quarter}/year/{year}")
+    @Operation(summary = "Get work plan performance for a section",
+            description = "Returns total work plans, completed, in-progress, cancelled, and rescheduled counts, and budget utilization for a given section and quarter.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<SectionWorkPlanPerformanceResponse> getWorkPlanPerformanceBySection(
+            @PathVariable Long sectionId,
+            @PathVariable String quarter,
+            @PathVariable String year) {
+
+        SectionWorkPlanPerformanceResponse response = workPlanService.getPerformanceBySectionAndQuarter(sectionId, quarter, year);
+        return ResponseEntity.ok(response);
+    }
+
 }

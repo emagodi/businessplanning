@@ -801,4 +801,55 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                 .build();
     }
 
+    @Override
+    public SectionWorkPlanPerformanceResponse getPerformanceBySectionAndQuarter(Long sectionId, String quarter, String year) {
+        List<String> months = new ArrayList<>();
+
+        switch (quarter.toUpperCase()) {
+            case "Q1":
+                months.addAll(Arrays.asList("January", "February", "March"));
+                break;
+            case "Q2":
+                months.addAll(Arrays.asList("April", "May", "June"));
+                break;
+            case "Q3":
+                months.addAll(Arrays.asList("July", "August", "September"));
+                break;
+            case "Q4":
+                months.addAll(Arrays.asList("October", "November", "December"));
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid quarter: " + quarter);
+        }
+
+        // Fetch work plans within the specified year and months
+        List<WorkPlan> workPlans = workPlanRepository.findBySectionIdAndMonthIn(year, sectionId, months);
+
+        // Calculate performance metrics
+        Long totalWorkPlans = (long) workPlans.size();
+        Long completedWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.COMPLETED).count();
+        Long inProgressWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.IN_PROGRESS).count();
+        Long cancelledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.CANCELLED).count();
+        Long rescheduledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.RE_SCHEDULED).count();
+        Double averagePercentOfBudgetUtilized = totalWorkPlans > 0 ?
+                workPlans.stream().mapToDouble(WorkPlan::getPercentOfBudget).average().orElse(0) : 0;
+        Double overallCompletionRate = totalWorkPlans > 0 ?
+                (completedWorkPlans.doubleValue() / totalWorkPlans) * 100 : 0;
+
+        return SectionWorkPlanPerformanceResponse.builder()
+                .sectionId(sectionId)
+                .quarter(quarter)
+                .year(Integer.parseInt(year)) // Convert year to int
+                .totalWorkPlans(totalWorkPlans)
+                .completedWorkPlans(completedWorkPlans)
+                .inProgressWorkPlans(inProgressWorkPlans)
+                .cancelledWorkPlans(cancelledWorkPlans)
+                .rescheduledWorkPlans(rescheduledWorkPlans)
+                .averagePercentOfBudgetUtilized(averagePercentOfBudgetUtilized)
+                .overallCompletionRate(overallCompletionRate)
+                .build();
+    }
+
+
+
 }
