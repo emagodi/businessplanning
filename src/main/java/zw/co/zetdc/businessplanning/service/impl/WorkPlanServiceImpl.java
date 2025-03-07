@@ -13,6 +13,7 @@ import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
 import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
+import zw.co.zetdc.businessplanning.payload.response.DepartmentWorkPlanSummaryResponse;
 import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
 import zw.co.zetdc.businessplanning.payload.response.WorkPlanScopeResponse;
 import zw.co.zetdc.businessplanning.repository.ScopeRepository;
@@ -652,6 +653,53 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
         // Fetch work plans based on year, section, months, and status
         return workPlanRepository.findByYearAndSectionIdAndMonthsAndStatus(year, sectionId, months, status);
+    }
+
+    @Override
+    public DepartmentWorkPlanSummaryResponse getWorkPlanSummaryByDepartment(Long departmentId) {
+        // Fetch work plans for the department
+        List<WorkPlan> workPlans = workPlanRepository.findByDepartmentId(departmentId);
+
+        // Initialize summary fields
+        Long totalWorkPlans = (long) workPlans.size();
+        Long completedWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.COMPLETED).count();
+        Long inProgressWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.IN_PROGRESS).count();
+        Long cancelledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.CANCELLED).count();
+        Long rescheduledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.RE_SCHEDULED).count();
+
+        // Calculate average percent of budget utilized
+        Double averagePercentOfBudgetUtilized = totalWorkPlans > 0 ?
+                workPlans.stream()
+                        .mapToDouble(WorkPlan::getPercentOfBudget)
+                        .average()
+                        .orElse(0) : 0;
+
+        Double totalBudgetAllocated = workPlans.stream()
+                .mapToDouble(wp -> {
+                    try {
+                        return wp.getWeeklyTarget() != null ? Double.parseDouble(wp.getWeeklyTarget()) : 0;
+                    } catch (NumberFormatException e) {
+                        log.warn("Invalid weekly target for work plan ID {}: {}", wp.getId(), wp.getWeeklyTarget());
+                        return 0; // Treat invalid strings as 0
+                    }
+                })
+                .sum();
+
+        Double overallCompletionRate = totalWorkPlans > 0 ?
+                (completedWorkPlans.doubleValue() / totalWorkPlans) * 100 : 0;
+
+        // Create the response object
+        DepartmentWorkPlanSummaryResponse summaryResponse = new DepartmentWorkPlanSummaryResponse();
+        summaryResponse.setDepartmentId(departmentId);
+        summaryResponse.setTotalWorkPlans(totalWorkPlans);
+        summaryResponse.setCompletedWorkPlans(completedWorkPlans);
+        summaryResponse.setInProgressWorkPlans(inProgressWorkPlans);
+        summaryResponse.setCancelledWorkPlans(cancelledWorkPlans);
+        summaryResponse.setRescheduledWorkPlans(rescheduledWorkPlans);
+        summaryResponse.setAveragePercentOfBudgetUtilized(averagePercentOfBudgetUtilized); // Set average instead
+        summaryResponse.setOverallCompletionRate(overallCompletionRate);
+
+        return summaryResponse;
     }
 
 

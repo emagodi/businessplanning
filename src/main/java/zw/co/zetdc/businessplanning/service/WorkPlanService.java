@@ -8,6 +8,7 @@ import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
 import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
+import zw.co.zetdc.businessplanning.payload.response.DepartmentWorkPlanSummaryResponse;
 import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
 import zw.co.zetdc.businessplanning.payload.response.WorkPlanScopeResponse;
 
@@ -98,5 +99,7 @@ public interface WorkPlanService {
     Long getWorkPlanCountByYearAndSection(String year, Long sectionId, String quarter, Status status);
 
     List<WorkPlan> getWorkPlansByYearAndSection(String year, Long sectionId, String quarter, Status status);
+
+    public DepartmentWorkPlanSummaryResponse getWorkPlanSummaryByDepartment(Long departmentId);
 
 }

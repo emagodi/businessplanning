@@ -17,6 +17,7 @@ import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
 import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
+import zw.co.zetdc.businessplanning.payload.response.DepartmentWorkPlanSummaryResponse;
 import zw.co.zetdc.businessplanning.payload.response.ScopeStatusResponse;
 import zw.co.zetdc.businessplanning.payload.response.WorkPlanScopeResponse;
 import zw.co.zetdc.businessplanning.service.DepartmentService;
@@ -354,5 +355,21 @@ public class WorkPlanController {
         List<WorkPlan> workPlans = workPlanService.getWorkPlansByYearAndSection(year, sectionId, quarter, status);
         return ResponseEntity.ok(workPlans); // Return the list of work plans
     }
+
+
+    @GetMapping("/workplans/summary/department/{departmentId}")
+    @Operation(summary = "Get summary of work plans for a department",
+            description = "Returns total work plans, completed, in-progress, overdue counts, and budget utilization for a given department.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<DepartmentWorkPlanSummaryResponse> getDepartmentWorkPlanSummary(
+            @PathVariable Long departmentId) {
+
+        DepartmentWorkPlanSummaryResponse summary = workPlanService.getWorkPlanSummaryByDepartment(departmentId);
+        return ResponseEntity.ok(summary);
+    }
+
+
+
+
 
 }
