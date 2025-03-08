@@ -378,7 +378,7 @@ public class WorkPlanController {
     }
 
     @GetMapping("/workplans/performance/department/{departmentId}/quarter/{quarter}/year/{year}")
-    @Operation(summary = "Get work plan performance for a department",
+    @Operation(summary = "Get work plan performance for a department by quarter and year",
             description = "Returns total work plans, completed, in-progress, cancelled, and rescheduled counts, and budget utilization for a given department and quarter.")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<WorkPlanPerformanceResponse> getWorkPlanPerformance(
@@ -391,7 +391,7 @@ public class WorkPlanController {
     }
 
     @GetMapping("/workplans/performance/section/{sectionId}/quarter/{quarter}/year/{year}")
-    @Operation(summary = "Get work plan performance for a section",
+    @Operation(summary = "Get work plan performance for a section by quarter and year",
             description = "Returns total work plans, completed, in-progress, cancelled, and rescheduled counts, and budget utilization for a given section and quarter.")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<SectionWorkPlanPerformanceResponse> getWorkPlanPerformanceBySection(
@@ -400,6 +400,17 @@ public class WorkPlanController {
             @PathVariable String year) {
 
         SectionWorkPlanPerformanceResponse response = workPlanService.getPerformanceBySectionAndQuarter(sectionId, quarter, year);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/workplans/status/department/{departmentIds}")
+    @Operation(summary = "Get overall list of work plan summaries for departments",
+            description = "Returns total work plans, completed, in-progress, cancelled, rescheduled counts, and budget utilization for specified departments.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<DepartmentWorkPlanSummaryResponse>> getWorkPlanStatusByDepartment(
+            @PathVariable List<Long> departmentIds) {
+
+        List<DepartmentWorkPlanSummaryResponse> response = workPlanService.getWorkPlanStatusByDepartments(departmentIds);
         return ResponseEntity.ok(response);
     }
 

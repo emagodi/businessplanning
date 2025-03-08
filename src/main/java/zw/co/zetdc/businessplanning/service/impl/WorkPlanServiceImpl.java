@@ -850,6 +850,39 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                 .build();
     }
 
+    @Override
+    public List<DepartmentWorkPlanSummaryResponse> getWorkPlanStatusByDepartments(List<Long> departmentIds) {
+        List<WorkPlan> workPlans = workPlanRepository.findByDepartmentIds(departmentIds);
+
+        Map<Long, List<WorkPlan>> workPlansByDepartment = workPlans.stream()
+                .collect(Collectors.groupingBy(WorkPlan::getDepartmentId));
+
+        return workPlansByDepartment.entrySet().stream().map(entry -> {
+            Long departmentId = entry.getKey();
+            List<WorkPlan> plans = entry.getValue();
+            Long totalWorkPlans = (long) plans.size();
+            Long completedWorkPlans = plans.stream().filter(wp -> wp.getStatus() == Status.COMPLETED).count();
+            Long inProgressWorkPlans = plans.stream().filter(wp -> wp.getStatus() == Status.IN_PROGRESS).count();
+            Long cancelledWorkPlans = plans.stream().filter(wp -> wp.getStatus() == Status.CANCELLED).count();
+            Long rescheduledWorkPlans = plans.stream().filter(wp -> wp.getStatus() == Status.RE_SCHEDULED).count();
+            Double averagePercentOfBudgetUtilized = totalWorkPlans > 0 ?
+                    plans.stream().mapToDouble(WorkPlan::getPercentOfBudget).average().orElse(0) : 0;
+            Double overallCompletionRate = totalWorkPlans > 0 ?
+                    (completedWorkPlans.doubleValue() / totalWorkPlans) * 100 : 0;
+
+            return new DepartmentWorkPlanSummaryResponse(
+                    departmentId,
+                    totalWorkPlans,
+                    completedWorkPlans,
+                    inProgressWorkPlans,
+                    cancelledWorkPlans,
+                    rescheduledWorkPlans,
+                    averagePercentOfBudgetUtilized,
+                    overallCompletionRate
+            );
+        }).collect(Collectors.toList());
+    }
+
 
 
 }
