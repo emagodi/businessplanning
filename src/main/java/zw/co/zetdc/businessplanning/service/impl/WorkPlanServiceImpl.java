@@ -898,4 +898,9 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return workPlanRepository.countByDepartmentIdAndMonthAndYear(departmentId, month, year);
     }
 
+    @Override
+    public Long countWorkPlansBySectionIdMonthYear(Long sectionId, String month, String year) {
+        return workPlanRepository.countBySectionIdAndMonthAndYear(sectionId, month, year);
+    }
+
 }

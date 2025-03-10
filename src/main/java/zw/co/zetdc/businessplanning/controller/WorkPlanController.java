@@ -438,7 +438,7 @@ public class WorkPlanController {
     }
 
     @GetMapping("/workplans/count/department/{departmentId}/month/{month}/year/{year}")
-    @Operation(summary = "Count total work plans for a department by month and year",
+    @Operation(summary = "Count total number of work plans for a department by month and year",
             description = "Returns the total number of work plans for a specific department in a given month and year.")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<Long> countWorkPlansByDepartmentIdMonthYear(
@@ -446,6 +446,19 @@ public class WorkPlanController {
             @PathVariable String month,
             @PathVariable String year) {
         Long count = workPlanService.countWorkPlansByDepartmentIdMonthYear(departmentId, month, year);
+        return ResponseEntity.ok(count);
+    }
+
+
+    @GetMapping("/workplans/count/sectionId/{sectionId}/month/{month}/year/{year}")
+    @Operation(summary = "Count total number of work plans for a section by month and year",
+            description = "Returns the total number of work plans for a specific section in a given month and year.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<Long> countWorkPlansBySectionIdMonthYear(
+            @PathVariable Long sectionId,
+            @PathVariable String month,
+            @PathVariable String year) {
+        Long count = workPlanService.countWorkPlansBySectionIdMonthYear(sectionId, month, year);
         return ResponseEntity.ok(count);
     }
 
