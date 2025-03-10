@@ -883,6 +883,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public List<WorkPlan> getWorkPlansByDepartmentIdMonthYear(Long departmentId, String month, String year) {
+        return workPlanRepository.findByDepartmentIdAndMonthAndYear(departmentId, month, year);
+    }
+
 
 
 }

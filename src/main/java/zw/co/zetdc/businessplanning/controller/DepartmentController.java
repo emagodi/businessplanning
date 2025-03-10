@@ -80,7 +80,7 @@ public class DepartmentController {
 
 
     @PostMapping("/department/{departmentId}/add/sections")
-    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     @Operation(summary = "Add section to department", description = "Add section by their IDs to the specified department")
     public List<Section> addSectionsToDepartment(
             @PathVariable("departmentId") Long departmentId,

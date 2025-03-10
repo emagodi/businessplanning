@@ -75,7 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         MailBody mailBody = new MailBody(user.getEmail(), subject, body);
 
         // Send email with the generated password
-        emailService.sendSimpleMessage(mailBody);
+        //emailService.sendSimpleMessage(mailBody);
 
         // Generate JWT token for the user
         var jwt = jwtService.generateToken(user);

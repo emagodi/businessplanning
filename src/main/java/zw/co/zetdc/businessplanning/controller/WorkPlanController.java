@@ -101,19 +101,19 @@ public class WorkPlanController {
         return workPlanService.addTeamMembersToScope(scopeId, request);
     }
 
-    @GetMapping("/findBy/{week}")
+    @GetMapping("/findBy/week/{week}")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public List<WorkPlan> getWorkPlansByWeek(@RequestParam String week) {
         return workPlanService.getWorkPlansByWeek(week);
     }
 
-    @GetMapping("/findBy/{month}")
+    @GetMapping("/findBy/month/{month}")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public List<WorkPlan> getWorkPlansByMonth(@RequestParam String month) {
         return workPlanService.getWorkPlansByMonth(month);
     }
 
-    @GetMapping("/findBy/{year}")
+    @GetMapping("/findBy/year/{year}")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public List<WorkPlan> getWorkPlansByYear(@RequestParam String year) {
         return workPlanService.getWorkPlansByYear(year);
@@ -412,6 +412,18 @@ public class WorkPlanController {
 
         List<DepartmentWorkPlanSummaryResponse> response = workPlanService.getWorkPlanStatusByDepartments(departmentIds);
         return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/findBy/departmentId/{departmentId}/month/{month}/year/{year}")
+    @Operation(summary = "Get work plan by department id, month and year",
+            description = "Returns work plans by department, month and year")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public List<WorkPlan> getWorkPlansByDepartmentIdMonthYear(
+            @PathVariable Long departmentId,
+            @PathVariable String month,
+            @PathVariable String year) {
+        return workPlanService.getWorkPlansByDepartmentIdMonthYear(departmentId, month, year);
     }
 
 }
