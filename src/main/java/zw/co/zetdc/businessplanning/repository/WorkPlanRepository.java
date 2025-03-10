@@ -82,4 +82,8 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
 
     List<WorkPlan> findBySectionIdAndMonthAndYear(Long departmentId, String month, String year);
 
+    @Query("SELECT COUNT(wp) FROM WorkPlan wp WHERE wp.departmentId = :departmentId AND wp.month = :month AND wp.year = :year")
+    Long countByDepartmentIdAndMonthAndYear(@Param("departmentId") Long departmentId,
+                                            @Param("month") String month,
+                                            @Param("year") String year);
 }

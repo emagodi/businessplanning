@@ -437,4 +437,18 @@ public class WorkPlanController {
         return workPlanService.getWorkPlansBySectionIdMonthYear(sectionId, month, year);
     }
 
+    @GetMapping("/workplans/count/department/{departmentId}/month/{month}/year/{year}")
+    @Operation(summary = "Count total work plans for a department by month and year",
+            description = "Returns the total number of work plans for a specific department in a given month and year.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<Long> countWorkPlansByDepartmentIdMonthYear(
+            @PathVariable Long departmentId,
+            @PathVariable String month,
+            @PathVariable String year) {
+        Long count = workPlanService.countWorkPlansByDepartmentIdMonthYear(departmentId, month, year);
+        return ResponseEntity.ok(count);
+    }
+
+
+
 }

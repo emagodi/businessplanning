@@ -111,4 +111,8 @@ public interface WorkPlanService {
     public List<WorkPlan> getWorkPlansByDepartmentIdMonthYear(Long departmentId, String month, String year);
 
     public List<WorkPlan> getWorkPlansBySectionIdMonthYear(Long sectionId, String month, String year);
+
+
+    public Long countWorkPlansByDepartmentIdMonthYear(Long departmentId, String month, String year);
+
 }
