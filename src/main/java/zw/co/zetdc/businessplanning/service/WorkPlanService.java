@@ -109,4 +109,6 @@ public interface WorkPlanService {
     public List<DepartmentWorkPlanSummaryResponse> getWorkPlanStatusByDepartments(List<Long> departmentIds);
 
     public List<WorkPlan> getWorkPlansByDepartmentIdMonthYear(Long departmentId, String month, String year);
+
+    public List<WorkPlan> getWorkPlansBySectionIdMonthYear(Long sectionId, String month, String year);
 }

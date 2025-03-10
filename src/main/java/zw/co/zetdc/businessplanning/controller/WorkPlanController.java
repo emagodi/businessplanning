@@ -426,4 +426,15 @@ public class WorkPlanController {
         return workPlanService.getWorkPlansByDepartmentIdMonthYear(departmentId, month, year);
     }
 
+    @GetMapping("/findBy/sectionId/{sectionId}/month/{month}/year/{year}")
+    @Operation(summary = "Get work plan by section id, month and year",
+            description = "Returns work plans by section, month and year")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public List<WorkPlan> getWorkPlansBySectionIdMonthYear(
+            @PathVariable Long sectionId,
+            @PathVariable String month,
+            @PathVariable String year) {
+        return workPlanService.getWorkPlansBySectionIdMonthYear(sectionId, month, year);
+    }
+
 }

@@ -80,4 +80,6 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
 
     List<WorkPlan> findByDepartmentIdAndMonthAndYear(Long departmentId, String month, String year);
 
+    List<WorkPlan> findBySectionIdAndMonthAndYear(Long departmentId, String month, String year);
+
 }

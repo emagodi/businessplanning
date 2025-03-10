@@ -888,6 +888,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return workPlanRepository.findByDepartmentIdAndMonthAndYear(departmentId, month, year);
     }
 
+    @Override
+    public List<WorkPlan> getWorkPlansBySectionIdMonthYear(Long sectionId, String month, String year) {
+        return workPlanRepository.findBySectionIdAndMonthAndYear(sectionId, month, year);
+    }
+
 
 
 }
