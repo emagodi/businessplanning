@@ -29,7 +29,7 @@ public class AuthenticationResponse {
 
     private Long sectionId;
 
-    private Long departmentId;
+    private List<Long> departmentIds;
 
     private boolean temporaryPassword;
 

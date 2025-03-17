@@ -13,6 +13,7 @@ import zw.co.zetdc.businessplanning.enums.Role;
 
 
 import java.util.Collection;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -47,7 +48,12 @@ public class User implements UserDetails { // make our app User a spring securit
 
     private Long sectionId;
 
-    private Long departmentId;
+//    private Long departmentId;
+
+
+    @ElementCollection
+    private List<Long> departmentIds;
+
 
     @OneToOne(mappedBy = "user")
     private ForgotPassword forgotPassword;

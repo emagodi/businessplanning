@@ -9,6 +9,9 @@ import zw.co.zetdc.businessplanning.entities.User;
 import zw.co.zetdc.businessplanning.enums.Role;
 import zw.co.zetdc.businessplanning.repository.UserRepository;
 import zw.co.zetdc.businessplanning.service.impl.AuthenticationServiceImpl;
+
+import java.util.Collections;
+
 @Component
 public class DataLoader implements CommandLineRunner {
 
@@ -35,7 +38,7 @@ public class DataLoader implements CommandLineRunner {
             superAdmin.setLastname("Admin");
             superAdmin.setEmail("superadmin@zetdc.co.zw");
             superAdmin.setSectionId(0L);
-            superAdmin.setDepartmentId(0L);
+            superAdmin.setDepartmentIds(Collections.singletonList(0L));
             superAdmin.setPassword(passwordEncoder.encode("Password@123"));
             superAdmin.setRole(Role.ADMIN);
             superAdmin.setTemporaryPassword(false);

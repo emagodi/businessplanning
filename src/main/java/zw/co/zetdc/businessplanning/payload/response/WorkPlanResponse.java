@@ -23,13 +23,13 @@ public class WorkPlanResponse {
     private String month;
     private String week;
     private String year;
-    private String weeklyTarget;
-    private Double actualWorkDone;
+    private int weeklyTarget;
+    private int actualWorkDone;
+    private Double budget;
     private Double percentageComplete;
     private Double actualExpenditure;
     private Double percentOfBudget;
     private String remarks;
-
     private Status status;
     private Date startDate;
     private Date targetCompletionDate;

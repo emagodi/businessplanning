@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import zw.co.zetdc.businessplanning.enums.Currency;
 import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.handlers.BaseEntity;
 
@@ -25,11 +26,14 @@ public class WorkPlan extends BaseEntity {
     private String week;
     private String year;
 
-    private String weeklyTarget;
-    private Double actualWorkDone;
+    private int weeklyTarget;
+    private int actualWorkDone;
     private Double percentageComplete;
+    private Double budget;
     private Double actualExpenditure;
     private Double percentOfBudget;
+
+    private Currency currency;
 
 
     private Status status;

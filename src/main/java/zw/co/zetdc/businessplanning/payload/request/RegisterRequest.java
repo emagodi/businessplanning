@@ -11,6 +11,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import zw.co.zetdc.businessplanning.enums.Role;
 
+import java.util.List;
+
 
 @Data
 @Builder
@@ -37,6 +39,8 @@ public class RegisterRequest {
 
     private Long sectionId;
 
-    private Long departmentId;
+//    private Long departmentId;
+
+    private List<Long> departmentIds;
 
 }

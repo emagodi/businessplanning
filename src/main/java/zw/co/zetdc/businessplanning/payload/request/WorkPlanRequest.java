@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import zw.co.zetdc.businessplanning.entities.Scope;
+import zw.co.zetdc.businessplanning.enums.Currency;
 import zw.co.zetdc.businessplanning.enums.Status;
 
 import java.util.Date;
@@ -19,13 +20,14 @@ public class WorkPlanRequest {
     private String month;
     private String week;
     private String year;
-    private String weeklyTarget;
-    private Double actualWorkDone;
+    private int weeklyTarget;
+    private int actualWorkDone;
     private Double percentageComplete;
+    private Double budget;
     private Double actualExpenditure;
     private Double percentOfBudget;
+    private Currency currency;
     private String remarks;
-
     private Status status;
     private Date startDate;
     private Date targetCompletionDate;

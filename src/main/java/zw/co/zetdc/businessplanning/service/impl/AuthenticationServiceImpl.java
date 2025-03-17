@@ -58,7 +58,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .password(passwordEncoder.encode(generatedPassword)) // Save the encoded generated password
                 .role(request.getRole())
                 .sectionId(request.getSectionId()) // Set the sectionId from the request
-                .departmentId(request.getDepartmentId()) // Set the departmentId from the request
+//                .departmentId(request.getDepartmentId())
+                .departmentIds(request.getDepartmentIds())
                 .temporaryPassword(true) // Set the temporary password flag
                 .build();
 
@@ -98,7 +99,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .refreshToken(refreshToken.getToken())
                 .roles(roles)
                 .sectionId(user.getSectionId()) // Use sectionId
-                .departmentId(user.getDepartmentId()) // Use departmentId
+                .departmentIds(user.getDepartmentIds())
                 .temporaryPassword(user.isTemporaryPassword())
                 .tokenType(TokenType.BEARER.name())
                 .message("User created successfully")
@@ -160,7 +161,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .firstname(user.getFirstname())
                     .lastname(user.getLastname())
                     .sectionId(user.getSectionId())
-                    .departmentId(user.getDepartmentId())
+                    .departmentIds(user.getDepartmentIds())
                     .temporaryPassword(user.isTemporaryPassword())
                     .refreshToken(null) // No refresh token for temporary password users
                     .message("Please change your temporary password.") // Include a message field
@@ -186,7 +187,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())
                 .sectionId(user.getSectionId())
-                .departmentId(user.getDepartmentId())
+                .departmentIds(user.getDepartmentIds())
                 .temporaryPassword(user.isTemporaryPassword())
                 .message("User Authenticated Successfully")
                 .refreshToken(refreshToken)

@@ -55,8 +55,10 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         workPlan.setWeeklyTarget(workPlanRequest.getWeeklyTarget()); // Add this line
         workPlan.setActualWorkDone(workPlanRequest.getActualWorkDone()); // Add this line
         workPlan.setPercentageComplete(workPlanRequest.getPercentageComplete()); // Add this line
+        workPlan.setBudget(workPlanRequest.getBudget());
         workPlan.setActualExpenditure(workPlanRequest.getActualExpenditure()); // Add this line
         workPlan.setPercentOfBudget(workPlanRequest.getPercentOfBudget()); // Add this line
+        workPlan.setCurrency(workPlanRequest.getCurrency());
         workPlan.setRemarks(workPlanRequest.getRemarks()); // Add this line
         workPlan.setSectionId(workPlanRequest.getSectionId());
         workPlan.setDepartmentId(workPlanRequest.getDepartmentId());
@@ -677,15 +679,9 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                         .average()
                         .orElse(0) : 0;
 
+        // Calculate total budget allocated using the int weeklyTarget
         Double totalBudgetAllocated = workPlans.stream()
-                .mapToDouble(wp -> {
-                    try {
-                        return wp.getWeeklyTarget() != null ? Double.parseDouble(wp.getWeeklyTarget()) : 0;
-                    } catch (NumberFormatException e) {
-                        log.warn("Invalid weekly target for work plan ID {}: {}", wp.getId(), wp.getWeeklyTarget());
-                        return 0; // Treat invalid strings as 0
-                    }
-                })
+                .mapToDouble(WorkPlan::getWeeklyTarget)
                 .sum();
 
         Double overallCompletionRate = totalWorkPlans > 0 ?
@@ -699,12 +695,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         summaryResponse.setInProgressWorkPlans(inProgressWorkPlans);
         summaryResponse.setCancelledWorkPlans(cancelledWorkPlans);
         summaryResponse.setRescheduledWorkPlans(rescheduledWorkPlans);
-        summaryResponse.setAveragePercentOfBudgetUtilized(averagePercentOfBudgetUtilized); // Set average instead
+        summaryResponse.setAveragePercentOfBudgetUtilized(averagePercentOfBudgetUtilized);
         summaryResponse.setOverallCompletionRate(overallCompletionRate);
 
         return summaryResponse;
     }
-
 
     @Override
     public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySection(Long sectionId) {
