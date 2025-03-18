@@ -50,4 +50,13 @@ public class WorkPlan extends BaseEntity {
     @JsonManagedReference
     private List<Scope> scopes = new ArrayList<>(); // Initialize the list
 
+
+    public void updatePercentageComplete() {
+        if (weeklyTarget != null && weeklyTarget > 0 && actualWorkDone != null) {
+            this.percentageComplete = (actualWorkDone.doubleValue() / weeklyTarget.doubleValue()) * 100;
+        } else {
+            this.percentageComplete = 0.0; // Default to 0 if targets aren't set correctly
+        }
+    }
+
 }

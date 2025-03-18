@@ -52,14 +52,20 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         workPlan.setMonth(workPlanRequest.getMonth());
         workPlan.setWeek(workPlanRequest.getWeek());
         workPlan.setYear(workPlanRequest.getYear());
-        workPlan.setWeeklyTarget(workPlanRequest.getWeeklyTarget()); // Add this line
-        workPlan.setActualWorkDone(workPlanRequest.getActualWorkDone()); // Add this line
-        workPlan.setPercentageComplete(workPlanRequest.getPercentageComplete()); // Add this line
+        workPlan.setWeeklyTarget(workPlanRequest.getWeeklyTarget());
+        workPlan.setActualWorkDone(workPlanRequest.getActualWorkDone());
+
+
+        // Calculate percentage completion right after setting actualWorkDone
+        workPlan.updatePercentageComplete();
+
+//        workPlan.setPercentageComplete(workPlanRequest.getPercentageComplete());
+
         workPlan.setBudget(workPlanRequest.getBudget());
-        workPlan.setActualExpenditure(workPlanRequest.getActualExpenditure()); // Add this line
-        workPlan.setPercentOfBudget(workPlanRequest.getPercentOfBudget()); // Add this line
+        workPlan.setActualExpenditure(workPlanRequest.getActualExpenditure());
+        workPlan.setPercentOfBudget(workPlanRequest.getPercentOfBudget());
         workPlan.setCurrency(workPlanRequest.getCurrency());
-        workPlan.setRemarks(workPlanRequest.getRemarks()); // Add this line
+        workPlan.setRemarks(workPlanRequest.getRemarks());
         workPlan.setSectionId(workPlanRequest.getSectionId());
         workPlan.setDepartmentId(workPlanRequest.getDepartmentId());
         workPlan.setStatus(workPlanRequest.getStatus());
@@ -112,22 +118,24 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return workPlanRepository.findAll(); // Fetch all from database
     }
 
+
     @Override
     @Transactional
     public WorkPlan updateWorkPlan(Long id, WorkPlanRequest workPlanRequest) {
         WorkPlan workPlan = getWorkPlanById(id);
         if (workPlan != null) {
             copyNonNullProperties(workPlanRequest, workPlan);
+
+            // Update percentage complete if actual work done is set
+            if (workPlanRequest.getActualWorkDone() != null) {
+                workPlan.updatePercentageComplete(); // Calculate percentage completion
+            }
+
             return workPlanRepository.save(workPlan); // Save updated work plan
         }
         return null; // Return null if not found
     }
 
-    @Override
-    @Transactional
-    public void deleteWorkPlan(Long id) {
-        workPlanRepository.deleteById(id); // Delete from database
-    }
 
     private void copyNonNullProperties(WorkPlanRequest source, WorkPlan target) {
         for (Method method : WorkPlanRequest.class.getDeclaredMethods()) {
@@ -149,6 +157,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         }
     }
 
+    @Override
+    @Transactional
+    public void deleteWorkPlan(Long id) {
+        workPlanRepository.deleteById(id); // Delete from database
+    }
 
     @Override
     @Transactional
