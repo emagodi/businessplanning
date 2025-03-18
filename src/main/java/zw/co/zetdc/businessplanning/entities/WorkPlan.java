@@ -26,8 +26,8 @@ public class WorkPlan extends BaseEntity {
     private String week;
     private String year;
 
-    private int weeklyTarget;
-    private int actualWorkDone;
+    private Integer weeklyTarget;
+    private Integer actualWorkDone;
     private Double percentageComplete;
     private Double budget;
     private Double actualExpenditure;
@@ -49,17 +49,5 @@ public class WorkPlan extends BaseEntity {
     @OneToMany(mappedBy = "workPlan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Scope> scopes = new ArrayList<>(); // Initialize the list
-
-
-    public void setPercentageComplete(Double percentageComplete) {
-        this.percentageComplete = percentageComplete;
-
-        // If percentageComplete is 100%, update the status of all associated scopes to COMPLETED
-        if (this.percentageComplete != null && this.percentageComplete == 100) {
-            for (Scope scope : this.scopes) {
-                scope.setStatus(Status.COMPLETED);
-            }
-        }
-    }
 
 }

@@ -134,13 +134,16 @@ public class WorkPlanServiceImpl implements WorkPlanService {
             if (method.getName().startsWith("get")) {
                 try {
                     Object value = method.invoke(source);
+                    // Check for null for all types, including Integer
                     if (value != null) {
                         String setterName = "set" + method.getName().substring(3);
                         Method setter = WorkPlan.class.getDeclaredMethod(setterName, method.getReturnType());
                         setter.invoke(target, value);
                     }
+                } catch (NoSuchMethodException e) {
+                    log.error("Setter not found for method: {}", method.getName(), e);
                 } catch (Exception e) {
-                    log.error("Error copying properties: {}", e.getMessage(), e); // Better logging
+                    log.error("Error copying properties: {}", e.getMessage(), e);
                 }
             }
         }

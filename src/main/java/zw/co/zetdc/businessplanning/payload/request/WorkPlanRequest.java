@@ -20,8 +20,8 @@ public class WorkPlanRequest {
     private String month;
     private String week;
     private String year;
-    private int weeklyTarget;
-    private int actualWorkDone;
+    private Integer weeklyTarget;
+    private Integer actualWorkDone;
     private Double percentageComplete;
     private Double budget;
     private Double actualExpenditure;
