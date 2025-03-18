@@ -63,7 +63,12 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
         workPlan.setBudget(workPlanRequest.getBudget());
         workPlan.setActualExpenditure(workPlanRequest.getActualExpenditure());
-        workPlan.setPercentOfBudget(workPlanRequest.getPercentOfBudget());
+
+
+        // Calculate percentage of budget used
+        workPlan.updatePercentOfBudget();
+
+//        workPlan.setPercentOfBudget(workPlanRequest.getPercentOfBudget());
         workPlan.setCurrency(workPlanRequest.getCurrency());
         workPlan.setRemarks(workPlanRequest.getRemarks());
         workPlan.setSectionId(workPlanRequest.getSectionId());
@@ -129,6 +134,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
             // Update percentage complete if actual work done is set
             if (workPlanRequest.getActualWorkDone() != null) {
                 workPlan.updatePercentageComplete(); // Calculate percentage completion
+            }
+
+            // Update percent of budget if budget or actual expenditure is set
+            if (workPlanRequest.getBudget() != null || workPlanRequest.getActualExpenditure() != null) {
+                workPlan.updatePercentOfBudget(); // Calculate percent of budget
             }
 
             return workPlanRepository.save(workPlan); // Save updated work plan

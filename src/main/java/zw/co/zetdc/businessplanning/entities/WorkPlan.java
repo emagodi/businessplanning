@@ -59,4 +59,12 @@ public class WorkPlan extends BaseEntity {
         }
     }
 
+    public void updatePercentOfBudget() {
+        if (budget != null && budget > 0 && actualExpenditure != null) {
+            this.percentOfBudget = (actualExpenditure / budget) * 100;
+        } else {
+            this.percentOfBudget = 0.0; // Default to 0 if budget is not set correctly
+        }
+    }
+
 }
