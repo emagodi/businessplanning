@@ -119,4 +119,6 @@ public interface WorkPlanService {
 
 
     List<Map<String, Object>> getTotalExpendituresBySectionAndWeek(Long sectionId, String week, String month, String year);
+
+    List<Map<String, Object>> getTotalExpendituresBySectionAndMonth(Long sectionId, String month, String year);
 }

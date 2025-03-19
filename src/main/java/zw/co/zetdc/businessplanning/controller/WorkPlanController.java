@@ -464,6 +464,8 @@ public class WorkPlanController {
 
 
     @GetMapping("/expenditure/sectionId/{sectionId}/week/{week}/month/{month}/year/{year}")
+    @Operation(summary = "Total expenditure for the week for a section and comparison to allocated budget",
+            description = "Total expenditure for the section for that particular week in comparison to the allocated budget")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<List<Map<String, Object>>> getTotalExpenditures(
             @PathVariable Long sectionId,
@@ -472,6 +474,19 @@ public class WorkPlanController {
             @PathVariable String year) {
 
         List<Map<String, Object>> expenditures = workPlanService.getTotalExpendituresBySectionAndWeek(sectionId, week, month, year);
+        return ResponseEntity.ok(expenditures);
+    }
+
+    @GetMapping("/expenditure/sectionId/{sectionId}/month/{month}/year/{year}")
+    @Operation(summary = "Total expenditure for the month for a section and comparison to allocated budget",
+            description = "Total expenditure for the section for that particular month in comparison to the allocated budget")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Map<String, Object>>> getTotalExpendituresByMonth(
+            @PathVariable Long sectionId,
+            @PathVariable String month,
+            @PathVariable String year) {
+
+        List<Map<String, Object>> expenditures = workPlanService.getTotalExpendituresBySectionAndMonth(sectionId, month, year);
         return ResponseEntity.ok(expenditures);
     }
 
