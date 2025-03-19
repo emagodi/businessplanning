@@ -548,6 +548,18 @@ public class WorkPlanController {
         return ResponseEntity.ok(expenditures);
     }
 
+    @GetMapping("/graphs/member-workplan-count/section/{sectionId}/year/{year}")
+    @Operation(summary = "Get Work Plan Count by Member for a Section, Month and Year",
+            description = "Retrieves the number of work plans assigned to each team member for a specified section and year. The response includes member IDs, names, and their respective work plan counts for each month. This endpoint is useful for tracking team performance and workload distribution within the specified section.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Map<String, Object>>> getWorkPlanCountByMember(
+            @PathVariable Long sectionId,
+            @PathVariable String year) {
+
+        List<Map<String, Object>> response = workPlanService.getWorkPlanCountByMemberForYear(sectionId, year);
+        return ResponseEntity.ok(response);
+    }
+
 
 
 }

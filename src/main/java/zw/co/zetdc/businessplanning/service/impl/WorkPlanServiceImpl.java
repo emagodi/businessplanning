@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -1197,6 +1198,57 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("countExceedingBudget", countExceedingBudget); // Count of work plans exceeding budget
 
         return Collections.singletonList(response); // Return as a list for consistency
+    }
+
+    @Override
+    public List<Map<String, Object>> getWorkPlanCountByMemberForYear(Long sectionId, String year) {
+        // Fetch work plans for the specified section and year
+        List<WorkPlan> workPlans = workPlanRepository.findBySectionIdAndYear(sectionId, year);
+
+        // Initialize a map to hold the count of work plans per member per month
+        Map<Long, Map<String, Integer>> memberWorkPlanCount = new HashMap<>();
+
+        // Collect member IDs from the scopes in the work plans
+        Set<Long> memberIds = new HashSet<>();
+
+        for (WorkPlan wp : workPlans) {
+            String month = wp.getMonth();
+            for (Scope scope : wp.getScopes()) {
+                for (TeamMember member : scope.getAssignedTeamMembers()) {
+                    Long memberId = member.getId();
+                    memberIds.add(memberId); // Collect member IDs
+
+                    // Initialize inner map if it doesn't exist
+                    memberWorkPlanCount.putIfAbsent(memberId, new HashMap<>());
+                    memberWorkPlanCount.get(memberId).put(month, memberWorkPlanCount.get(memberId).getOrDefault(month, 0) + 1);
+                }
+            }
+        }
+
+        // Pre-fetch relevant team members from the repository
+        List<TeamMember> teamMembers = teamMemberRepository.findAllById(memberIds);
+        Map<Long, TeamMember> memberMap = teamMembers.stream()
+                .collect(Collectors.toMap(TeamMember::getId, Function.identity()));
+
+        // Prepare the response
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (Map.Entry<Long, Map<String, Integer>> entry : memberWorkPlanCount.entrySet()) {
+            Long memberId = entry.getKey();
+            Map<String, Integer> monthlyCounts = entry.getValue();
+
+            TeamMember member = memberMap.get(memberId);
+            if (member != null) {
+                Map<String, Object> memberResponse = new HashMap<>();
+                memberResponse.put("memberId", memberId);
+                memberResponse.put("memberName", member.getFirstname() + " " + member.getLastname());
+                memberResponse.put("sectionId", sectionId);
+                memberResponse.put("year", year);
+                memberResponse.put("monthlyCounts", monthlyCounts);
+                response.add(memberResponse);
+            }
+        }
+
+        return response;
     }
 
 }
