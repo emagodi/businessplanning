@@ -949,6 +949,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         Boolean exceedsBudget = budgetDifference > 0;
         Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
 
+        // Count how many work plans exceed budget
+        long countExceedingBudget = filteredWorkPlans.stream()
+                .filter(wp -> wp.getActualExpenditure() > wp.getBudget())
+                .count();
+
         // Create response map
         Map<String, Object> response = new HashMap<>();
         response.put("sectionId", sectionId);
@@ -962,6 +967,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("exceedsBudget", exceedsBudget);
         response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
         response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
+        response.put("countExceedingBudget", countExceedingBudget); // Count of work plans exceeding budget
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
@@ -990,6 +996,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         Boolean exceedsBudget = budgetDifference > 0;
         Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
 
+        // Count how many work plans exceed budget
+        long countExceedingBudget = filteredWorkPlans.stream()
+                .filter(wp -> wp.getActualExpenditure() > wp.getBudget())
+                .count();
+
         // Create response map
         Map<String, Object> response = new HashMap<>();
         response.put("sectionId", sectionId);
@@ -1002,6 +1013,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("exceedsBudget", exceedsBudget);
         response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
         response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
+        response.put("countExceedingBudget", countExceedingBudget); // Count of work plans exceeding budget
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
@@ -1030,6 +1042,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         Boolean exceedsBudget = budgetDifference > 0;
         Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
 
+        // Count how many work plans exceed budget
+        long countExceedingBudget = filteredWorkPlans.stream()
+                .filter(wp -> wp.getActualExpenditure() > wp.getBudget())
+                .count();
+
         // Create response map
         Map<String, Object> response = new HashMap<>();
         response.put("sectionId", sectionId);
@@ -1041,6 +1058,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("exceedsBudget", exceedsBudget);
         response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
         response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
+        response.put("countExceedingBudget", countExceedingBudget); // Count of work plans exceeding budget
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
@@ -1069,6 +1087,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         Boolean exceedsBudget = budgetDifference > 0;
         Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
 
+        // Count how many work plans exceed budget
+        long countExceedingBudget = filteredWorkPlans.stream()
+                .filter(wp -> wp.getActualExpenditure() > wp.getBudget())
+                .count();
+
         // Create response map
         Map<String, Object> response = new HashMap<>();
         response.put("departmentId", departmentId);
@@ -1082,6 +1105,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("exceedsBudget", exceedsBudget);
         response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
         response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
+        response.put("countExceedingBudget", countExceedingBudget); // Count of work plans exceeding budget
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
@@ -1105,10 +1129,15 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
         Double percentOfBudgetUsed = (totalBudget > 0) ? (totalExpenditure / totalBudget) * 100 : 0.0;
 
-        // Calculate budget exceeding details
+        // Budget exceeding logic
         Double budgetDifference = totalExpenditure - totalBudget;
         Boolean exceedsBudget = budgetDifference > 0;
         Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
+
+        // Count how many work plans exceed budget
+        long countExceedingBudget = filteredWorkPlans.stream()
+                .filter(wp -> wp.getActualExpenditure() > wp.getBudget())
+                .count();
 
         // Create response map
         Map<String, Object> response = new HashMap<>();
@@ -1122,6 +1151,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("exceedsBudget", exceedsBudget);
         response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
         response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
+        response.put("countExceedingBudget", countExceedingBudget); // Count of work plans exceeding budget
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
@@ -1148,6 +1178,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         Boolean exceedsBudget = budgetDifference > 0;
         Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
 
+        // Count how many work plans exceed budget
+        long countExceedingBudget = filteredWorkPlans.stream()
+                .filter(wp -> wp.getActualExpenditure() > wp.getBudget())
+                .count();
+
         // Create response map
         Map<String, Object> response = new HashMap<>();
         response.put("departmentId", departmentId);
@@ -1159,6 +1194,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("exceedsBudget", exceedsBudget);
         response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
         response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
+        response.put("countExceedingBudget", countExceedingBudget); // Count of work plans exceeding budget
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
