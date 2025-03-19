@@ -926,8 +926,8 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     }
 
     @Override
-    public List<Map<String, Object>> getTotalExpendituresBySectionAndWeek(Long sectionId, String week, String month, String year) {
-        List<WorkPlan> workPlans = workPlanRepository.findBySectionId(sectionId);
+    public List<Map<String, Object>> getTotalExpendituresBySectionAndWeek(Long sectionId, String week, String month, String year, Currency currency) {
+        List<WorkPlan> workPlans = workPlanRepository.findBySectionIdAndCurrency(sectionId, currency);
 
         // Filter work plans based on the provided week, month, and year
         List<WorkPlan> filteredWorkPlans = workPlans.stream()
@@ -950,6 +950,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("week", week);
         response.put("month", month);
         response.put("year", year);
+        response.put("currency", currency.name()); // Add currency
         response.put("totalExpenditure", totalExpenditure);
         response.put("totalBudget", totalBudget);
         response.put("percentOfBudgetUsed", percentOfBudgetUsed);
