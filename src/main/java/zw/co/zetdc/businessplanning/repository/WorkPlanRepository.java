@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import zw.co.zetdc.businessplanning.entities.Scope;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
+import zw.co.zetdc.businessplanning.enums.Currency;
 import zw.co.zetdc.businessplanning.enums.Status;
 
 import java.util.List;
@@ -91,5 +92,9 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
     Long countBySectionIdAndMonthAndYear(@Param("sectionId") Long sectionId,
                                             @Param("month") String month,
                                             @Param("year") String year);
+
+
+    @Query("SELECT wp FROM WorkPlan wp WHERE wp.sectionId = :sectionId AND wp.currency = :currency")
+    List<WorkPlan> findBySectionIdAndCurrency(@Param("sectionId") Long sectionId, @Param("currency") Currency currency);
 
 }

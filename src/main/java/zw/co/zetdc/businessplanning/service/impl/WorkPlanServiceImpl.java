@@ -21,6 +21,7 @@ import zw.co.zetdc.businessplanning.repository.SectionRepository;
 import zw.co.zetdc.businessplanning.repository.TeamMemberRepository;
 import zw.co.zetdc.businessplanning.repository.WorkPlanRepository;
 import zw.co.zetdc.businessplanning.service.WorkPlanService;
+import zw.co.zetdc.businessplanning.enums.Currency;
 
 import java.lang.reflect.Method;
 import java.time.Instant;
@@ -957,8 +958,8 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     }
 
     @Override
-    public List<Map<String, Object>> getTotalExpendituresBySectionAndMonth(Long sectionId, String month, String year) {
-        List<WorkPlan> workPlans = workPlanRepository.findBySectionId(sectionId);
+    public List<Map<String, Object>> getTotalExpendituresBySectionAndMonth(Long sectionId, String month, String year, Currency currency) {
+        List<WorkPlan> workPlans = workPlanRepository.findBySectionIdAndCurrency(sectionId, currency);
 
         // Filter work plans based on the provided month and year
         List<WorkPlan> filteredWorkPlans = workPlans.stream()
@@ -980,6 +981,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("sectionId", sectionId);
         response.put("month", month);
         response.put("year", year);
+        response.put("currency", currency);
         response.put("totalExpenditure", totalExpenditure);
         response.put("totalBudget", totalBudget);
         response.put("percentOfBudgetUsed", percentOfBudgetUsed);

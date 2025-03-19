@@ -3,6 +3,7 @@ package zw.co.zetdc.businessplanning.service;
 import zw.co.zetdc.businessplanning.entities.Scope;
 import zw.co.zetdc.businessplanning.entities.TeamMember;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
+import zw.co.zetdc.businessplanning.enums.Currency;
 import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
 import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
@@ -120,5 +121,5 @@ public interface WorkPlanService {
 
     List<Map<String, Object>> getTotalExpendituresBySectionAndWeek(Long sectionId, String week, String month, String year);
 
-    List<Map<String, Object>> getTotalExpendituresBySectionAndMonth(Long sectionId, String month, String year);
+    List<Map<String, Object>> getTotalExpendituresBySectionAndMonth(Long sectionId, String month, String year, Currency currency);
 }
