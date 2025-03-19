@@ -535,6 +535,19 @@ public class WorkPlanController {
         return ResponseEntity.ok(expenditures);
     }
 
+    @GetMapping("/expenditure/departmentId/{departmentId}/year/{year}/currency/{currency}")
+    @Operation(summary = "Total expenditure for the year for a department and comparison to allocated budget",
+            description = "Total expenditure for the department for that particular year in comparison to the allocated budget")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Map<String, Object>>> getTotalExpendituresByYear(
+            @PathVariable Long departmentId,
+            @PathVariable String year,
+            @PathVariable Currency currency) {
+
+        List<Map<String, Object>> expenditures = workPlanService.getTotalExpendituresByDepartmentAndYear(departmentId, year, currency);
+        return ResponseEntity.ok(expenditures);
+    }
+
 
 
 }
