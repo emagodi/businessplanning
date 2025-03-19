@@ -944,6 +944,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
         Double percentOfBudgetUsed = (totalBudget > 0) ? (totalExpenditure / totalBudget) * 100 : 0.0;
 
+        // Budget exceeding logic
+        Double budgetDifference = totalExpenditure - totalBudget;
+        Boolean exceedsBudget = budgetDifference > 0;
+        Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
+
         // Create response map
         Map<String, Object> response = new HashMap<>();
         response.put("sectionId", sectionId);
@@ -954,6 +959,9 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("totalExpenditure", totalExpenditure);
         response.put("totalBudget", totalBudget);
         response.put("percentOfBudgetUsed", percentOfBudgetUsed);
+        response.put("exceedsBudget", exceedsBudget);
+        response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
+        response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
@@ -977,15 +985,23 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
         Double percentOfBudgetUsed = (totalBudget > 0) ? (totalExpenditure / totalBudget) * 100 : 0.0;
 
+        // Budget exceeding logic
+        Double budgetDifference = totalExpenditure - totalBudget;
+        Boolean exceedsBudget = budgetDifference > 0;
+        Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
+
         // Create response map
         Map<String, Object> response = new HashMap<>();
         response.put("sectionId", sectionId);
         response.put("month", month);
         response.put("year", year);
-        response.put("currency", currency);
+        response.put("currency", currency.name()); // Add currency
         response.put("totalExpenditure", totalExpenditure);
         response.put("totalBudget", totalBudget);
         response.put("percentOfBudgetUsed", percentOfBudgetUsed);
+        response.put("exceedsBudget", exceedsBudget);
+        response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
+        response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
@@ -1009,6 +1025,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
         Double percentOfBudgetUsed = (totalBudget > 0) ? (totalExpenditure / totalBudget) * 100 : 0.0;
 
+        // Budget exceeding logic
+        Double budgetDifference = totalExpenditure - totalBudget;
+        Boolean exceedsBudget = budgetDifference > 0;
+        Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
+
         // Create response map
         Map<String, Object> response = new HashMap<>();
         response.put("sectionId", sectionId);
@@ -1017,6 +1038,9 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("totalExpenditure", totalExpenditure);
         response.put("totalBudget", totalBudget);
         response.put("percentOfBudgetUsed", percentOfBudgetUsed);
+        response.put("exceedsBudget", exceedsBudget);
+        response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
+        response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
@@ -1040,6 +1064,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
         Double percentOfBudgetUsed = (totalBudget > 0) ? (totalExpenditure / totalBudget) * 100 : 0.0;
 
+        // Budget exceeding logic
+        Double budgetDifference = totalExpenditure - totalBudget;
+        Boolean exceedsBudget = budgetDifference > 0;
+        Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
+
         // Create response map
         Map<String, Object> response = new HashMap<>();
         response.put("departmentId", departmentId);
@@ -1050,6 +1079,9 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("totalExpenditure", totalExpenditure);
         response.put("totalBudget", totalBudget);
         response.put("percentOfBudgetUsed", percentOfBudgetUsed);
+        response.put("exceedsBudget", exceedsBudget);
+        response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
+        response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
@@ -1073,6 +1105,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
         Double percentOfBudgetUsed = (totalBudget > 0) ? (totalExpenditure / totalBudget) * 100 : 0.0;
 
+        // Calculate budget exceeding details
+        Double budgetDifference = totalExpenditure - totalBudget;
+        Boolean exceedsBudget = budgetDifference > 0;
+        Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
+
         // Create response map
         Map<String, Object> response = new HashMap<>();
         response.put("departmentId", departmentId);
@@ -1082,6 +1119,9 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.put("totalExpenditure", totalExpenditure);
         response.put("totalBudget", totalBudget);
         response.put("percentOfBudgetUsed", percentOfBudgetUsed);
+        response.put("exceedsBudget", exceedsBudget);
+        response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
+        response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
@@ -1104,15 +1144,21 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                 .sum();
 
         Double percentOfBudgetUsed = (totalBudget > 0) ? (totalExpenditure / totalBudget) * 100 : 0.0;
+        Double budgetDifference = totalExpenditure - totalBudget;
+        Boolean exceedsBudget = budgetDifference > 0;
+        Double percentExceeded = (totalBudget > 0) ? (budgetDifference / totalBudget) * 100 : 0.0;
 
         // Create response map
         Map<String, Object> response = new HashMap<>();
         response.put("departmentId", departmentId);
         response.put("year", year);
-        response.put("currency", currency.name()); // Add currency
+        response.put("currency", currency.name());
         response.put("totalExpenditure", totalExpenditure);
         response.put("totalBudget", totalBudget);
         response.put("percentOfBudgetUsed", percentOfBudgetUsed);
+        response.put("exceedsBudget", exceedsBudget);
+        response.put("budgetDifference", exceedsBudget ? budgetDifference : 0.0);
+        response.put("percentExceeded", exceedsBudget ? percentExceeded : 0.0);
 
         return Collections.singletonList(response); // Return as a list for consistency
     }
