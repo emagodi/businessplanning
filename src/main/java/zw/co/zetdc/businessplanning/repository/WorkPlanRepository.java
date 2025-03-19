@@ -97,4 +97,7 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
     @Query("SELECT wp FROM WorkPlan wp WHERE wp.sectionId = :sectionId AND wp.currency = :currency")
     List<WorkPlan> findBySectionIdAndCurrency(@Param("sectionId") Long sectionId, @Param("currency") Currency currency);
 
+    @Query("SELECT wp FROM WorkPlan wp WHERE wp.departmentId = :departmentId AND wp.currency = :currency")
+    List<WorkPlan> findByDepartmentIdAndCurrency(@Param("departmentId") Long departmentId, @Param("currency") Currency currency);
+
 }
