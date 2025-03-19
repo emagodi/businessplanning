@@ -91,4 +91,5 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
     Long countBySectionIdAndMonthAndYear(@Param("sectionId") Long sectionId,
                                             @Param("month") String month,
                                             @Param("year") String year);
+
 }

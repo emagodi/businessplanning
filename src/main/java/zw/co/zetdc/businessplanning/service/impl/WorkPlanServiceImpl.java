@@ -924,4 +924,36 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return workPlanRepository.countBySectionIdAndMonthAndYear(sectionId, month, year);
     }
 
+    @Override
+    public List<Map<String, Object>> getTotalExpendituresBySectionAndWeek(Long sectionId, String week, String month, String year) {
+        List<WorkPlan> workPlans = workPlanRepository.findBySectionId(sectionId);
+
+        // Filter work plans based on the provided week, month, and year
+        List<WorkPlan> filteredWorkPlans = workPlans.stream()
+                .filter(wp -> wp.getWeek().equals(week) && wp.getMonth().equals(month) && wp.getYear().equals(year))
+                .collect(Collectors.toList());
+
+        Double totalExpenditure = filteredWorkPlans.stream()
+                .mapToDouble(WorkPlan::getActualExpenditure)
+                .sum();
+
+        Double totalBudget = filteredWorkPlans.stream()
+                .mapToDouble(WorkPlan::getBudget)
+                .sum();
+
+        Double percentOfBudgetUsed = (totalBudget > 0) ? (totalExpenditure / totalBudget) * 100 : 0.0;
+
+        // Create response map
+        Map<String, Object> response = new HashMap<>();
+        response.put("sectionId", sectionId);
+        response.put("week", week);
+        response.put("month", month);
+        response.put("year", year);
+        response.put("totalExpenditure", totalExpenditure);
+        response.put("totalBudget", totalBudget);
+        response.put("percentOfBudgetUsed", percentOfBudgetUsed);
+
+        return Collections.singletonList(response); // Return as a list for consistency
+    }
+
 }
