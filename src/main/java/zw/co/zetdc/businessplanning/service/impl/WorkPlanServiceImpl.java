@@ -1319,4 +1319,52 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return response;
     }
 
+
+    @Override
+    public List<Map<String, Object>> getOverdueWorkPlanDetailsByDepartment(Long departmentId) {
+        List<WorkPlan> workPlans = workPlanRepository.findByDepartmentId(departmentId);
+        List<Map<String, Object>> overdueWorkPlanDetails = new ArrayList<>();
+
+        LocalDate currentDate = LocalDate.now();
+
+        for (WorkPlan workPlan : workPlans) {
+            // Check if the work plan status is not COMPLETED or CANCELLED
+            if (workPlan.getStatus() != Status.COMPLETED && workPlan.getStatus() != Status.CANCELLED) {
+                for (Scope scope : workPlan.getScopes()) {
+                    if (scope.getTargetCompletionDate() != null) {
+                        LocalDate targetDate = Instant.ofEpochMilli(scope.getTargetCompletionDate().getTime())
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate();
+
+                        // Check if the scope is overdue
+                        if (targetDate.isBefore(currentDate)) {
+                            long overdueDays = ChronoUnit.DAYS.between(targetDate, currentDate);
+
+                            // Prepare the details map
+                            Map<String, Object> detailMap = new HashMap<>();
+                            detailMap.put("departmentName", departmentRepository.findById(departmentId)
+                                    .map(Department::getName)
+                                    .orElse("Unknown Department"));
+                            detailMap.put("workPlanId", workPlan.getId());
+                            detailMap.put("scopeDetails", scope.getDetails());
+                            detailMap.put("teamMembers", scope.getAssignedTeamMembers().stream()
+                                    .map(member -> member.getFirstname() + " " + member.getLastname())
+                                    .collect(Collectors.toList()));
+                            detailMap.put("targetCompletionDate", targetDate);
+                            detailMap.put("overdueDays", overdueDays);
+                            detailMap.put("sectionName", sectionRepository.findById(workPlan.getSectionId())
+                                    .map(Section::getName)
+                                    .orElse("Unknown Section")); // Fetch section name
+
+                            // Add the details to the list
+                            overdueWorkPlanDetails.add(detailMap);
+                        }
+                    }
+                }
+            }
+        }
+
+        return overdueWorkPlanDetails;
+    }
+
 }

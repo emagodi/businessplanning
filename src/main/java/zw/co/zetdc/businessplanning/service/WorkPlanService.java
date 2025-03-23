@@ -134,4 +134,6 @@ public interface WorkPlanService {
     List<Map<String, Object>> getWorkPlanCountByMemberForYear(Long sectionId, String year);
 
     Map<String, Object> getOverdueTasksSummaryByDepartment(Long departmentId);
+
+    public List<Map<String, Object>> getOverdueWorkPlanDetailsByDepartment(Long departmentId);
 }
