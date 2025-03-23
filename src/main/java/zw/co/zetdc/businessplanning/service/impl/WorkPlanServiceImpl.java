@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import zw.co.zetdc.businessplanning.entities.Scope;
-import zw.co.zetdc.businessplanning.entities.Section;
-import zw.co.zetdc.businessplanning.entities.TeamMember;
-import zw.co.zetdc.businessplanning.entities.WorkPlan;
+import zw.co.zetdc.businessplanning.entities.*;
 import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.exception.NotFoundException;
 import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
@@ -16,10 +13,7 @@ import zw.co.zetdc.businessplanning.payload.request.ScopeUpdateRequest;
 import zw.co.zetdc.businessplanning.payload.request.TeamMemberIdsRequest;
 import zw.co.zetdc.businessplanning.payload.request.WorkPlanRequest;
 import zw.co.zetdc.businessplanning.payload.response.*;
-import zw.co.zetdc.businessplanning.repository.ScopeRepository;
-import zw.co.zetdc.businessplanning.repository.SectionRepository;
-import zw.co.zetdc.businessplanning.repository.TeamMemberRepository;
-import zw.co.zetdc.businessplanning.repository.WorkPlanRepository;
+import zw.co.zetdc.businessplanning.repository.*;
 import zw.co.zetdc.businessplanning.service.WorkPlanService;
 import zw.co.zetdc.businessplanning.enums.Currency;
 
@@ -45,6 +39,8 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     private final TeamMemberRepository teamMemberRepository;
 
     private final SectionRepository sectionRepository;
+
+    private final DepartmentRepository departmentRepository;
 
 
     @Override
@@ -1248,6 +1244,78 @@ public class WorkPlanServiceImpl implements WorkPlanService {
             }
         }
 
+        return response;
+    }
+
+    @Override
+    public Map<String, Object> getOverdueTasksSummaryByDepartment(Long departmentId) {
+        // Fetch the department using the repository
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new NotFoundException("Department not found with ID: " + departmentId));
+
+        // Fetch all work plans associated with the specified department
+        List<WorkPlan> workPlans = workPlanRepository.findByDepartmentId(departmentId);
+
+        // Initialize the response structure
+        Map<String, Object> response = new HashMap<>();
+        response.put("departmentId", departmentId);
+        response.put("departmentName", department.getName()); // Use the actual department name
+
+        // Map to hold overdue counts by section
+        Map<Long, String> sectionNames = new HashMap<>();
+        Map<Long, Integer> overdueCounts = new HashMap<>();
+
+        // Fetch sections for the department
+        List<Section> sections = sectionRepository.findByDepartmentsId(departmentId);
+
+        // Populate section names mapping
+        for (Section section : sections) {
+            sectionNames.put(section.getId(), section.getName());
+        }
+
+        // Populate overdue count map
+        int totalOverdueCount = 0; // To track the total overdue count
+
+        for (WorkPlan workPlan : workPlans) {
+            // Check if the work plan status is not COMPLETED or CANCELLED
+            if (workPlan.getStatus() != Status.COMPLETED && workPlan.getStatus() != Status.CANCELLED) {
+                for (Scope scope : workPlan.getScopes()) {
+                    if (scope.getTargetCompletionDate() != null) {
+                        LocalDate targetDate = Instant.ofEpochMilli(scope.getTargetCompletionDate().getTime())
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate();
+                        LocalDate currentDate = LocalDate.now();
+
+                        // Check if the scope is overdue
+                        if (targetDate.isBefore(currentDate)) {
+                            Long sectionId = workPlan.getSectionId();
+
+                            // Increment the overdue count for the section
+                            overdueCounts.put(sectionId, overdueCounts.getOrDefault(sectionId, 0) + 1);
+                            totalOverdueCount++;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Build the overdue tasks summary
+        List<Map<String, Object>> overdueTasks = new ArrayList<>();
+        for (Map.Entry<Long, Integer> entry : overdueCounts.entrySet()) {
+            Map<String, Object> taskSummary = new HashMap<>();
+            taskSummary.put("sectionId", entry.getKey());
+            taskSummary.put("sectionName", sectionNames.get(entry.getKey())); // Get section name
+            taskSummary.put("overdueCount", entry.getValue());
+
+            // Calculate the percentage contribution
+            double percentageContribution = totalOverdueCount > 0 ?
+                    (entry.getValue() / (double) totalOverdueCount) * 100 : 0.0;
+            taskSummary.put("percentageContribution", Math.round(percentageContribution * 100.0) / 100.0); // Round to 2 decimal places
+
+            overdueTasks.add(taskSummary);
+        }
+
+        response.put("overdueTasks", overdueTasks);
         return response;
     }
 
