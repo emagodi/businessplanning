@@ -42,6 +42,8 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
     private final DepartmentRepository departmentRepository;
 
+    private final DepartmentGroupRepository departmentGroupRepository;
+
 
     @Override
     @Transactional
@@ -71,6 +73,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         workPlan.setRemarks(workPlanRequest.getRemarks());
         workPlan.setSectionId(workPlanRequest.getSectionId());
         workPlan.setDepartmentId(workPlanRequest.getDepartmentId());
+        workPlan.setDepartmentGroupId(workPlanRequest.getDepartmentGroupId());
         workPlan.setStatus(workPlanRequest.getStatus());
         workPlan.setStartDate(workPlanRequest.getStartDate());
         workPlan.setTargetCompletionDate(workPlanRequest.getTargetCompletionDate());
@@ -1365,6 +1368,80 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         }
 
         return overdueWorkPlanDetails;
+    }
+
+    @Override
+    public Map<String, Object> getOverdueTasksSummaryByDepartmentGroup(Long departmentGroupId) {
+        // Fetch the department group using the repository
+        DepartmentGroup departmentGroup = departmentGroupRepository.findById(departmentGroupId)
+                .orElseThrow(() -> new NotFoundException("Department Group not found with ID: " + departmentGroupId));
+
+        // Initialize the response structure
+        Map<String, Object> response = new HashMap<>();
+        response.put("departmentGroupId", departmentGroupId);
+        response.put("departmentGroupName", departmentGroup.getName()); // Use the actual department group name
+
+        // Map to hold overdue counts by department
+        Map<Long, String> departmentNames = new HashMap<>();
+        Map<Long, Integer> overdueCounts = new HashMap<>();
+
+        // Fetch departments for the department group
+        List<Department> departments = departmentGroup.getAssignedDepartments();
+
+        // Populate department names mapping
+        for (Department department : departments) {
+            departmentNames.put(department.getId(), department.getName());
+        }
+
+        // Initialize total overdue count
+        int totalOverdueCount = 0;
+
+        // Iterate through each department to fetch their work plans
+        for (Department department : departments) {
+            List<WorkPlan> workPlans = workPlanRepository.findByDepartmentId(department.getId());
+
+            for (WorkPlan workPlan : workPlans) {
+                // Check if the work plan status is not COMPLETED or CANCELLED
+                if (workPlan.getStatus() != Status.COMPLETED && workPlan.getStatus() != Status.CANCELLED) {
+                    for (Scope scope : workPlan.getScopes()) {
+                        if (scope.getTargetCompletionDate() != null) {
+                            LocalDate targetDate = Instant.ofEpochMilli(scope.getTargetCompletionDate().getTime())
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate();
+                            LocalDate currentDate = LocalDate.now();
+
+                            // Check if the scope is overdue
+                            if (targetDate.isBefore(currentDate)) {
+                                Long departmentId = department.getId();
+
+                                // Increment the overdue count for the department
+                                overdueCounts.put(departmentId, overdueCounts.getOrDefault(departmentId, 0) + 1);
+                                totalOverdueCount++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Build the overdue tasks summary
+        List<Map<String, Object>> overdueTasks = new ArrayList<>();
+        for (Map.Entry<Long, Integer> entry : overdueCounts.entrySet()) {
+            Map<String, Object> taskSummary = new HashMap<>();
+            taskSummary.put("departmentId", entry.getKey());
+            taskSummary.put("departmentName", departmentNames.get(entry.getKey())); // Get department name
+            taskSummary.put("overdueCount", entry.getValue());
+
+            // Calculate the percentage contribution
+            double percentageContribution = totalOverdueCount > 0 ?
+                    (entry.getValue() / (double) totalOverdueCount) * 100 : 0.0;
+            taskSummary.put("percentageContribution", Math.round(percentageContribution * 100.0) / 100.0); // Round to 2 decimal places
+
+            overdueTasks.add(taskSummary);
+        }
+
+        response.put("overdueTasks", overdueTasks);
+        return response;
     }
 
 }

@@ -39,8 +39,10 @@ public class RegisterRequest {
 
     private Long sectionId;
 
-//    private Long departmentId;
+    private Long departmentId;
 
-    private List<Long> departmentIds;
+    private Long departmentGroupId;
+
+//    private List<Long> departmentIds;
 
 }

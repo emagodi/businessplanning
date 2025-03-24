@@ -27,6 +27,8 @@ public class TeamMember extends BaseEntity {
     private Long sectionId;
     private Long departmentId;
 
+    private Long departmentGroupId;
+
     @ManyToMany(mappedBy = "assignedTeamMembers")
     @JsonIgnore // Prevents this relationship from being serialized
     private List<Scope> scopes;

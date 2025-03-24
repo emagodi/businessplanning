@@ -48,11 +48,13 @@ public class User implements UserDetails { // make our app User a spring securit
 
     private Long sectionId;
 
-//    private Long departmentId;
+    private Long departmentId;
+
+    private Long departmentGroupId;
 
 
-    @ElementCollection
-    private List<Long> departmentIds;
+//    @ElementCollection
+//    private List<Long> departmentIds;
 
 
     @OneToOne(mappedBy = "user")

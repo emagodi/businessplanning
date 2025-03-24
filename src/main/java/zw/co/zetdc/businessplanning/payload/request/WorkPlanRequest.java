@@ -35,6 +35,7 @@ public class WorkPlanRequest {
 
     private Long sectionId;
     private Long departmentId;
+    private Long departmentGroupId;
 
     private List<ScopeRequest> scopes; // List of scopes
 

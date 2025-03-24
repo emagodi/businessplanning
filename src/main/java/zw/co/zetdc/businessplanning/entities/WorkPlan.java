@@ -45,6 +45,7 @@ public class WorkPlan extends BaseEntity {
 
     private Long sectionId;
     private Long departmentId;
+    private Long departmentGroupId;
 
     @OneToMany(mappedBy = "workPlan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference

@@ -30,6 +30,7 @@ public class TeamMemberServiceImpl implements TeamMemberService {
                 .designation(teamMemberRequest.getDesignation())
                 .sectionId(teamMemberRequest.getSectionId())
                 .departmentId(teamMemberRequest.getDepartmentId())
+                .departmentGroupId(teamMemberRequest.getDepartmentGroupId())
                 .build();
 
         return teamMemberRepository.save(teamMember); // Save to database
