@@ -15,15 +15,15 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "groups")
+@Table(name = "divisions")
 @EntityListeners(AuditingEntityListener.class)
-public class DepartmentGroup extends BaseEntity {
+public class Division extends BaseEntity {
     private String name;
 
     @ManyToMany
     @JoinTable(
-            name = "group_department",
-            joinColumns = @JoinColumn(name = "department_group_id"),
+            name = "division_department",
+            joinColumns = @JoinColumn(name = "division_id"),
             inverseJoinColumns = @JoinColumn(name = "department_id")
     )
     private List<Department> assignedDepartments = new ArrayList<>();

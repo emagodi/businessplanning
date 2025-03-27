@@ -14,7 +14,7 @@ public class TeamMemberResponse {
 
     private Long sectionId;
     private Long departmentId;
-    private Long departmentGroupId;
+    private Long divisionId;
 
     private LocalDateTime createdAt;
     private String createdBy;

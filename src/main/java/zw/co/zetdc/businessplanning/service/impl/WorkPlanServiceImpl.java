@@ -42,7 +42,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
     private final DepartmentRepository departmentRepository;
 
-    private final DepartmentGroupRepository departmentGroupRepository;
+    private final DivisionRepository divisionRepository;
 
 
     @Override
@@ -73,7 +73,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         workPlan.setRemarks(workPlanRequest.getRemarks());
         workPlan.setSectionId(workPlanRequest.getSectionId());
         workPlan.setDepartmentId(workPlanRequest.getDepartmentId());
-        workPlan.setDepartmentGroupId(workPlanRequest.getDepartmentGroupId());
+        workPlan.setDivisionId(workPlanRequest.getDivisionId());
         workPlan.setStatus(workPlanRequest.getStatus());
         workPlan.setStartDate(workPlanRequest.getStartDate());
         workPlan.setTargetCompletionDate(workPlanRequest.getTargetCompletionDate());
@@ -1371,22 +1371,22 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     }
 
     @Override
-    public Map<String, Object> getOverdueTasksSummaryByDepartmentGroup(Long departmentGroupId) {
-        // Fetch the department group using the repository
-        DepartmentGroup departmentGroup = departmentGroupRepository.findById(departmentGroupId)
-                .orElseThrow(() -> new NotFoundException("Department Group not found with ID: " + departmentGroupId));
+    public Map<String, Object> getOverdueTasksSummaryByDivision(Long divisionId) {
+        // Fetch the division using the repository
+        Division division = divisionRepository.findById(divisionId)
+                .orElseThrow(() -> new NotFoundException("Division not found with ID: " + divisionId));
 
         // Initialize the response structure
         Map<String, Object> response = new HashMap<>();
-        response.put("departmentGroupId", departmentGroupId);
-        response.put("departmentGroupName", departmentGroup.getName()); // Use the actual department group name
+        response.put("divisionId", divisionId);
+        response.put("divisionName", division.getName()); // Use the actual division name
 
         // Map to hold overdue counts by department
         Map<Long, String> departmentNames = new HashMap<>();
         Map<Long, Integer> overdueCounts = new HashMap<>();
 
-        // Fetch departments for the department group
-        List<Department> departments = departmentGroup.getAssignedDepartments();
+        // Fetch departments for the division
+        List<Department> departments = division.getAssignedDepartments();
 
         // Populate department names mapping
         for (Department department : departments) {

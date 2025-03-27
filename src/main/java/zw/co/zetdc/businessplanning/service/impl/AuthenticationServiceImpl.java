@@ -59,7 +59,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .role(request.getRole())
                 .sectionId(request.getSectionId()) // Set the sectionId from the request
                 .departmentId(request.getDepartmentId())
-                .departmentGroupId(request.getDepartmentGroupId())
+                .divisionId(request.getDivisionId())
 //                .departmentIds(request.getDepartmentIds())
                 .temporaryPassword(true) // Set the temporary password flag
                 .build();
@@ -101,7 +101,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .roles(roles)
                 .sectionId(user.getSectionId()) // Use sectionId
                 .departmentId(user.getDepartmentId())
-                .departmentGroupId(user.getDepartmentGroupId())
+                .divisionId(user.getDivisionId())
                 .temporaryPassword(user.isTemporaryPassword())
                 .tokenType(TokenType.BEARER.name())
                 .message("User created successfully")
@@ -164,7 +164,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .lastname(user.getLastname())
                     .sectionId(user.getSectionId())
                     .departmentId(user.getDepartmentId())
-                    .departmentGroupId(user.getDepartmentGroupId())
+                    .divisionId(user.getDivisionId())
                     .temporaryPassword(user.isTemporaryPassword())
                     .refreshToken(null) // No refresh token for temporary password users
                     .message("Please change your temporary password.") // Include a message field
@@ -191,7 +191,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .lastname(user.getLastname())
                 .sectionId(user.getSectionId())
                 .departmentId(user.getDepartmentId())
-                .departmentGroupId(user.getDepartmentGroupId())
+                .divisionId(user.getDivisionId())
                 .temporaryPassword(user.isTemporaryPassword())
                 .message("User Authenticated Successfully")
                 .refreshToken(refreshToken)

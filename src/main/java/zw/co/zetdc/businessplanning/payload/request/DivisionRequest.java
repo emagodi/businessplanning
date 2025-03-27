@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class DepartmentGroupRequest {
+public class DivisionRequest {
 
     private String name;
 

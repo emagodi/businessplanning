@@ -50,7 +50,7 @@ public class User implements UserDetails { // make our app User a spring securit
 
     private Long departmentId;
 
-    private Long departmentGroupId;
+    private Long divisionId;
 
 
 //    @ElementCollection

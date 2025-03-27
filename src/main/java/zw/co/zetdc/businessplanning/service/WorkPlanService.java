@@ -137,5 +137,5 @@ public interface WorkPlanService {
 
     public List<Map<String, Object>> getOverdueWorkPlanDetailsByDepartment(Long departmentId);
 
-    public Map<String, Object> getOverdueTasksSummaryByDepartmentGroup(Long departmentGroupId);
+    public Map<String, Object> getOverdueTasksSummaryByDivision(Long divisionId);
 }

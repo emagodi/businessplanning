@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class DepartmentGroupResponse {
+public class DivisionResponse {
 
     private Long id;
 

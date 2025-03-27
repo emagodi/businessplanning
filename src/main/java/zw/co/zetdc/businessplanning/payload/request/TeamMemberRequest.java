@@ -20,5 +20,5 @@ public class TeamMemberRequest {
     private Long sectionId;
     private Long departmentId;
 
-    private Long departmentGroupId;
+    private Long divisionId;
 }

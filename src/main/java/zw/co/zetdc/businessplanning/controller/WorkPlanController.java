@@ -580,13 +580,13 @@ public class WorkPlanController {
         return ResponseEntity.ok(overdueWorkPlans);
     }
 
-    @GetMapping("/department-summary-overdue/workplans/department-group/{departmentGroupId}")
-    @Operation(summary = "Get overdue work plans for a specific department group",
-            description = "Get summary details of overdue work plans, percentage contributed by each department and total number of overdue tasks")
+    @GetMapping("/department-summary-overdue/workplans/division/{divisionId}")
+    @Operation(summary = "Get overdue work plans for a specific division",
+            description = "Get summary details of overdue work plans, percentage contributed by each department, and total number of overdue tasks.")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
-    public ResponseEntity<Map<String, Object>> getOverdueWorkPlansSummaryByDepartmentGroup(@PathVariable Long departmentGroupId) {
-        // Fetch the overdue tasks summary by department group
-        Map<String, Object> overdueWorkPlansSummary = workPlanService.getOverdueTasksSummaryByDepartmentGroup(departmentGroupId);
+    public ResponseEntity<Map<String, Object>> getOverdueWorkPlansSummaryByDivision(@PathVariable Long divisionId) {
+        // Fetch the overdue tasks summary by division
+        Map<String, Object> overdueWorkPlansSummary = workPlanService.getOverdueTasksSummaryByDivision(divisionId);
 
         return ResponseEntity.ok(overdueWorkPlansSummary);
     }

@@ -41,7 +41,7 @@ public class RegisterRequest {
 
     private Long departmentId;
 
-    private Long departmentGroupId;
+    private Long divisionId;
 
 //    private List<Long> departmentIds;
 
