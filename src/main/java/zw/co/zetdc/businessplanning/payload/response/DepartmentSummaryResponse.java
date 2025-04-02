@@ -22,4 +22,6 @@ public class DepartmentSummaryResponse {
     private double departmentBudget;
     private double percentageBudget;
     private double percentageOverdue;
+    private double remainingBudget;
+    private double percentageRemainingBudget;
 }

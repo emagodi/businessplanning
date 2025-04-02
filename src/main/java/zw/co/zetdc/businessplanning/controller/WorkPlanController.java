@@ -591,44 +591,47 @@ public class WorkPlanController {
         return ResponseEntity.ok(overdueWorkPlansSummary);
     }
 
-    @GetMapping("/division-summary/division/{divisionId}/week/{week}/month/{month}/year/{year}")
+    @GetMapping("/division-summary/division/{divisionId}/week/{week}/month/{month}/year/{year}/currency/{currency}")
     @Operation(summary = "Get work plan summary for a specific division",
             description = "Retrieve summary details of work plans including total work plans, overdue tasks, budget, and expenditure by division for that week of the month and particular year.")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
-    public ResponseEntity<WorkPlanSummaryResponse> getWorkPlanSummary(
+    public ResponseEntity<WorkPlanSummaryResponse> getWorkPlanWeekSummary(
             @PathVariable Long divisionId,
             @PathVariable String week,
             @PathVariable String month,
-            @PathVariable String year) {
+            @PathVariable String year,
+            @PathVariable Currency currency) { // Include currency parameter
         // Fetch the work plan summary
-        WorkPlanSummaryResponse workPlanSummary = workPlanService.getWorkPlanWeekSummary(divisionId, week, month, year);
+        WorkPlanSummaryResponse workPlanSummary = workPlanService.getWorkPlanWeekSummary(divisionId, week, month, year, currency);
 
         return ResponseEntity.ok(workPlanSummary);
     }
 
-    @GetMapping("/division-summary/division/{divisionId}/month/{month}/year/{year}")
+    @GetMapping("/division-summary/division/{divisionId}/month/{month}/year/{year}/currency/{currency}")
     @Operation(summary = "Get work plan summary for a specific division",
             description = "Retrieve summary details of work plans including total work plans, overdue tasks, budget, and expenditure by division for that month of the year.")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<WorkPlanSummaryResponse> getWorkPlanMonthSummary(
             @PathVariable Long divisionId,
             @PathVariable String month,
-            @PathVariable String year) {
+            @PathVariable String year,
+            @PathVariable Currency currency) {
         // Fetch the work plan summary
-        WorkPlanSummaryResponse workPlanSummary = workPlanService.getWorkPlanMonthSummary(divisionId, month, year);
+        WorkPlanSummaryResponse workPlanSummary = workPlanService.getWorkPlanMonthSummary(divisionId, month, year, currency);
 
         return ResponseEntity.ok(workPlanSummary);
     }
 
-    @GetMapping("/division-summary/division/{divisionId}/year/{year}")
+    @GetMapping("/division-summary/division/{divisionId}/year/{year}/currency/{currency}")
     @Operation(summary = "Get work plan summary for a specific division",
             description = "Retrieve summary details of work plans including total work plans, overdue tasks, budget, and expenditure by division for that year.")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<WorkPlanSummaryResponse> getWorkPlanYearSummary(
             @PathVariable Long divisionId,
-            @PathVariable String year) {
+            @PathVariable String year,
+            @PathVariable Currency currency) { // Include currency parameter
         // Fetch the work plan summary
-        WorkPlanSummaryResponse workPlanSummary = workPlanService.getWorkPlanYearSummary(divisionId, year);
+        WorkPlanSummaryResponse workPlanSummary = workPlanService.getWorkPlanYearSummary(divisionId, year, currency);
 
         return ResponseEntity.ok(workPlanSummary);
     }

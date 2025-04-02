@@ -21,5 +21,6 @@ public class WorkPlanSummaryResponse {
     private int totalOverdue;
     private double totalBudget;
     private double totalExpenditure;
+    private String currency;
     private List<DepartmentSummaryResponse> departments;
 }

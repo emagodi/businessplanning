@@ -1444,17 +1444,19 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return response;
     }
 
-
-    @Transactional
     @Override
-    public WorkPlanSummaryResponse getWorkPlanWeekSummary(Long divisionId, String week, String month, String year) {
-        List<WorkPlan> workPlans = workPlanRepository.findByDivisionIdAndWeekAndMonthAndYear(divisionId, week, month, year);
+    public WorkPlanSummaryResponse getWorkPlanWeekSummary(Long divisionId, String week, String month, String year, Currency currency) {
+        List<WorkPlan> workPlans = workPlanRepository.findByDivisionIdAndWeekAndMonthAndYearAndCurrency(divisionId, week, month, year, currency);
 
         // Calculate totals and percentages
         int totalWorkPlans = workPlans.size();
         int totalOverdue = (int) workPlans.stream().filter(wp -> wp.getStatus() != Status.COMPLETED).count();
         double totalBudget = workPlans.stream().mapToDouble(WorkPlan::getBudget).sum();
         double totalExpenditure = workPlans.stream().mapToDouble(WorkPlan::getActualExpenditure).sum();
+        double remainingBudget = totalBudget - totalExpenditure; // Calculate remaining budget
+
+        // Calculate percentage of remaining budget
+        double percentageRemainingBudget = totalBudget > 0 ? (remainingBudget / totalBudget) * 100 : 0.0;
 
         // Fetch actual division name
         Division division = divisionRepository.findById(divisionId)
@@ -1475,6 +1477,11 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                     double percentageBudget = (departmentBudget / totalBudget) * 100;
                     double percentageOverdue = (overdueTasks / (double) totalOverdue) * 100;
 
+                    // Calculate remaining budget and percentage for the department
+                    double departmentExpenditure = departmentPlans.stream().mapToDouble(WorkPlan::getActualExpenditure).sum();
+                    double departmentRemainingBudget = departmentBudget - departmentExpenditure;
+                    double departmentPercentageRemainingBudget = departmentBudget > 0 ? (departmentRemainingBudget / departmentBudget) * 100 : 0.0;
+
                     // Fetch actual department name
                     Department department = departmentRepository.findById(departmentId)
                             .orElseThrow(() -> new EntityNotFoundException("Department not found"));
@@ -1482,7 +1489,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                     // Calculate percentages for the department
                     return new DepartmentSummaryResponse(
                             departmentId,
-                            department.getName(), // Use the actual department name
+                            department.getName(),
                             workPlansCount,
                             overdueTasks,
                             calculatePercentageComplete(departmentPlans),
@@ -1492,7 +1499,9 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                             calculatePercentageReScheduled(departmentPlans),
                             departmentBudget,
                             percentageBudget,
-                            percentageOverdue
+                            percentageOverdue,
+                            departmentRemainingBudget,
+                            departmentPercentageRemainingBudget // Use the renamed variable
                     );
                 })
                 .collect(Collectors.toList());
@@ -1500,7 +1509,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         // Create response
         WorkPlanSummaryResponse response = new WorkPlanSummaryResponse();
         response.setDivisionId(divisionId);
-        response.setDivisionName(division.getName()); // Use the actual division name
+        response.setDivisionName(division.getName());
         response.setWeek(week);
         response.setMonth(month);
         response.setYear(year);
@@ -1508,22 +1517,25 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.setTotalOverdue(totalOverdue);
         response.setTotalBudget(totalBudget);
         response.setTotalExpenditure(totalExpenditure);
+        response.setCurrency(currency.name()); // Include currency in the response
         response.setDepartments(departmentSummary);
 
         return response;
     }
 
-
-
     @Override
-    public WorkPlanSummaryResponse getWorkPlanMonthSummary(Long divisionId, String month, String year) {
-        List<WorkPlan> workPlans = workPlanRepository.findByDivisionIdAndMonthAndYear(divisionId, month, year);
+    public WorkPlanSummaryResponse getWorkPlanMonthSummary(Long divisionId, String month, String year, Currency currency) {
+        List<WorkPlan> workPlans = workPlanRepository.findByDivisionIdAndMonthAndYearAndCurrency(divisionId, month, year, currency);
 
         // Calculate totals and percentages
         int totalWorkPlans = workPlans.size();
         int totalOverdue = (int) workPlans.stream().filter(wp -> wp.getStatus() != Status.COMPLETED).count();
         double totalBudget = workPlans.stream().mapToDouble(WorkPlan::getBudget).sum();
         double totalExpenditure = workPlans.stream().mapToDouble(WorkPlan::getActualExpenditure).sum();
+        double remainingBudget = totalBudget - totalExpenditure; // Calculate remaining budget
+
+        // Calculate percentage of remaining budget
+        double percentageRemainingBudget = totalBudget > 0 ? (remainingBudget / totalBudget) * 100 : 0.0;
 
         // Fetch actual division name
         Division division = divisionRepository.findById(divisionId)
@@ -1541,10 +1553,22 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                     int workPlansCount = departmentPlans.size();
                     int overdueTasks = (int) departmentPlans.stream().filter(wp -> wp.getStatus() != Status.COMPLETED).count();
 
+                    double percentageBudget = (departmentBudget / totalBudget) * 100;
+                    double percentageOverdue = (overdueTasks / (double) totalOverdue) * 100;
+
+                    // Calculate remaining budget and percentage for the department
+                    double departmentExpenditure = departmentPlans.stream().mapToDouble(WorkPlan::getActualExpenditure).sum();
+                    double departmentRemainingBudget = departmentBudget - departmentExpenditure;
+                    double departmentPercentageRemainingBudget = departmentBudget > 0 ? (departmentRemainingBudget / departmentBudget) * 100 : 0.0;
+
+                    // Fetch actual department name
+                    Department department = departmentRepository.findById(departmentId)
+                            .orElseThrow(() -> new EntityNotFoundException("Department not found"));
+
                     // Calculate percentages for the department
                     return new DepartmentSummaryResponse(
                             departmentId,
-                            getDepartmentName(departmentId),
+                            department.getName(),
                             workPlansCount,
                             overdueTasks,
                             calculatePercentageComplete(departmentPlans),
@@ -1553,8 +1577,10 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                             calculatePercentageCancelled(departmentPlans),
                             calculatePercentageReScheduled(departmentPlans),
                             departmentBudget,
-                            (departmentBudget / totalBudget) * 100,
-                            (overdueTasks / (double) totalOverdue) * 100
+                            percentageBudget,
+                            percentageOverdue,
+                            departmentRemainingBudget,
+                            departmentPercentageRemainingBudget // Use the renamed variable
                     );
                 })
                 .collect(Collectors.toList());
@@ -1569,21 +1595,26 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.setTotalOverdue(totalOverdue);
         response.setTotalBudget(totalBudget);
         response.setTotalExpenditure(totalExpenditure);
+        response.setCurrency(currency.name()); // Include currency in the response
         response.setDepartments(departmentSummary);
 
         return response;
     }
 
+
     @Override
-    public WorkPlanSummaryResponse getWorkPlanYearSummary(Long divisionId, String year) {
-        // Fetch work plans for the specified division and year
-        List<WorkPlan> workPlans = workPlanRepository.findByDivisionIdAndYear(divisionId, year);
+    public WorkPlanSummaryResponse getWorkPlanYearSummary(Long divisionId, String year, Currency currency) {
+        List<WorkPlan> workPlans = workPlanRepository.findByDivisionIdAndYearAndCurrency(divisionId, year, currency);
 
         // Calculate totals and percentages
         int totalWorkPlans = workPlans.size();
         int totalOverdue = (int) workPlans.stream().filter(wp -> wp.getStatus() != Status.COMPLETED).count();
         double totalBudget = workPlans.stream().mapToDouble(WorkPlan::getBudget).sum();
         double totalExpenditure = workPlans.stream().mapToDouble(WorkPlan::getActualExpenditure).sum();
+        double remainingBudget = totalBudget - totalExpenditure; // Calculate remaining budget
+
+        // Calculate percentage of remaining budget
+        double percentageRemainingBudget = totalBudget > 0 ? (remainingBudget / totalBudget) * 100 : 0.0;
 
         // Fetch actual division name
         Division division = divisionRepository.findById(divisionId)
@@ -1601,10 +1632,18 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                     int workPlansCount = departmentPlans.size();
                     int overdueTasks = (int) departmentPlans.stream().filter(wp -> wp.getStatus() != Status.COMPLETED).count();
 
+                    // Calculate remaining budget and percentage for the department
+                    double departmentExpenditure = departmentPlans.stream().mapToDouble(WorkPlan::getActualExpenditure).sum();
+                    double departmentRemainingBudget = departmentBudget - departmentExpenditure;
+                    double departmentPercentageRemainingBudget = departmentBudget > 0 ? (departmentRemainingBudget / departmentBudget) * 100 : 0.0;
+
+                    // Fetch actual department name
+                    String departmentName = getDepartmentName(departmentId); // Adjust this method as needed
+
                     // Calculate percentages for the department
                     return new DepartmentSummaryResponse(
                             departmentId,
-                            getDepartmentName(departmentId),
+                            departmentName,
                             workPlansCount,
                             overdueTasks,
                             calculatePercentageComplete(departmentPlans),
@@ -1614,7 +1653,9 @@ public class WorkPlanServiceImpl implements WorkPlanService {
                             calculatePercentageReScheduled(departmentPlans),
                             departmentBudget,
                             (departmentBudget / totalBudget) * 100,
-                            (overdueTasks / (double) totalOverdue) * 100
+                            (overdueTasks / (double) totalOverdue) * 100,
+                            departmentRemainingBudget, // Remaining budget
+                            departmentPercentageRemainingBudget // Percentage of remaining budget
                     );
                 })
                 .collect(Collectors.toList());
@@ -1628,6 +1669,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         response.setTotalOverdue(totalOverdue);
         response.setTotalBudget(totalBudget);
         response.setTotalExpenditure(totalExpenditure);
+        response.setCurrency(currency.name()); // Include currency in the response
         response.setDepartments(departmentSummary);
 
         return response;
@@ -1669,6 +1711,9 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     private double totalPercentage(long count, int total) {
         return total > 0 ? (count / (double) total) * 100 : 0.0;
     }
+
+
+
 
 
 
