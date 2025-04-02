@@ -580,7 +580,7 @@ public class WorkPlanController {
         return ResponseEntity.ok(overdueWorkPlans);
     }
 
-    @GetMapping("/department-summary-overdue/workplans/division/{divisionId}")
+    @GetMapping("/division-summary-overdue/workplans/division/{divisionId}")
     @Operation(summary = "Get overdue work plans for a specific division",
             description = "Get summary details of overdue work plans, percentage contributed by each department, and total number of overdue tasks.")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
