@@ -1444,4 +1444,235 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return response;
     }
 
+
+    @Transactional
+    @Override
+    public WorkPlanSummaryResponse getWorkPlanWeekSummary(Long divisionId, String week, String month, String year) {
+        List<WorkPlan> workPlans = workPlanRepository.findByDivisionIdAndWeekAndMonthAndYear(divisionId, week, month, year);
+
+        // Calculate totals and percentages
+        int totalWorkPlans = workPlans.size();
+        int totalOverdue = (int) workPlans.stream().filter(wp -> wp.getStatus() != Status.COMPLETED).count();
+        double totalBudget = workPlans.stream().mapToDouble(WorkPlan::getBudget).sum();
+        double totalExpenditure = workPlans.stream().mapToDouble(WorkPlan::getActualExpenditure).sum();
+
+        // Fetch actual division name
+        Division division = divisionRepository.findById(divisionId)
+                .orElseThrow(() -> new EntityNotFoundException("Division not found"));
+
+        // Group by departments and fetch their names
+        var departmentSummary = workPlans.stream()
+                .collect(Collectors.groupingBy(WorkPlan::getDepartmentId))
+                .entrySet().stream()
+                .map(entry -> {
+                    Long departmentId = entry.getKey();
+                    List<WorkPlan> departmentPlans = entry.getValue();
+
+                    double departmentBudget = departmentPlans.stream().mapToDouble(WorkPlan::getBudget).sum();
+                    int workPlansCount = departmentPlans.size();
+                    int overdueTasks = (int) departmentPlans.stream().filter(wp -> wp.getStatus() != Status.COMPLETED).count();
+
+                    double percentageBudget = (departmentBudget / totalBudget) * 100;
+                    double percentageOverdue = (overdueTasks / (double) totalOverdue) * 100;
+
+                    // Fetch actual department name
+                    Department department = departmentRepository.findById(departmentId)
+                            .orElseThrow(() -> new EntityNotFoundException("Department not found"));
+
+                    // Calculate percentages for the department
+                    return new DepartmentSummaryResponse(
+                            departmentId,
+                            department.getName(), // Use the actual department name
+                            workPlansCount,
+                            overdueTasks,
+                            calculatePercentageComplete(departmentPlans),
+                            calculatePercentagePending(departmentPlans),
+                            calculatePercentageInProgress(departmentPlans),
+                            calculatePercentageCancelled(departmentPlans),
+                            calculatePercentageReScheduled(departmentPlans),
+                            departmentBudget,
+                            percentageBudget,
+                            percentageOverdue
+                    );
+                })
+                .collect(Collectors.toList());
+
+        // Create response
+        WorkPlanSummaryResponse response = new WorkPlanSummaryResponse();
+        response.setDivisionId(divisionId);
+        response.setDivisionName(division.getName()); // Use the actual division name
+        response.setWeek(week);
+        response.setMonth(month);
+        response.setYear(year);
+        response.setTotalWorkPlans(totalWorkPlans);
+        response.setTotalOverdue(totalOverdue);
+        response.setTotalBudget(totalBudget);
+        response.setTotalExpenditure(totalExpenditure);
+        response.setDepartments(departmentSummary);
+
+        return response;
+    }
+
+
+
+    @Override
+    public WorkPlanSummaryResponse getWorkPlanMonthSummary(Long divisionId, String month, String year) {
+        List<WorkPlan> workPlans = workPlanRepository.findByDivisionIdAndMonthAndYear(divisionId, month, year);
+
+        // Calculate totals and percentages
+        int totalWorkPlans = workPlans.size();
+        int totalOverdue = (int) workPlans.stream().filter(wp -> wp.getStatus() != Status.COMPLETED).count();
+        double totalBudget = workPlans.stream().mapToDouble(WorkPlan::getBudget).sum();
+        double totalExpenditure = workPlans.stream().mapToDouble(WorkPlan::getActualExpenditure).sum();
+
+        // Fetch actual division name
+        Division division = divisionRepository.findById(divisionId)
+                .orElseThrow(() -> new EntityNotFoundException("Division not found"));
+
+        // Group by departments and fetch their names
+        var departmentSummary = workPlans.stream()
+                .collect(Collectors.groupingBy(WorkPlan::getDepartmentId))
+                .entrySet().stream()
+                .map(entry -> {
+                    Long departmentId = entry.getKey();
+                    List<WorkPlan> departmentPlans = entry.getValue();
+
+                    double departmentBudget = departmentPlans.stream().mapToDouble(WorkPlan::getBudget).sum();
+                    int workPlansCount = departmentPlans.size();
+                    int overdueTasks = (int) departmentPlans.stream().filter(wp -> wp.getStatus() != Status.COMPLETED).count();
+
+                    // Calculate percentages for the department
+                    return new DepartmentSummaryResponse(
+                            departmentId,
+                            getDepartmentName(departmentId),
+                            workPlansCount,
+                            overdueTasks,
+                            calculatePercentageComplete(departmentPlans),
+                            calculatePercentagePending(departmentPlans),
+                            calculatePercentageInProgress(departmentPlans),
+                            calculatePercentageCancelled(departmentPlans),
+                            calculatePercentageReScheduled(departmentPlans),
+                            departmentBudget,
+                            (departmentBudget / totalBudget) * 100,
+                            (overdueTasks / (double) totalOverdue) * 100
+                    );
+                })
+                .collect(Collectors.toList());
+
+        // Create response
+        WorkPlanSummaryResponse response = new WorkPlanSummaryResponse();
+        response.setDivisionId(divisionId);
+        response.setDivisionName(division.getName());
+        response.setMonth(month);
+        response.setYear(year);
+        response.setTotalWorkPlans(totalWorkPlans);
+        response.setTotalOverdue(totalOverdue);
+        response.setTotalBudget(totalBudget);
+        response.setTotalExpenditure(totalExpenditure);
+        response.setDepartments(departmentSummary);
+
+        return response;
+    }
+
+    @Override
+    public WorkPlanSummaryResponse getWorkPlanYearSummary(Long divisionId, String year) {
+        // Fetch work plans for the specified division and year
+        List<WorkPlan> workPlans = workPlanRepository.findByDivisionIdAndYear(divisionId, year);
+
+        // Calculate totals and percentages
+        int totalWorkPlans = workPlans.size();
+        int totalOverdue = (int) workPlans.stream().filter(wp -> wp.getStatus() != Status.COMPLETED).count();
+        double totalBudget = workPlans.stream().mapToDouble(WorkPlan::getBudget).sum();
+        double totalExpenditure = workPlans.stream().mapToDouble(WorkPlan::getActualExpenditure).sum();
+
+        // Fetch actual division name
+        Division division = divisionRepository.findById(divisionId)
+                .orElseThrow(() -> new EntityNotFoundException("Division not found"));
+
+        // Group by departments and fetch their names
+        var departmentSummary = workPlans.stream()
+                .collect(Collectors.groupingBy(WorkPlan::getDepartmentId))
+                .entrySet().stream()
+                .map(entry -> {
+                    Long departmentId = entry.getKey();
+                    List<WorkPlan> departmentPlans = entry.getValue();
+
+                    double departmentBudget = departmentPlans.stream().mapToDouble(WorkPlan::getBudget).sum();
+                    int workPlansCount = departmentPlans.size();
+                    int overdueTasks = (int) departmentPlans.stream().filter(wp -> wp.getStatus() != Status.COMPLETED).count();
+
+                    // Calculate percentages for the department
+                    return new DepartmentSummaryResponse(
+                            departmentId,
+                            getDepartmentName(departmentId),
+                            workPlansCount,
+                            overdueTasks,
+                            calculatePercentageComplete(departmentPlans),
+                            calculatePercentagePending(departmentPlans),
+                            calculatePercentageInProgress(departmentPlans),
+                            calculatePercentageCancelled(departmentPlans),
+                            calculatePercentageReScheduled(departmentPlans),
+                            departmentBudget,
+                            (departmentBudget / totalBudget) * 100,
+                            (overdueTasks / (double) totalOverdue) * 100
+                    );
+                })
+                .collect(Collectors.toList());
+
+        // Create response
+        WorkPlanSummaryResponse response = new WorkPlanSummaryResponse();
+        response.setDivisionId(divisionId);
+        response.setDivisionName(division.getName());
+        response.setYear(year);
+        response.setTotalWorkPlans(totalWorkPlans);
+        response.setTotalOverdue(totalOverdue);
+        response.setTotalBudget(totalBudget);
+        response.setTotalExpenditure(totalExpenditure);
+        response.setDepartments(departmentSummary);
+
+        return response;
+    }
+
+    private String getDepartmentName(Long departmentId) {
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new EntityNotFoundException("Department not found"));
+        return department.getName();
+    }
+
+
+    private double calculatePercentageComplete(List<WorkPlan> plans) {
+        long completedCount = plans.stream().filter(wp -> wp.getStatus() == Status.COMPLETED).count();
+        return totalPercentage(completedCount, plans.size());
+    }
+
+
+    private double calculatePercentagePending(List<WorkPlan> plans) {
+        long pendingCount = plans.stream().filter(wp -> wp.getStatus() == Status.PENDING).count();
+        return totalPercentage(pendingCount, plans.size());
+    }
+
+    private double calculatePercentageInProgress(List<WorkPlan> plans) {
+        long inProgressCount = plans.stream().filter(wp -> wp.getStatus() == Status.IN_PROGRESS).count();
+        return totalPercentage(inProgressCount, plans.size());
+    }
+
+    private double calculatePercentageCancelled(List<WorkPlan> plans) {
+        long cancelledCount = plans.stream().filter(wp -> wp.getStatus() == Status.CANCELLED).count();
+        return totalPercentage(cancelledCount, plans.size());
+    }
+
+    private double calculatePercentageReScheduled(List<WorkPlan> plans) {
+        long rescheduledCount = plans.stream().filter(wp -> wp.getStatus() == Status.RE_SCHEDULED).count();
+        return totalPercentage(rescheduledCount, plans.size());
+    }
+
+    private double totalPercentage(long count, int total) {
+        return total > 0 ? (count / (double) total) * 100 : 0.0;
+    }
+
+
+
 }
+
+
+

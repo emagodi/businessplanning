@@ -103,4 +103,24 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
     @Query("SELECT wp FROM WorkPlan wp WHERE wp.sectionId = :sectionId AND wp.year = :year")
     List<WorkPlan> findBySectionIdAndYear(@Param("sectionId") Long sectionId, @Param("year") String year);
 
+
+
+    @Query("SELECT wp FROM WorkPlan wp WHERE wp.divisionId = :divisionId AND wp.week = :week AND wp.month = :month AND wp.year = :year")
+    List<WorkPlan> findByDivisionIdAndWeekAndMonthAndYear(@Param("divisionId") Long divisionId,
+                                                          @Param("week") String week,
+                                                          @Param("month") String month,
+                                                          @Param("year") String year);
+
+
+    @Query("SELECT wp FROM WorkPlan wp WHERE wp.divisionId = :divisionId AND wp.month = :month AND wp.year = :year")
+    List<WorkPlan> findByDivisionIdAndMonthAndYear(@Param("divisionId") Long divisionId,
+                                                   @Param("month") String month,
+                                                   @Param("year") String year);
+
+
+
+    List<WorkPlan> findByDivisionIdAndYear(@Param("divisionId") Long divisionId,
+                                                   @Param("year") String year);
+
+
 }

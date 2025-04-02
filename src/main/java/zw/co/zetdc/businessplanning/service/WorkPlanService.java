@@ -138,4 +138,10 @@ public interface WorkPlanService {
     public List<Map<String, Object>> getOverdueWorkPlanDetailsByDepartment(Long departmentId);
 
     public Map<String, Object> getOverdueTasksSummaryByDivision(Long divisionId);
+
+    public WorkPlanSummaryResponse getWorkPlanWeekSummary(Long divisionId, String week, String month, String year);
+
+    public WorkPlanSummaryResponse getWorkPlanMonthSummary(Long divisionId, String month, String year);
+
+    public WorkPlanSummaryResponse getWorkPlanYearSummary(Long divisionId, String year);
 }

@@ -21,11 +21,11 @@ import zw.co.zetdc.businessplanning.handlers.ErrorResponse;
 @OpenAPIDefinition(
         info = @Info(
                 contact = @Contact(
-                        name = "ZETDC Business Planning Reporting",
+                        name = "ZETDC Performance Reporting System",
                         email = "emagodi@zetdc.co.zw"
                 ),
-                title = "ZETDC Business Planning Reporting System",
-                description = "Custom Made Business Reporting System For All Reports",
+                title = "ZETDC Performance Reporting System",
+                description = "Custom Made Performance Reporting System For ZETDC",
                 version = "0.0.1-SNAPSHOT"
         ),
         servers = {
