@@ -756,4 +756,17 @@ public class WorkPlanController {
         return ResponseEntity.ok(budgetVsActual);
     }
 
+    @GetMapping("/division/budgetVsActual/year/{year}/month/{month}/currency/{currency}/division/{divisionId}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "Get budget vs actual expenditure for a specific month and year",
+            description = "Retrieve budget and actual expenditure comparison for each week of the specified month, year, currency, and division.")
+    public ResponseEntity<List<BudgetVsActualMonthResponse>> getBudgetVsActualByYearMonthCurrencyAndDivision(
+            @PathVariable String year,
+            @PathVariable String month,
+            @PathVariable Currency currency,
+            @PathVariable Long divisionId) {
+        List<BudgetVsActualMonthResponse> budgetVsActual = workPlanService.getBudgetVsActualByYearMonthCurrencyAndDivision(year, month, currency, divisionId);
+        return ResponseEntity.ok(budgetVsActual);
+    }
+
 }

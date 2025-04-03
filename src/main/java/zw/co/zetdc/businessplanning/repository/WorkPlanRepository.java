@@ -230,4 +230,27 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
                                                                @Param("currency") Currency currency,
                                                                @Param("divisionId") Long divisionId);
 
+
+    @Query("""
+        SELECT 
+            wp.week AS week, 
+            SUM(wp.budget) AS budget, 
+            SUM(wp.actualExpenditure) AS actual
+        FROM 
+            WorkPlan wp
+        WHERE 
+            wp.year = :year 
+            AND wp.month = :month 
+            AND wp.currency = :currency
+            AND wp.divisionId = :divisionId
+        GROUP BY 
+            wp.week
+        ORDER BY 
+            wp.week
+    """)
+    List<Object[]> findBudgetVsActualByYearMonthCurrencyAndDivision(@Param("year") String year,
+                                                                    @Param("month") String month,
+                                                                    @Param("currency") Currency currency,
+                                                                    @Param("divisionId") Long divisionId);
+
 }
