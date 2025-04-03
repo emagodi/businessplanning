@@ -1712,9 +1712,20 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return total > 0 ? (count / (double) total) * 100 : 0.0;
     }
 
+    @Override
+    public List<WorkPlan> getWorkPlansByDivisionIdWeekMonthYear(Long divisionId, String week, String month, String year) {
+        return workPlanRepository.findByDivisionIdAndWeekAndMonthAndYear(divisionId, week, month, year);
+    }
 
+    @Override
+    public List<WorkPlan> getWorkPlansByDivisionIdMonthYear(Long divisionId, String month, String year) {
+        return workPlanRepository.findByDivisionIdAndMonthAndYear(divisionId, month, year);
+    }
 
-
+    @Override
+    public List<WorkPlan> getWorkPlansByDivisionIdYear(Long divisionId, String year) {
+        return workPlanRepository.findByDivisionIdAndYear(divisionId, year);
+    }
 
 
 }

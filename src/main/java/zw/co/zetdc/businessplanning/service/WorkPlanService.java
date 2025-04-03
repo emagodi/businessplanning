@@ -144,4 +144,11 @@ public interface WorkPlanService {
     public WorkPlanSummaryResponse getWorkPlanMonthSummary(Long divisionId, String month, String year, Currency currency);
 
     public WorkPlanSummaryResponse getWorkPlanYearSummary(Long divisionId, String year, Currency currency);
+
+    public List<WorkPlan> getWorkPlansByDivisionIdWeekMonthYear(Long divisionId, String week, String month, String year);
+
+    public List<WorkPlan> getWorkPlansByDivisionIdMonthYear(Long divisionId, String month, String year);
+
+    public List<WorkPlan> getWorkPlansByDivisionIdYear(Long divisionId, String year);
+
 }

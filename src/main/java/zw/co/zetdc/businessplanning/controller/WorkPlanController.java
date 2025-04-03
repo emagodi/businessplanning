@@ -636,5 +636,42 @@ public class WorkPlanController {
         return ResponseEntity.ok(workPlanSummary);
     }
 
+    @GetMapping("/findBy/division/{divisionId}/week/{week}/month/{month}/year/{year}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "Get work plans by division ID, week, month, and year",
+            description = "Retrieve all work plans for a specific division, week, month, and year.")
+    public ResponseEntity<List<WorkPlan>> getWorkPlansByDivisionIdWeekMonthYear(
+            @PathVariable Long divisionId,
+            @PathVariable String week,
+            @PathVariable String month,
+            @PathVariable String year) {
+        List<WorkPlan> workPlans = workPlanService.getWorkPlansByDivisionIdWeekMonthYear(divisionId, week, month, year);
+        return ResponseEntity.ok(workPlans);
+    }
+
+    @GetMapping("/findBy/division/{divisionId}/month/{month}/year/{year}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "Get work plans by division ID, month, and year",
+            description = "Retrieve all work plans for a specific division, month, and year.")
+    public ResponseEntity<List<WorkPlan>> getWorkPlansByDivisionIdMonthYear(
+            @PathVariable Long divisionId,
+            @PathVariable String month,
+            @PathVariable String year) {
+        List<WorkPlan> workPlans = workPlanService.getWorkPlansByDivisionIdMonthYear(divisionId, month, year);
+        return ResponseEntity.ok(workPlans);
+    }
+
+    @GetMapping("/findBy/division/{divisionId}/year/{year}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "Get work plans by division ID and year",
+            description = "Retrieve all work plans for a specific division and year.")
+    public ResponseEntity<List<WorkPlan>> getWorkPlansByDivisionIdYear(
+            @PathVariable Long divisionId,
+            @PathVariable String year) {
+        List<WorkPlan> workPlans = workPlanService.getWorkPlansByDivisionIdYear(divisionId, year);
+        return ResponseEntity.ok(workPlans);
+    }
+
+
 
 }
