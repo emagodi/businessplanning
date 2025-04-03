@@ -673,5 +673,30 @@ public class WorkPlanController {
     }
 
 
+    @GetMapping("/overdue/division/{divisionId}/week/{week}/month/{month}/year/{year}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "Get overdue work plans by division ID, week, month, and year",
+            description = "Retrieve all overdue work plans for a specific division, week, month, and year.")
+    public ResponseEntity<List<WorkPlan>> getOverdueWorkPlans(
+            @PathVariable Long divisionId,
+            @PathVariable String week,
+            @PathVariable String month,
+            @PathVariable String year) {
+        List<WorkPlan> overdueWorkPlans = workPlanService.getOverdueWorkPlans(divisionId, week, month, year);
+        return ResponseEntity.ok(overdueWorkPlans);
+    }
+
+    @GetMapping("/overdue/division/{divisionId}/month/{month}/year/{year}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "Get overdue work plans by division ID, month, and year",
+            description = "Retrieve all overdue work plans for a specific division, month, and year.")
+    public ResponseEntity<List<WorkPlan>> getOverdueWorkPlansByMonthYear(
+            @PathVariable Long divisionId,
+            @PathVariable String month,
+            @PathVariable String year) {
+        List<WorkPlan> overdueWorkPlans = workPlanService.getOverdueWorkPlansByMonthYear(divisionId, month, year);
+        return ResponseEntity.ok(overdueWorkPlans);
+    }
+
 
 }

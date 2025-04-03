@@ -142,6 +142,28 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
                                                       @Param("year") String year,
                                                       @Param("currency") Currency currency);
 
+    @Query("SELECT wp FROM WorkPlan wp WHERE wp.divisionId = :divisionId " +
+            "AND wp.week = :week AND wp.month = :month AND wp.year = :year " +
+            "AND wp.status NOT IN (:completed, :cancelled) " +
+            "AND wp.targetCompletionDate < CURRENT_DATE")
+    List<WorkPlan> findOverdueWorkPlans(@Param("divisionId") Long divisionId,
+                                        @Param("week") String week,
+                                        @Param("month") String month,
+                                        @Param("year") String year,
+                                        @Param("completed") Status completed,
+                                        @Param("cancelled") Status cancelled);
+
+
+    @Query("SELECT wp FROM WorkPlan wp WHERE wp.divisionId = :divisionId " +
+            "AND wp.month = :month AND wp.year = :year " +
+            "AND wp.status NOT IN (:completed, :cancelled) " +
+            "AND wp.targetCompletionDate < CURRENT_DATE")
+    List<WorkPlan> findOverdueWorkPlansByMonthYear(@Param("divisionId") Long divisionId,
+                                                   @Param("month") String month,
+                                                   @Param("year") String year,
+                                                   @Param("completed") Status completed,
+                                                   @Param("cancelled") Status cancelled);
+
 
 
 

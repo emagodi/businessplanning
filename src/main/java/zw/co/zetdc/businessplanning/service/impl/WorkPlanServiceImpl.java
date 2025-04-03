@@ -1727,6 +1727,15 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return workPlanRepository.findByDivisionIdAndYear(divisionId, year);
     }
 
+    @Override
+    public List<WorkPlan> getOverdueWorkPlans(Long divisionId, String week, String month, String year) {
+        return workPlanRepository.findOverdueWorkPlans(divisionId, week, month, year, Status.COMPLETED, Status.CANCELLED);
+    }
+
+    @Override
+    public List<WorkPlan> getOverdueWorkPlansByMonthYear(Long divisionId, String month, String year) {
+        return workPlanRepository.findOverdueWorkPlansByMonthYear(divisionId, month, year, Status.COMPLETED, Status.CANCELLED);
+    }
 
 }
 
