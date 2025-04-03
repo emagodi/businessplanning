@@ -698,5 +698,44 @@ public class WorkPlanController {
         return ResponseEntity.ok(overdueWorkPlans);
     }
 
+    @GetMapping("/overdue-count/division/{divisionId}/week/{week}/month/{month}/year/{year}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "Get count of overdue work plans by division ID, week, month, and year",
+            description = "Retrieve the count of overdue work plans for a specific division, week, month, and year.")
+    public ResponseEntity<Long> countOverdueWorkPlans(
+            @PathVariable Long divisionId,
+            @PathVariable String week,
+            @PathVariable String month,
+            @PathVariable String year) {
+        long count = workPlanService.countOverdueWorkPlans(divisionId, week, month, year);
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/overdue-count/division/{divisionId}/month/{month}/year/{year}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "Get count of overdue work plans by division ID, month, and year",
+            description = "Retrieve the count of overdue work plans for a specific division, month, and year.")
+    public ResponseEntity<Long> countOverdueWorkPlansByMonthYear(
+            @PathVariable Long divisionId,
+            @PathVariable String month,
+            @PathVariable String year) {
+        long count = workPlanService.countOverdueWorkPlansByMonthYear(divisionId, month, year);
+        return ResponseEntity.ok(count);
+    }
+
+
+    @GetMapping("/overdue-count/division/{divisionId}/year/{year}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "Get count of overdue work plans by division ID and year",
+            description = "Retrieve the count of overdue work plans for a specific division and year.")
+    public ResponseEntity<Long> countOverdueWorkPlansByYear(
+            @PathVariable Long divisionId,
+            @PathVariable String year) {
+        long count = workPlanService.countOverdueWorkPlansByYear(divisionId, year);
+        return ResponseEntity.ok(count);
+    }
+
+
+
 
 }

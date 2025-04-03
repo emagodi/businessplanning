@@ -155,4 +155,14 @@ public interface WorkPlanService {
 
     public List<WorkPlan> getOverdueWorkPlansByMonthYear(Long divisionId, String month, String year);
 
+
+    public long countOverdueWorkPlans(Long divisionId, String week, String month, String year);
+
+
+    public long countOverdueWorkPlansByMonthYear(Long divisionId, String month, String year);
+
+
+    public long countOverdueWorkPlansByYear(Long divisionId, String year);
+
+
 }
