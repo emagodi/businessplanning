@@ -1752,6 +1752,47 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     public long countOverdueWorkPlansByYear(Long divisionId, String year) {
         return workPlanRepository.countOverdueWorkPlansByYear(divisionId, year, Status.COMPLETED, Status.CANCELLED);
     }
+
+
+    @Override
+    public List<OverdueTaskResponse> getOverdueTasksWithEmails() {
+        // Fetch overdue work plans with user emails
+        List<Object[]> results = workPlanRepository.findOverdueWorkPlansWithUserEmails(Status.COMPLETED, Status.CANCELLED);
+        List<OverdueTaskResponse> responseList = new ArrayList<>();
+
+        // Process the results and map to DTOs
+        for (Object[] result : results) {
+            WorkPlan workPlan = (WorkPlan) result[0];
+            String managerEmail = (String) result[1];
+            String seniorManagerEmail = (String) result[2];
+
+            responseList.add(new OverdueTaskResponse(workPlan, managerEmail, seniorManagerEmail));
+        }
+
+        return responseList;
+    }
+
+
+    @Override
+    public List<BudgetVsActualResponse> getBudgetVsActualByYearCurrencyAndDivision(String year, Currency currency, Long divisionId) {
+        List<Object[]> results = workPlanRepository.findBudgetVsActualByYearCurrencyAndDivision(year, currency, divisionId);
+        List<BudgetVsActualResponse> responseList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            String month = (String) result[0];
+            Double budget = (Double) result[1];
+            Double actual = (Double) result[2];
+
+            double difference = actual - budget;
+            double percentageDifference = (budget > 0) ? (difference / budget) * 100 : 0.0;
+
+            responseList.add(new BudgetVsActualResponse(month, budget, actual, difference, percentageDifference));
+        }
+
+        return responseList;
+    }
+
+
 }
 
 

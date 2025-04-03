@@ -164,5 +164,7 @@ public interface WorkPlanService {
 
     public long countOverdueWorkPlansByYear(Long divisionId, String year);
 
+    public List<OverdueTaskResponse> getOverdueTasksWithEmails();
 
+    public List<BudgetVsActualResponse> getBudgetVsActualByYearCurrencyAndDivision(String year, Currency currency, Long divisionId);
 }

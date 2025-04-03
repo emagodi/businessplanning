@@ -195,7 +195,39 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
                                      @Param("completed") Status completed,
                                      @Param("cancelled") Status cancelled);
 
+    @Query("""
+    SELECT wp, 
+           (SELECT u.email FROM User u WHERE u.role = 'MANAGER' AND u.sectionId = wp.sectionId) AS managerEmail,
+           (SELECT u.email FROM User u WHERE u.role = 'SENIORMANAGER' AND u.divisionId = wp.divisionId) AS seniorManagerEmail
+    FROM WorkPlan wp 
+    WHERE wp.targetCompletionDate < CURRENT_DATE 
+    AND wp.status NOT IN (:completed, :cancelled)
+""")
+    List<Object[]> findOverdueWorkPlansWithUserEmails(@Param("completed") Status completed,
+                                                      @Param("cancelled") Status cancelled);
 
 
+
+
+    @Query("""
+    SELECT 
+        wp.month AS month, 
+        SUM(wp.budget) AS budget, 
+        SUM(wp.actualExpenditure) AS actual
+    FROM 
+        WorkPlan wp
+    WHERE 
+        wp.year = :year 
+        AND wp.currency = :currency
+        AND wp.divisionId = :divisionId
+    GROUP BY 
+        wp.month
+    ORDER BY 
+        FIELD(wp.month, 'January', 'February', 'March', 'April', 'May', 'June', 
+               'July', 'August', 'September', 'October', 'November', 'December')
+""")
+    List<Object[]> findBudgetVsActualByYearCurrencyAndDivision(@Param("year") String year,
+                                                               @Param("currency") Currency currency,
+                                                               @Param("divisionId") Long divisionId);
 
 }

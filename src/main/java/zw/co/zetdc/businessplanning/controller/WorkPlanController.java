@@ -735,7 +735,25 @@ public class WorkPlanController {
         return ResponseEntity.ok(count);
     }
 
+    @GetMapping("/overdue/tasks/emails")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "Get overdue tasks and emails of relevant users",
+            description = "Retrieve overdue tasks along with emails of the corresponding MANAGER and SENIORMANAGER.")
+    public ResponseEntity<List<OverdueTaskResponse>> getOverdueTasksWithEmails() {
+        List<OverdueTaskResponse> overdueTasks = workPlanService.getOverdueTasksWithEmails();
+        return ResponseEntity.ok(overdueTasks);
+    }
 
-
+    @GetMapping("/division/budgetVsActual/year/{year}/currency/{currency}/division/{divisionId}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "Get budget vs actual expenditure for a specific year, currency, and division",
+            description = "Retrieve a comparison of budget and actual expenditure for each month of the specified year, currency, and division.")
+    public ResponseEntity<List<BudgetVsActualResponse>> getBudgetVsActualByYearCurrencyAndDivision(
+            @PathVariable String year,
+            @PathVariable Currency currency,
+            @PathVariable Long divisionId) {
+        List<BudgetVsActualResponse> budgetVsActual = workPlanService.getBudgetVsActualByYearCurrencyAndDivision(year, currency, divisionId);
+        return ResponseEntity.ok(budgetVsActual);
+    }
 
 }
