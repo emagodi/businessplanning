@@ -1812,6 +1812,27 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return responseList;
     }
 
+    @Override
+    public BudgetVsActualCurrencyResponse getBudgetVsActualByYearMonthAndDivision(String year, String month, Long divisionId) {
+        List<Object[]> results = workPlanRepository.findBudgetVsActualByYearMonthAndDivision(year, month, divisionId);
+        List<BudgetVsActualCurrencyResponse.WeeklyBudgetVsActual> weeklyData = new ArrayList<>();
+
+        for (Object[] result : results) {
+            String week = (String) result[0];
+            Double budgetUSD = (Double) result[1];
+            Double actualUSD = (Double) result[2];
+            Double budgetZWL = (Double) result[3];
+            Double actualZWL = (Double) result[4];
+
+            Double differenceUSD = actualUSD - budgetUSD;
+            Double differenceZWL = actualZWL - budgetZWL;
+
+            weeklyData.add(new BudgetVsActualCurrencyResponse.WeeklyBudgetVsActual(
+                    week, budgetUSD, actualUSD, differenceUSD, budgetZWL, actualZWL, differenceZWL));
+        }
+
+        return new BudgetVsActualCurrencyResponse(month, year, divisionId, weeklyData);
+    }
 
 }
 

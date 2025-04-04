@@ -769,4 +769,15 @@ public class WorkPlanController {
         return ResponseEntity.ok(budgetVsActual);
     }
 
+    @GetMapping("/division/budgetVsActual/year/{year}/month/{month}/division/{divisionId}")
+    @Operation(summary = "Get budget vs actual expenditure for a specific month, year, and division",
+            description = "Retrieve budget and actual expenditure comparison for both USD and ZWL.")
+    public ResponseEntity<BudgetVsActualCurrencyResponse> getBudgetVsActualByYearMonthAndDivision(
+            @PathVariable String year,
+            @PathVariable String month,
+            @PathVariable Long divisionId) {
+        BudgetVsActualCurrencyResponse response = workPlanService.getBudgetVsActualByYearMonthAndDivision(year, month, divisionId);
+        return ResponseEntity.ok(response);
+    }
+
 }

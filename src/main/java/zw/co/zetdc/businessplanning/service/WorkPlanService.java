@@ -169,4 +169,6 @@ public interface WorkPlanService {
     public List<BudgetVsActualResponse> getBudgetVsActualByYearCurrencyAndDivision(String year, Currency currency, Long divisionId);
 
     public List<BudgetVsActualMonthResponse> getBudgetVsActualByYearMonthCurrencyAndDivision(String year, String month, Currency currency, Long divisionId);
+
+    public BudgetVsActualCurrencyResponse getBudgetVsActualByYearMonthAndDivision(String year, String month, Long divisionId);
 }
