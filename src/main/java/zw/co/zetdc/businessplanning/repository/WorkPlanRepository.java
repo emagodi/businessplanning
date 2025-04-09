@@ -275,4 +275,54 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
                                                             @Param("month") String month,
                                                             @Param("divisionId") Long divisionId);
 
+
+
+
+    @Query("""
+        SELECT 
+            wp.month AS month, 
+            SUM(CASE WHEN wp.currency = 0 THEN wp.budget ELSE 0 END) AS budgetUSD,
+            SUM(CASE WHEN wp.currency = 0 THEN wp.actualExpenditure ELSE 0 END) AS actualUSD,
+            SUM(CASE WHEN wp.currency = 1 THEN wp.budget ELSE 0 END) AS budgetZWL,
+            SUM(CASE WHEN wp.currency = 1 THEN wp.actualExpenditure ELSE 0 END) AS actualZWL
+        FROM 
+            WorkPlan wp
+        WHERE 
+            wp.year = :year 
+            AND wp.divisionId = :divisionId
+        GROUP BY 
+            wp.month
+        ORDER BY 
+            FIELD(wp.month, 'January', 'February', 'March', 'April', 'May', 'June', 
+                   'July', 'August', 'September', 'October', 'November', 'December')
+    """)
+    List<Object[]> findBudgetVsActualByYearAndDivision(@Param("year") String year,
+                                                       @Param("divisionId") Long divisionId);
+
+
+    @Query("""
+    SELECT wp FROM WorkPlan wp 
+    WHERE wp.sectionId = :sectionId 
+      AND wp.week = :week 
+      AND wp.month = :month 
+      AND wp.year = :year
+""")
+    List<WorkPlan> findBySectionIdAndWeekMonthYear(@Param("sectionId") Long sectionId,
+                                                   @Param("week") String week,
+                                                   @Param("month") String month,
+                                                   @Param("year") String year);
+
+    @Query("""
+        SELECT wp FROM WorkPlan wp 
+        WHERE wp.sectionId = :sectionId 
+          AND wp.month = :month 
+          AND wp.year = :year
+    """)
+    List<WorkPlan> findBySectionIdAndMonthYear(@Param("sectionId") Long sectionId,
+                                               @Param("month") String month,
+                                               @Param("year") String year);
+
+
+
+
 }

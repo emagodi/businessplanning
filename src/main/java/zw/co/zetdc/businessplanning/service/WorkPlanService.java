@@ -171,4 +171,12 @@ public interface WorkPlanService {
     public List<BudgetVsActualMonthResponse> getBudgetVsActualByYearMonthCurrencyAndDivision(String year, String month, Currency currency, Long divisionId);
 
     public BudgetVsActualCurrencyResponse getBudgetVsActualByYearMonthAndDivision(String year, String month, Long divisionId);
+
+    public BudgetVsActualYearResponse getBudgetVsActualByYearAndDivision(String year, Long divisionId);
+
+    public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySectionWeekMonthYear(Long sectionId, String week, String month, String year);
+
+    public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySectionMonthYear(Long sectionId, String month, String year);
+
+    public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySectionYear(Long sectionId, String year);
 }

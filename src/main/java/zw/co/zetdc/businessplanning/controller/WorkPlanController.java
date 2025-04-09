@@ -780,4 +780,49 @@ public class WorkPlanController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/division/budgetVsActual/year/{year}/division/{divisionId}")
+    @Operation(summary = "Get budget vs actual expenditure for all months of a specific year and division",
+            description = "Retrieve budget and actual expenditure comparison for both USD and ZWL for each month of the year.")
+    public ResponseEntity<BudgetVsActualYearResponse> getBudgetVsActualByYearAndDivision(
+            @PathVariable String year,
+            @PathVariable Long divisionId) {
+        BudgetVsActualYearResponse response = workPlanService.getBudgetVsActualByYearAndDivision(year, divisionId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/workplans/summary/section/{sectionId}/week/{week}/month/{month}/year/{year}")
+    @Operation(summary = "Get summary of work plans for a section filtered by week, month, and year",
+            description = "Returns total work plans, completed, in-progress, cancelled, and rescheduled counts, and budget utilization for a given section and week.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<SectionWorkPlanSummaryResponse> getSectionWorkPlanSummary(
+            @PathVariable Long sectionId,
+            @PathVariable String week,
+            @PathVariable String month,
+            @PathVariable String year) {
+
+        SectionWorkPlanSummaryResponse summary = workPlanService.getWorkPlanSummaryBySectionWeekMonthYear(sectionId, week, month, year);
+        return ResponseEntity.ok(summary);
+    }
+
+    @GetMapping("/workplans/summary/section/{sectionId}/month/{month}/year/{year}")
+    public ResponseEntity<SectionWorkPlanSummaryResponse> getSectionWorkPlanSummary(
+            @PathVariable Long sectionId,
+            @PathVariable String month,
+            @PathVariable String year) {
+
+        SectionWorkPlanSummaryResponse summary = workPlanService.getWorkPlanSummaryBySectionMonthYear(sectionId, month, year);
+        return ResponseEntity.ok(summary);
+    }
+
+
+    @GetMapping("/workplans/summary/section/{sectionId}/year/{year}")
+    public ResponseEntity<SectionWorkPlanSummaryResponse> getSectionWorkPlanSummaryByYear(
+            @PathVariable Long sectionId,
+            @PathVariable String year) {
+
+        SectionWorkPlanSummaryResponse summary = workPlanService.getWorkPlanSummaryBySectionYear(sectionId, year);
+        return ResponseEntity.ok(summary);
+    }
+
+
 }

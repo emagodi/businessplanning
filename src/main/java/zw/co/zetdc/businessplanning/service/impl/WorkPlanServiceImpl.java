@@ -1834,6 +1834,123 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return new BudgetVsActualCurrencyResponse(month, year, divisionId, weeklyData);
     }
 
+    @Override
+    public BudgetVsActualYearResponse getBudgetVsActualByYearAndDivision(String year, Long divisionId) {
+        List<Object[]> results = workPlanRepository.findBudgetVsActualByYearAndDivision(year, divisionId);
+        List<BudgetVsActualYearResponse.MonthlyBudgetVsActual> monthlyData = new ArrayList<>();
+
+        for (Object[] result : results) {
+            String month = (String) result[0];
+            Double budgetUSD = (Double) result[1];
+            Double actualUSD = (Double) result[2];
+            Double budgetZWL = (Double) result[3];
+            Double actualZWL = (Double) result[4];
+
+            Double differenceUSD = actualUSD - budgetUSD;
+            Double differenceZWL = actualZWL - budgetZWL;
+
+            monthlyData.add(new BudgetVsActualYearResponse.MonthlyBudgetVsActual(
+                    month, budgetUSD, actualUSD, differenceUSD, budgetZWL, actualZWL, differenceZWL));
+        }
+
+        return new BudgetVsActualYearResponse(year, divisionId, monthlyData);
+    }
+
+
+    @Override
+    public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySectionWeekMonthYear(Long sectionId, String week, String month, String year) {
+        List<WorkPlan> workPlans = workPlanRepository.findBySectionIdAndWeekMonthYear(sectionId, week, month, year);
+
+        // Initialize summary fields
+        Long totalWorkPlans = (long) workPlans.size();
+        Long completedWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.COMPLETED).count();
+        Long inProgressWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.IN_PROGRESS).count();
+        Long cancelledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.CANCELLED).count();
+        Long rescheduledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.RE_SCHEDULED).count();
+
+        // Calculate average percent of budget utilized
+        Double averagePercentOfBudgetUtilized = totalWorkPlans > 0 ?
+                workPlans.stream().mapToDouble(WorkPlan::getPercentOfBudget).average().orElse(0) : 0;
+
+        Double overallCompletionRate = totalWorkPlans > 0 ?
+                (completedWorkPlans.doubleValue() / totalWorkPlans) * 100 : 0;
+
+        // Create the response object
+        SectionWorkPlanSummaryResponse summaryResponse = new SectionWorkPlanSummaryResponse();
+        summaryResponse.setSectionId(sectionId); // Set the section ID
+        summaryResponse.setTotalWorkPlans(totalWorkPlans);
+        summaryResponse.setCompletedWorkPlans(completedWorkPlans);
+        summaryResponse.setInProgressWorkPlans(inProgressWorkPlans);
+        summaryResponse.setCancelledWorkPlans(cancelledWorkPlans);
+        summaryResponse.setRescheduledWorkPlans(rescheduledWorkPlans);
+        summaryResponse.setAveragePercentOfBudgetUtilized(averagePercentOfBudgetUtilized);
+        summaryResponse.setOverallCompletionRate(overallCompletionRate);
+
+        return summaryResponse;
+    }
+
+    @Override
+    @Transactional
+    public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySectionMonthYear(Long sectionId, String month, String year) {
+        List<WorkPlan> workPlans = workPlanRepository.findBySectionIdAndMonthYear(sectionId, month, year);
+
+        Long totalWorkPlans = (long) workPlans.size();
+        Long completedWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.COMPLETED).count();
+        Long inProgressWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.IN_PROGRESS).count();
+        Long cancelledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.CANCELLED).count();
+        Long rescheduledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.RE_SCHEDULED).count();
+
+        Double averagePercentOfBudgetUtilized = totalWorkPlans > 0 ?
+                workPlans.stream().mapToDouble(WorkPlan::getPercentOfBudget).average().orElse(0) : 0;
+
+        Double overallCompletionRate = totalWorkPlans > 0 ?
+                (completedWorkPlans.doubleValue() / totalWorkPlans) * 100 : 0;
+
+        SectionWorkPlanSummaryResponse summaryResponse = new SectionWorkPlanSummaryResponse();
+        summaryResponse.setSectionId(sectionId);
+        summaryResponse.setTotalWorkPlans(totalWorkPlans);
+        summaryResponse.setCompletedWorkPlans(completedWorkPlans);
+        summaryResponse.setInProgressWorkPlans(inProgressWorkPlans);
+        summaryResponse.setCancelledWorkPlans(cancelledWorkPlans);
+        summaryResponse.setRescheduledWorkPlans(rescheduledWorkPlans);
+        summaryResponse.setAveragePercentOfBudgetUtilized(averagePercentOfBudgetUtilized);
+        summaryResponse.setOverallCompletionRate(overallCompletionRate);
+
+        return summaryResponse;
+    }
+
+
+    @Override
+    @Transactional
+    public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySectionYear(Long sectionId, String year) {
+        List<WorkPlan> workPlans = workPlanRepository.findBySectionIdAndYear(sectionId, year);
+
+        Long totalWorkPlans = (long) workPlans.size();
+        Long completedWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.COMPLETED).count();
+        Long inProgressWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.IN_PROGRESS).count();
+        Long cancelledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.CANCELLED).count();
+        Long rescheduledWorkPlans = workPlans.stream().filter(wp -> wp.getStatus() == Status.RE_SCHEDULED).count();
+
+        Double averagePercentOfBudgetUtilized = totalWorkPlans > 0 ?
+                workPlans.stream().mapToDouble(WorkPlan::getPercentOfBudget).average().orElse(0) : 0;
+
+        Double overallCompletionRate = totalWorkPlans > 0 ?
+                (completedWorkPlans.doubleValue() / totalWorkPlans) * 100 : 0;
+
+        SectionWorkPlanSummaryResponse summaryResponse = new SectionWorkPlanSummaryResponse();
+        summaryResponse.setSectionId(sectionId);
+        summaryResponse.setTotalWorkPlans(totalWorkPlans);
+        summaryResponse.setCompletedWorkPlans(completedWorkPlans);
+        summaryResponse.setInProgressWorkPlans(inProgressWorkPlans);
+        summaryResponse.setCancelledWorkPlans(cancelledWorkPlans);
+        summaryResponse.setRescheduledWorkPlans(rescheduledWorkPlans);
+        summaryResponse.setAveragePercentOfBudgetUtilized(averagePercentOfBudgetUtilized);
+        summaryResponse.setOverallCompletionRate(overallCompletionRate);
+
+
+        return summaryResponse;
+    }
+
 }
 
 
