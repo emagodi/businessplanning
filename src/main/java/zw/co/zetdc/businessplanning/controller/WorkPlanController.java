@@ -824,5 +824,11 @@ public class WorkPlanController {
         return ResponseEntity.ok(summary);
     }
 
+    @GetMapping("/workplans/summary/department/{departmentId}/sections")
+    public ResponseEntity<List<SectionSummaryResponse>> getSectionSummariesForDepartment(@PathVariable Long departmentId) {
+        List<SectionSummaryResponse> summaries = workPlanService.getSectionSummariesForDepartment(departmentId);
+        return ResponseEntity.ok(summaries);
+    }
+
 
 }

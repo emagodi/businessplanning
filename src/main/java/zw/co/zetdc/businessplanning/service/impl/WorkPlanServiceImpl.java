@@ -44,6 +44,8 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
     private final DivisionRepository divisionRepository;
 
+    private final UserRepository userRepository;
+
 
     @Override
     @Transactional
@@ -1949,6 +1951,51 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
 
         return summaryResponse;
+    }
+
+    @Override
+    public List<SectionSummaryResponse> getSectionSummariesForDepartment(Long departmentId) {
+        List<Section> sections = sectionRepository.findByDepartmentId(departmentId);
+
+        // Get the current date
+        LocalDate currentDate = LocalDate.now();
+        String currentMonth = currentDate.getMonth().toString(); // Get current month as String
+        String currentYear = String.valueOf(currentDate.getYear()); // Convert year to String
+
+        return sections.stream().map(section -> {
+            List<WorkPlan> workPlans = workPlanRepository.findBySectionIdAndMonthAndYear(section.getId(), currentMonth, currentYear);
+
+            // Summary calculations
+            int totalWorkPlans = workPlans.size();
+            int completedWorkPlans = (int) workPlans.stream().filter(wp -> wp.getStatus() == Status.COMPLETED).count();
+            int pendingWorkPlans = (int) workPlans.stream().filter(wp -> wp.getStatus() == Status.PENDING).count();
+
+            double totalBudget = workPlans.stream().mapToDouble(WorkPlan::getBudget).sum();
+            double totalActualUsed = workPlans.stream().mapToDouble(WorkPlan::getActualExpenditure).sum();
+            double totalBudgetZWL = 0; // Adjust if needed
+            double totalActualUsedZWL = 0; // Adjust if needed
+
+            // Fetch section head details
+            User sectionHead = userRepository.findBySectionId(section.getId()); // Assume this method exists
+
+            // Prepare section summary response
+            SectionSummaryResponse response = new SectionSummaryResponse();
+            response.setSectionId(section.getId());
+            response.setSectionName(section.getName());
+            response.setYear(Integer.parseInt(currentYear)); // If needed as Integer
+            response.setTotalWorkPlans(totalWorkPlans);
+            response.setCompletedWorkPlans(completedWorkPlans);
+            response.setPendingWorkPlans(pendingWorkPlans);
+            response.setTotalBudgetUSD(totalBudget); // Adjust based on your currency logic
+            response.setTotalActualUsedUSD(totalActualUsed);
+            response.setTotalBudgetZWL(totalBudgetZWL);
+            response.setTotalActualUsedZWL(totalActualUsedZWL);
+            response.setSectionHeadEmail(sectionHead.getEmail());
+            response.setFirstname(sectionHead.getFirstname());
+            response.setLastname(sectionHead.getLastname());
+
+            return response;
+        }).collect(Collectors.toList());
     }
 
 }

@@ -179,4 +179,6 @@ public interface WorkPlanService {
     public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySectionMonthYear(Long sectionId, String month, String year);
 
     public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySectionYear(Long sectionId, String year);
+
+    public List<SectionSummaryResponse> getSectionSummariesForDepartment(Long departmentId);
 }
