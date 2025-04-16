@@ -181,4 +181,7 @@ public interface WorkPlanService {
     public SectionWorkPlanSummaryResponse getWorkPlanSummaryBySectionYear(Long sectionId, String year);
 
     public List<SectionSummaryResponse> getSectionSummariesForDepartment(Long departmentId);
+
+    public List<NotificationTaskResponse> getOverdueTasksSummaryByDepartmentEmails(Long departmentId);
+
 }

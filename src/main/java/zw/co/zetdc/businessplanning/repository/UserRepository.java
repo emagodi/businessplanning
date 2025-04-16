@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import zw.co.zetdc.businessplanning.entities.User;
 
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -19,4 +20,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void updatePasswordAndSetTemporaryFalse(String email, String password);
 
     User findBySectionId(Long sectionId);
+
 }

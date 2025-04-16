@@ -1998,6 +1998,55 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         }).collect(Collectors.toList());
     }
 
+
+
+    @Override
+    @Transactional
+    public List<NotificationTaskResponse> getOverdueTasksSummaryByDepartmentEmails(Long departmentId) {
+        List<Object[]> results = workPlanRepository.findOverdueTasksWithEmailsByDepartment(departmentId, Status.COMPLETED, Status.CANCELLED);
+
+        // Map to hold unique responses by section ID
+        Map<Long, NotificationTaskResponse> responseMap = new HashMap<>();
+
+        for (Object[] result : results) {
+            WorkPlan workPlan = (WorkPlan) result[0];
+            String managerEmail = (String) result[1];
+            String seniorManagerEmail = (String) result[2];
+
+            // Get section name using sectionId
+            String sectionName = sectionRepository.findById(workPlan.getSectionId())
+                    .map(section -> section.getName())
+                    .orElse("Unknown Section");
+
+            // Get department name using departmentId
+            String departmentName = departmentRepository.findById(departmentId)
+                    .map(department -> department.getName())
+                    .orElse("Unknown Department");
+
+            // Create or update the response in the map
+            NotificationTaskResponse notificationTask = responseMap.computeIfAbsent(workPlan.getSectionId(), id ->
+                    NotificationTaskResponse.builder()
+                            .departmentId(departmentId)
+                            .departmentName(departmentName)
+                            .managerEmail(managerEmail)
+                            .seniorManagerEmail(seniorManagerEmail)
+                            .sectionId(id)
+                            .sectionName(sectionName)
+                            .overdueCount(0) // Initialize
+                            .build()
+            );
+
+            // Increment the overdue count for the section
+            notificationTask.setOverdueCount(notificationTask.getOverdueCount() + 1);
+        }
+
+        // Return the values as a list
+        return new ArrayList<>(responseMap.values());
+    }
+
+
+
+
 }
 
 

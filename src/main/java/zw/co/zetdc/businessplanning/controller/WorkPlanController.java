@@ -805,6 +805,7 @@ public class WorkPlanController {
     }
 
     @GetMapping("/workplans/summary/section/{sectionId}/month/{month}/year/{year}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<SectionWorkPlanSummaryResponse> getSectionWorkPlanSummary(
             @PathVariable Long sectionId,
             @PathVariable String month,
@@ -825,9 +826,19 @@ public class WorkPlanController {
     }
 
     @GetMapping("/workplans/summary/department/{departmentId}/sections")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<List<SectionSummaryResponse>> getSectionSummariesForDepartment(@PathVariable Long departmentId) {
         List<SectionSummaryResponse> summaries = workPlanService.getSectionSummariesForDepartment(departmentId);
         return ResponseEntity.ok(summaries);
+    }
+
+
+    @GetMapping("/section-summary-overdue/workplans/department/{departmentId}/notifications/")
+    @Operation(summary = "Get overdue tasks summary for a department's sections",
+            description = "Fetches the count of overdue tasks grouped by section for the specified department along with manager emails.")
+    public ResponseEntity<List<NotificationTaskResponse>> getOverdueTasksSummaryByDepartmentEmails(@PathVariable Long departmentId) {
+        List<NotificationTaskResponse> overdueTasks = workPlanService.getOverdueTasksSummaryByDepartmentEmails(departmentId);
+        return ResponseEntity.ok(overdueTasks);
     }
 
 

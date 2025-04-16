@@ -8,6 +8,8 @@ import zw.co.zetdc.businessplanning.entities.WorkPlan;
 import zw.co.zetdc.businessplanning.enums.Currency;
 import zw.co.zetdc.businessplanning.enums.Status;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -322,9 +324,31 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
                                                @Param("month") String month,
                                                @Param("year") String year);
 
+    @Query("""
+    SELECT wp FROM WorkPlan wp 
+    WHERE wp.departmentId = :departmentId 
+    AND wp.targetCompletionDate < :currentDate 
+    AND wp.status NOT IN (:completed, :cancelled)
+""")
+    List<WorkPlan> findOverdueWorkPlans(@Param("departmentId") Long departmentId,
+                                        @Param("currentDate") Date currentDate,
+                                        @Param("completed") Status completed,
+                                        @Param("cancelled") Status cancelled);
 
 
 
+    @Query("""
+    SELECT wp, 
+           (SELECT u.email FROM User u WHERE u.role = 'MANAGER' AND u.sectionId = wp.sectionId) AS managerEmail,
+           (SELECT u.email FROM User u WHERE u.role = 'SENIORMANAGER' AND u.divisionId = wp.divisionId) AS seniorManagerEmail
+    FROM WorkPlan wp 
+    WHERE wp.targetCompletionDate < CURRENT_DATE 
+    AND wp.status NOT IN (:completed, :cancelled)
+    AND wp.departmentId = :departmentId
+    """)
+    List<Object[]> findOverdueTasksWithEmailsByDepartment(@Param("departmentId") Long departmentId,
+                                                          @Param("completed") Status completed,
+                                                          @Param("cancelled") Status cancelled);
 
 
 }
