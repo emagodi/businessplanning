@@ -909,6 +909,7 @@ public class WorkPlanController {
     @GetMapping("/count/departmentId/{departmentId}/month/{month}/year/{year}")
     @Operation(summary = "Get section workplan summary with names of managers for the month of that year ",
             description = "Get section workplan summary with names of managers for the month of that year.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummary(
             @PathVariable Long departmentId,
             @PathVariable String month,
@@ -919,10 +920,44 @@ public class WorkPlanController {
     @GetMapping("/count/departmentId/{departmentId}/year/{year}")
     @Operation(summary = "Get section workplan summary with names of managers for that year ",
             description = "Get section workplan summary with names of managers for that year.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummaryByDepartmentAndYear(
             @PathVariable Long departmentId,
             @PathVariable String year) {
         return workPlanService.getWorkPlanSummaryByDepartmentAndYear(departmentId, year);
+    }
+
+    @GetMapping("/count/team-member/sectionId/{sectionId}/week/{week}/month/{month}/year/{year}")
+    @Operation(summary = "Get section workplan totals for team members per week of the month and year",
+            description = "Get section workplan totals for team members per week of the month and year.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public List<TeamMemberSummaryResponse> getTeamMemberSummary(
+            @PathVariable Long sectionId,
+            @PathVariable String week,
+            @PathVariable String month,
+            @PathVariable String year) {
+        return workPlanService.getTeamMemberSummary(sectionId, week, month, year);
+    }
+
+    @GetMapping("/count/team-member/sectionId/{sectionId}/month/{month}/year/{year}")
+    @Operation(summary = "Get section workplan totals for team members per month of the year",
+            description = "Get section workplan totals for team members per month of the year.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public List<TeamMemberSummaryResponse> getTeamMemberSummaryByMonth(
+            @PathVariable Long sectionId,
+            @PathVariable String month,
+            @PathVariable String year) {
+        return workPlanService.getTeamMemberSummaryByMonth(sectionId, month, year);
+    }
+
+    @GetMapping("/count/team-member/sectionId/{sectionId}/year/{year}")
+    @Operation(summary = "Get section workplan totals for team members per year",
+            description = "Get section workplan totals for team members per year.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public List<TeamMemberSummaryResponse> getTeamMemberSummaryByYear(
+            @PathVariable Long sectionId,
+            @PathVariable String year) {
+        return workPlanService.getTeamMemberSummaryByYear(sectionId, year);
     }
 
 

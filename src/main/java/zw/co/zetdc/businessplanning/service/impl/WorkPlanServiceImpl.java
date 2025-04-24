@@ -2251,6 +2251,107 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     }
 
 
+    @Override
+    public List<TeamMemberSummaryResponse> getTeamMemberSummary(Long sectionId, String week, String month, String year) {
+        List<Object[]> results = workPlanRepository.findTeamMemberSummaries(sectionId, week, month, year,
+                Status.COMPLETED, Status.IN_PROGRESS, Status.CANCELLED, Status.RE_SCHEDULED);
+        List<TeamMemberSummaryResponse> responseList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Long teamMemberId = (Long) result[0];
+            String firstname = (String) result[1];
+            String lastname = (String) result[2];
+            Integer totalWorkPlans = ((Number) result[3]).intValue();
+            Integer completed = ((Number) result[4]).intValue();
+            Integer inProgress = ((Number) result[5]).intValue();
+            Integer overdue = ((Number) result[6]).intValue();
+            Integer cancelled = ((Number) result[7]).intValue();
+            Integer reScheduled = ((Number) result[8]).intValue();
+
+            TeamMemberSummaryResponse response = TeamMemberSummaryResponse.builder()
+                    .teamMemberId(teamMemberId)
+                    .firstname(firstname)
+                    .lastname(lastname)
+                    .totalWorkPlans(totalWorkPlans)
+                    .completed(completed)
+                    .inProgress(inProgress)
+                    .overdue(overdue)
+                    .cancelled(cancelled)
+                    .reScheduled(reScheduled)
+                    .build();
+            responseList.add(response);
+        }
+        return responseList;
+    }
+
+    @Override
+    public List<TeamMemberSummaryResponse> getTeamMemberSummaryByMonth(Long sectionId, String month, String year) {
+        List<Object[]> results = workPlanRepository.findTeamMemberSummariesByMonth(sectionId, month, year,
+                Status.COMPLETED, Status.IN_PROGRESS, Status.CANCELLED, Status.RE_SCHEDULED);
+        List<TeamMemberSummaryResponse> responseList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Long teamMemberId = (Long) result[0];
+            String firstname = (String) result[1];
+            String lastname = (String) result[2];
+            Integer totalWorkPlans = ((Number) result[3]).intValue();
+            Integer completed = ((Number) result[4]).intValue();
+            Integer inProgress = ((Number) result[5]).intValue();
+            Integer overdue = ((Number) result[6]).intValue();
+            Integer cancelled = ((Number) result[7]).intValue();
+            Integer reScheduled = ((Number) result[8]).intValue();
+
+            TeamMemberSummaryResponse response = TeamMemberSummaryResponse.builder()
+                    .teamMemberId(teamMemberId)
+                    .firstname(firstname)
+                    .lastname(lastname)
+                    .totalWorkPlans(totalWorkPlans)
+                    .completed(completed)
+                    .inProgress(inProgress)
+                    .overdue(overdue)
+                    .cancelled(cancelled)
+                    .reScheduled(reScheduled)
+                    .build();
+            responseList.add(response);
+        }
+        return responseList;
+    }
+
+
+    @Override
+    public List<TeamMemberSummaryResponse> getTeamMemberSummaryByYear(Long sectionId, String year) {
+        List<Object[]> results = workPlanRepository.findTeamMemberSummariesByYear(sectionId, year,
+                Status.COMPLETED, Status.IN_PROGRESS, Status.CANCELLED, Status.RE_SCHEDULED);
+        List<TeamMemberSummaryResponse> responseList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Long teamMemberId = (Long) result[0];
+            String firstname = (String) result[1];
+            String lastname = (String) result[2];
+            Integer totalWorkPlans = ((Number) result[3]).intValue();
+            Integer completed = ((Number) result[4]).intValue();
+            Integer inProgress = ((Number) result[5]).intValue();
+            Integer overdue = ((Number) result[6]).intValue();
+            Integer cancelled = ((Number) result[7]).intValue();
+            Integer reScheduled = ((Number) result[8]).intValue();
+
+            TeamMemberSummaryResponse response = TeamMemberSummaryResponse.builder()
+                    .teamMemberId(teamMemberId)
+                    .firstname(firstname)
+                    .lastname(lastname)
+                    .totalWorkPlans(totalWorkPlans)
+                    .completed(completed)
+                    .inProgress(inProgress)
+                    .overdue(overdue)
+                    .cancelled(cancelled)
+                    .reScheduled(reScheduled)
+                    .build();
+            responseList.add(response);
+        }
+        return responseList;
+    }
+
+
 
 }
 

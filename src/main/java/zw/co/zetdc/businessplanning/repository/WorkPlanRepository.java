@@ -500,4 +500,65 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
                                                          @Param("cancelled") Status cancelled,
                                                          @Param("reScheduled") Status reScheduled);
 
+
+    @Query("SELECT tm.id, tm.firstname, tm.lastname, " +
+            "COUNT(wp) AS totalWorkPlans, " +
+            "SUM(CASE WHEN wp.status = :completed THEN 1 ELSE 0 END) AS completed, " +
+            "SUM(CASE WHEN wp.status = :inProgress THEN 1 ELSE 0 END) AS inProgress, " +
+            "SUM(CASE WHEN wp.targetCompletionDate < CURRENT_DATE AND wp.status NOT IN (:completed, :cancelled) THEN 1 ELSE 0 END) AS overdue, " +
+            "SUM(CASE WHEN wp.status = :cancelled THEN 1 ELSE 0 END) AS cancelled, " +
+            "SUM(CASE WHEN wp.status = :reScheduled THEN 1 ELSE 0 END) AS reScheduled " +
+            "FROM WorkPlan wp " +
+            "JOIN wp.scopes s " +
+            "JOIN s.assignedTeamMembers tm " +
+            "WHERE wp.sectionId = :sectionId AND wp.week = :week AND wp.month = :month AND wp.year = :year " +
+            "GROUP BY tm.id, tm.firstname, tm.lastname")
+    List<Object[]> findTeamMemberSummaries(@Param("sectionId") Long sectionId,
+                                           @Param("week") String week,
+                                           @Param("month") String month,
+                                           @Param("year") String year,
+                                           @Param("completed") Status completed,
+                                           @Param("inProgress") Status inProgress,
+                                           @Param("cancelled") Status cancelled,
+                                           @Param("reScheduled") Status reScheduled);
+
+    @Query("SELECT tm.id, tm.firstname, tm.lastname, " +
+            "COUNT(wp) AS totalWorkPlans, " +
+            "SUM(CASE WHEN wp.status = :completed THEN 1 ELSE 0 END) AS completed, " +
+            "SUM(CASE WHEN wp.status = :inProgress THEN 1 ELSE 0 END) AS inProgress, " +
+            "SUM(CASE WHEN wp.targetCompletionDate < CURRENT_DATE AND wp.status NOT IN (:completed, :cancelled) THEN 1 ELSE 0 END) AS overdue, " +
+            "SUM(CASE WHEN wp.status = :cancelled THEN 1 ELSE 0 END) AS cancelled, " +
+            "SUM(CASE WHEN wp.status = :reScheduled THEN 1 ELSE 0 END) AS reScheduled " +
+            "FROM WorkPlan wp " +
+            "JOIN wp.scopes s " +
+            "JOIN s.assignedTeamMembers tm " +
+            "WHERE wp.sectionId = :sectionId AND wp.month = :month AND wp.year = :year " +
+            "GROUP BY tm.id, tm.firstname, tm.lastname")
+    List<Object[]> findTeamMemberSummariesByMonth(@Param("sectionId") Long sectionId,
+                                                  @Param("month") String month,
+                                                  @Param("year") String year,
+                                                  @Param("completed") Status completed,
+                                                  @Param("inProgress") Status inProgress,
+                                                  @Param("cancelled") Status cancelled,
+                                                  @Param("reScheduled") Status reScheduled);
+
+    @Query("SELECT tm.id, tm.firstname, tm.lastname, " +
+            "COUNT(wp) AS totalWorkPlans, " +
+            "SUM(CASE WHEN wp.status = :completed THEN 1 ELSE 0 END) AS completed, " +
+            "SUM(CASE WHEN wp.status = :inProgress THEN 1 ELSE 0 END) AS inProgress, " +
+            "SUM(CASE WHEN wp.targetCompletionDate < CURRENT_DATE AND wp.status NOT IN (:completed, :cancelled) THEN 1 ELSE 0 END) AS overdue, " +
+            "SUM(CASE WHEN wp.status = :cancelled THEN 1 ELSE 0 END) AS cancelled, " +
+            "SUM(CASE WHEN wp.status = :reScheduled THEN 1 ELSE 0 END) AS reScheduled " +
+            "FROM WorkPlan wp " +
+            "JOIN wp.scopes s " +
+            "JOIN s.assignedTeamMembers tm " +
+            "WHERE wp.sectionId = :sectionId AND wp.year = :year " +
+            "GROUP BY tm.id, tm.firstname, tm.lastname")
+    List<Object[]> findTeamMemberSummariesByYear(@Param("sectionId") Long sectionId,
+                                                 @Param("year") String year,
+                                                 @Param("completed") Status completed,
+                                                 @Param("inProgress") Status inProgress,
+                                                 @Param("cancelled") Status cancelled,
+                                                 @Param("reScheduled") Status reScheduled);
+
 }

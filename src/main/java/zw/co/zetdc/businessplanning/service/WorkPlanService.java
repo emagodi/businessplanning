@@ -198,4 +198,10 @@ public interface WorkPlanService {
 
     public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummaryByDepartmentAndYear(Long departmentId, String year);
 
+    public List<TeamMemberSummaryResponse> getTeamMemberSummary(Long sectionId, String week, String month, String year);
+
+    public List<TeamMemberSummaryResponse> getTeamMemberSummaryByMonth(Long sectionId, String month, String year);
+
+    public List<TeamMemberSummaryResponse> getTeamMemberSummaryByYear(Long sectionId, String year);
+
 }
