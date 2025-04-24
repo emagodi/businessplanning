@@ -2045,6 +2045,91 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     }
 
 
+    @Override
+    @Transactional
+    public List<BudgetVsActualResponse> getBudgetVsActualByYearMonthAndDepartment(String year, String month, Currency currency, Long departmentId) {
+        List<Object[]> results = workPlanRepository.findBudgetVsActualByYearMonthCurrencyAndDepartment(year, month, currency, departmentId);
+        List<BudgetVsActualResponse> responseList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            String week = (String) result[0];
+            Double budget = (Double) result[1];
+            Double actual = (Double) result[2];
+
+            double difference = actual - budget;
+            double percentageDifference = (budget > 0) ? (difference / budget) * 100 : 0.0;
+
+            responseList.add(new BudgetVsActualResponse(week, budget, actual, difference, percentageDifference));
+        }
+
+        return responseList;
+    }
+
+
+    @Override
+    @Transactional
+    public List<BudgetVsActualResponse> getBudgetVsActualByYearAndDepartment(String year, Currency currency, Long departmentId) {
+        List<Object[]> results = workPlanRepository.findBudgetVsActualByYearCurrencyAndDepartment(year, currency, departmentId);
+        List<BudgetVsActualResponse> responseList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            String month = (String) result[0];
+            Double budget = (Double) result[1];
+            Double actual = (Double) result[2];
+
+            double difference = actual - budget;
+            double percentageDifference = (budget > 0) ? (difference / budget) * 100 : 0.0;
+
+            responseList.add(new BudgetVsActualResponse(month, budget, actual, difference, percentageDifference));
+        }
+
+        return responseList;
+    }
+
+
+    @Override
+    @Transactional
+    public List<BudgetVsActualResponse> getBudgetVsActualByYearMonthAndSection(String year, String month, Currency currency, Long sectionId) {
+        List<Object[]> results = workPlanRepository.findBudgetVsActualByYearMonthCurrencyAndSection(year, month, currency, sectionId);
+        List<BudgetVsActualResponse> responseList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            String week = (String) result[0];
+            Double budget = (Double) result[1];
+            Double actual = (Double) result[2];
+
+            double difference = actual - budget;
+            double percentageDifference = (budget > 0) ? (difference / budget) * 100 : 0.0;
+
+            responseList.add(new BudgetVsActualResponse(week, budget, actual, difference, percentageDifference));
+        }
+
+        return responseList;
+    }
+
+
+
+    @Override
+    @Transactional
+    public List<BudgetVsActualResponse> getBudgetVsActualByYearAndSection(String year, Currency currency, Long sectionId) {
+        List<Object[]> results = workPlanRepository.findBudgetVsActualByYearCurrencyAndSection(year, currency, sectionId);
+        List<BudgetVsActualResponse> responseList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            String month = (String) result[0];
+            Double budget = (Double) result[1];
+            Double actual = (Double) result[2];
+
+            double difference = actual - budget;
+            double percentageDifference = (budget > 0) ? (difference / budget) * 100 : 0.0;
+
+            responseList.add(new BudgetVsActualResponse(month, budget, actual, difference, percentageDifference));
+        }
+
+        return responseList;
+    }
+
+
 
 
 }

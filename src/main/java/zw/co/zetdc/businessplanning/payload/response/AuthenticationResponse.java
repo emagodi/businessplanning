@@ -25,6 +25,8 @@ public class AuthenticationResponse {
 
     private String email;
 
+    private String cell;
+
     private List<String> roles;
 
     private Long sectionId;

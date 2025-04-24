@@ -31,6 +31,8 @@ public class RegisterRequest {
     @Email(message = "Please enter proper email format!")
     private String email;
 
+    private String cell;
+
 //    private String password;
 
     @Enumerated(EnumType.STRING)

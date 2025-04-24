@@ -184,4 +184,12 @@ public interface WorkPlanService {
 
     public List<NotificationTaskResponse> getOverdueTasksSummaryByDepartmentEmails(Long departmentId);
 
+    public List<BudgetVsActualResponse> getBudgetVsActualByYearMonthAndDepartment(String year, String month, Currency currency, Long departmentId);
+
+    public List<BudgetVsActualResponse> getBudgetVsActualByYearAndDepartment(String year, Currency currency, Long departmentId);
+
+    public List<BudgetVsActualResponse> getBudgetVsActualByYearMonthAndSection(String year, String month, Currency currency, Long sectionId);
+
+    public List<BudgetVsActualResponse> getBudgetVsActualByYearAndSection(String year, Currency currency, Long sectionId);
+
 }

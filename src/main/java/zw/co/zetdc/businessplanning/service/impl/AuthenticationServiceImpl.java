@@ -55,6 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
+                .cell(request.getCell())
                 .password(passwordEncoder.encode(generatedPassword)) // Save the encoded generated password
                 .role(request.getRole())
                 .sectionId(request.getSectionId()) // Set the sectionId from the request
@@ -96,6 +97,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .id(user.getId())
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())
+                .cell(user.getCell())
                 .password(generatedPassword) // Optionally include the generated password in the response
                 .refreshToken(refreshToken.getToken())
                 .roles(roles)
@@ -162,6 +164,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .id(user.getId())
                     .firstname(user.getFirstname())
                     .lastname(user.getLastname())
+                    .cell(user.getCell())
                     .sectionId(user.getSectionId())
                     .departmentId(user.getDepartmentId())
                     .divisionId(user.getDivisionId())
@@ -189,6 +192,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .id(user.getId())
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())
+                .cell(user.getCell())
                 .sectionId(user.getSectionId())
                 .departmentId(user.getDepartmentId())
                 .divisionId(user.getDivisionId())

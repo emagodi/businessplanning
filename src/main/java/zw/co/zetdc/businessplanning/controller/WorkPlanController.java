@@ -842,4 +842,55 @@ public class WorkPlanController {
     }
 
 
+    @GetMapping("/department/budgetVsActual/year/{year}/month/{month}/currency/{currency}/departmentId/{departmentId}")
+    @Operation(summary = "Get Budget Vs Expenditure per week for the department",
+            description = "Returns Budget Vs Expenditure per week for the department.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<BudgetVsActualResponse>> getBudgetVsActualByDepartment(
+            @PathVariable String year,
+            @PathVariable String month,
+            @PathVariable Currency currency,
+            @PathVariable Long departmentId) {
+        List<BudgetVsActualResponse> response = workPlanService.getBudgetVsActualByYearMonthAndDepartment(year, month, currency, departmentId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/department/budgetVsActual/year/{year}/currency/{currency}/departmentId/{departmentId}")
+    @Operation(summary = "Get Budget Vs Expenditure per month for the department",
+            description = "Returns Budget Vs Expenditure per month for the department.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<BudgetVsActualResponse>> getBudgetVsActualByDepartment(
+            @PathVariable String year,
+            @PathVariable Currency currency,
+            @PathVariable Long departmentId) {
+        List<BudgetVsActualResponse> response = workPlanService.getBudgetVsActualByYearAndDepartment(year, currency, departmentId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/section/budgetVsActual/year/{year}/month/{month}/currency/{currency}/sectionId/{sectionId}")
+    @Operation(summary = "Get Budget Vs Expenditure per week for the section",
+            description = "Returns Budget Vs Expenditure per week for the section.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<BudgetVsActualResponse>> getBudgetVsActualBySection(
+            @PathVariable String year,
+            @PathVariable String month,
+            @PathVariable Currency currency,
+            @PathVariable Long sectionId) {
+        List<BudgetVsActualResponse> response = workPlanService.getBudgetVsActualByYearMonthAndSection(year, month, currency, sectionId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/section/budgetVsActual/year/{year}/currency/{currency}/sectionId/{sectionId}")
+    @Operation(summary = "Get Budget Vs Expenditure per month for the section",
+            description = "Returns Budget Vs Expenditure per month for the section.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<BudgetVsActualResponse>> getBudgetVsActualBySection(
+            @PathVariable String year,
+            @PathVariable Currency currency,
+            @PathVariable Long sectionId) {
+        List<BudgetVsActualResponse> response = workPlanService.getBudgetVsActualByYearAndSection(year, currency, sectionId);
+        return ResponseEntity.ok(response);
+    }
+
+
 }

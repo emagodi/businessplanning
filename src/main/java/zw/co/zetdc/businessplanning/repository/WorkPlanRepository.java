@@ -351,4 +351,94 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
                                                           @Param("cancelled") Status cancelled);
 
 
+
+    @Query("""
+    SELECT 
+        wp.week AS week, 
+        SUM(wp.budget) AS budget, 
+        SUM(wp.actualExpenditure) AS actual
+    FROM 
+        WorkPlan wp
+    WHERE 
+        wp.year = :year 
+        AND wp.month = :month 
+        AND wp.departmentId = :departmentId 
+        AND wp.currency = :currency
+    GROUP BY 
+        wp.week
+    ORDER BY 
+        wp.week
+    """)
+    List<Object[]> findBudgetVsActualByYearMonthCurrencyAndDepartment(@Param("year") String year,
+                                                                      @Param("month") String month,
+                                                                      @Param("currency") Currency currency,
+                                                                      @Param("departmentId") Long departmentId);
+
+
+
+
+    @Query("""
+    SELECT 
+        wp.month AS month, 
+        SUM(wp.budget) AS budget, 
+        SUM(wp.actualExpenditure) AS actual
+    FROM 
+        WorkPlan wp
+    WHERE 
+        wp.year = :year 
+        AND wp.departmentId = :departmentId 
+        AND wp.currency = :currency
+    GROUP BY 
+        wp.month
+    ORDER BY 
+        FIELD(wp.month, 'January', 'February', 'March', 'April', 'May', 'June', 
+               'July', 'August', 'September', 'October', 'November', 'December')
+    """)
+    List<Object[]> findBudgetVsActualByYearCurrencyAndDepartment(@Param("year") String year,
+                                                                 @Param("currency") Currency currency,
+                                                                 @Param("departmentId") Long departmentId);
+
+    @Query("""
+    SELECT 
+        wp.week AS week, 
+        SUM(wp.budget) AS budget, 
+        SUM(wp.actualExpenditure) AS actual
+    FROM 
+        WorkPlan wp
+    WHERE 
+        wp.year = :year 
+        AND wp.month = :month 
+        AND wp.sectionId = :sectionId 
+        AND wp.currency = :currency
+    GROUP BY 
+        wp.week
+    ORDER BY 
+        wp.week
+    """)
+    List<Object[]> findBudgetVsActualByYearMonthCurrencyAndSection(@Param("year") String year,
+                                                                   @Param("month") String month,
+                                                                   @Param("currency") Currency currency,
+                                                                   @Param("sectionId") Long sectionId);
+
+    @Query("""
+    SELECT 
+        wp.month AS month, 
+        SUM(wp.budget) AS budget, 
+        SUM(wp.actualExpenditure) AS actual
+    FROM 
+        WorkPlan wp
+    WHERE 
+        wp.year = :year 
+        AND wp.sectionId = :sectionId 
+        AND wp.currency = :currency
+    GROUP BY 
+        wp.month
+    ORDER BY 
+        FIELD(wp.month, 'January', 'February', 'March', 'April', 'May', 'June', 
+               'July', 'August', 'September', 'October', 'November', 'December')
+    """)
+    List<Object[]> findBudgetVsActualByYearCurrencyAndSection(@Param("year") String year,
+                                                              @Param("currency") Currency currency,
+                                                              @Param("sectionId") Long sectionId);
+
 }
