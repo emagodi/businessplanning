@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import zw.co.zetdc.businessplanning.entities.User;
+import zw.co.zetdc.businessplanning.enums.Role;
 
 
 import java.util.List;
@@ -20,5 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void updatePasswordAndSetTemporaryFalse(String email, String password);
 
     User findBySectionId(Long sectionId);
+
+    User findBySectionIdAndRole(Long sectionId, Role role);
 
 }

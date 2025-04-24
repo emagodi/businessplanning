@@ -441,4 +441,63 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
                                                               @Param("currency") Currency currency,
                                                               @Param("sectionId") Long sectionId);
 
+
+    @Query("SELECT wp.sectionId, s.name, COUNT(wp), " +
+            "SUM(CASE WHEN wp.status = :completed THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :pending THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :inProgress THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :cancelled THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :reScheduled THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.targetCompletionDate < CURRENT_DATE AND wp.status NOT IN (:completed, :cancelled) THEN 1 ELSE 0 END) " +
+            "FROM WorkPlan wp JOIN Section s ON wp.sectionId = s.id " +
+            "WHERE wp.departmentId = :departmentId AND wp.week = :week AND wp.month = :month AND wp.year = :year " +
+            "GROUP BY wp.sectionId, s.name")
+    List<Object[]> findWorkPlanCountsBySectionAndPeriod(@Param("departmentId") Long departmentId,
+                                                        @Param("week") String week,
+                                                        @Param("month") String month,
+                                                        @Param("year") String year,
+                                                        @Param("completed") Status completed,
+                                                        @Param("pending") Status pending,
+                                                        @Param("inProgress") Status inProgress,
+                                                        @Param("cancelled") Status cancelled,
+                                                        @Param("reScheduled") Status reScheduled);
+
+    @Query("SELECT wp.sectionId, s.name, COUNT(wp), " +
+            "SUM(CASE WHEN wp.status = :completed THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :pending THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :inProgress THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :cancelled THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :reScheduled THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.targetCompletionDate < CURRENT_DATE AND wp.status NOT IN (:completed, :cancelled) THEN 1 ELSE 0 END) " +
+            "FROM WorkPlan wp JOIN Section s ON wp.sectionId = s.id " +
+            "WHERE wp.departmentId = :departmentId AND wp.month = :month AND wp.year = :year " +
+            "GROUP BY wp.sectionId, s.name")
+    List<Object[]> findWorkPlanCountsByDepartmentAndMonth(@Param("departmentId") Long departmentId,
+                                                          @Param("month") String month,
+                                                          @Param("year") String year,
+                                                          @Param("completed") Status completed,
+                                                          @Param("pending") Status pending,
+                                                          @Param("inProgress") Status inProgress,
+                                                          @Param("cancelled") Status cancelled,
+                                                          @Param("reScheduled") Status reScheduled);
+
+
+    @Query("SELECT wp.sectionId, s.name, COUNT(wp), " +
+            "SUM(CASE WHEN wp.status = :completed THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :pending THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :inProgress THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :cancelled THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.status = :reScheduled THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN wp.targetCompletionDate < CURRENT_DATE AND wp.status NOT IN (:completed, :cancelled) THEN 1 ELSE 0 END) " +
+            "FROM WorkPlan wp JOIN Section s ON wp.sectionId = s.id " +
+            "WHERE wp.departmentId = :departmentId AND wp.year = :year " +
+            "GROUP BY wp.sectionId, s.name")
+    List<Object[]> findWorkPlanCountsByDepartmentAndYear(@Param("departmentId") Long departmentId,
+                                                         @Param("year") String year,
+                                                         @Param("completed") Status completed,
+                                                         @Param("pending") Status pending,
+                                                         @Param("inProgress") Status inProgress,
+                                                         @Param("cancelled") Status cancelled,
+                                                         @Param("reScheduled") Status reScheduled);
+
 }

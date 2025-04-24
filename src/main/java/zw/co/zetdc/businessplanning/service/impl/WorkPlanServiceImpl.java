@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zw.co.zetdc.businessplanning.entities.*;
+import zw.co.zetdc.businessplanning.enums.Role;
 import zw.co.zetdc.businessplanning.enums.Status;
 import zw.co.zetdc.businessplanning.exception.NotFoundException;
 import zw.co.zetdc.businessplanning.payload.request.ScopeRequest;
@@ -2129,6 +2130,125 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return responseList;
     }
 
+    @Override
+    public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummaryByDepartmentAndPeriod(Long departmentId, String week, String month, String year) {
+        List<Object[]> results = workPlanRepository.findWorkPlanCountsBySectionAndPeriod(departmentId, week, month, year,
+                Status.COMPLETED, Status.PENDING, Status.IN_PROGRESS, Status.CANCELLED, Status.RE_SCHEDULED);
+        List<SectionWorkPlanSummaryResponsePeriod> responseList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Long sectionId = (Long) result[0];
+            String sectionName = (String) result[1]; // Get the section name
+            Long totalCount = (Long) result[2];
+            Long completed = (Long) result[3];
+            Long pending = (Long) result[4];
+            Long inProgress = (Long) result[5];
+            Long cancelled = (Long) result[6];
+            Long reScheduled = (Long) result[7];
+            Long overdue = (Long) result[8];
+
+            // Fetch the manager details
+            User manager = userRepository.findBySectionIdAndRole(sectionId, Role.MANAGER);
+            String managerFirstname = manager != null ? manager.getFirstname() : "Unknown";
+            String managerLastname = manager != null ? manager.getLastname() : "Unknown";
+
+            SectionWorkPlanSummaryResponsePeriod response = SectionWorkPlanSummaryResponsePeriod.builder()
+                    .sectionId(sectionId)
+                    .sectionName(sectionName) // Set the section name
+                    .managerFirstname(managerFirstname)
+                    .managerLastname(managerLastname)
+                    .totalCount(totalCount)
+                    .completed(completed)
+                    .pending(pending)
+                    .inProgress(inProgress)
+                    .cancelled(cancelled)
+                    .reScheduled(reScheduled)
+                    .overdue(overdue)
+                    .build();
+            responseList.add(response);
+        }
+        return responseList;
+    }
+
+    @Override
+    public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummaryByDepartmentAndMonth(Long departmentId, String month, String year) {
+        List<Object[]> results = workPlanRepository.findWorkPlanCountsByDepartmentAndMonth(departmentId, month, year,
+                Status.COMPLETED, Status.PENDING, Status.IN_PROGRESS, Status.CANCELLED, Status.RE_SCHEDULED);
+        List<SectionWorkPlanSummaryResponsePeriod> responseList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Long sectionId = (Long) result[0];
+            String sectionName = (String) result[1]; // Get the section name
+            Long totalCount = (Long) result[2];
+            Long completed = (Long) result[3];
+            Long pending = (Long) result[4];
+            Long inProgress = (Long) result[5];
+            Long cancelled = (Long) result[6];
+            Long reScheduled = (Long) result[7];
+            Long overdue = (Long) result[8];
+
+            // Fetch the manager details
+            User manager = userRepository.findBySectionIdAndRole(sectionId, Role.MANAGER);
+            String managerFirstname = manager != null ? manager.getFirstname() : "Unknown";
+            String managerLastname = manager != null ? manager.getLastname() : "Unknown";
+
+            SectionWorkPlanSummaryResponsePeriod response = SectionWorkPlanSummaryResponsePeriod.builder()
+                    .sectionId(sectionId)
+                    .sectionName(sectionName) // Set the section name
+                    .managerFirstname(managerFirstname)
+                    .managerLastname(managerLastname)
+                    .totalCount(totalCount)
+                    .completed(completed)
+                    .pending(pending)
+                    .inProgress(inProgress)
+                    .cancelled(cancelled)
+                    .reScheduled(reScheduled)
+                    .overdue(overdue)
+                    .build();
+            responseList.add(response);
+        }
+        return responseList;
+    }
+
+    @Override
+    public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummaryByDepartmentAndYear(Long departmentId, String year) {
+        List<Object[]> results = workPlanRepository.findWorkPlanCountsByDepartmentAndYear(departmentId, year,
+                Status.COMPLETED, Status.PENDING, Status.IN_PROGRESS, Status.CANCELLED, Status.RE_SCHEDULED);
+        List<SectionWorkPlanSummaryResponsePeriod> responseList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Long sectionId = (Long) result[0];
+            String sectionName = (String) result[1]; // Get the section name
+            Long totalCount = (Long) result[2];
+            Long completed = (Long) result[3];
+            Long pending = (Long) result[4];
+            Long inProgress = (Long) result[5];
+            Long cancelled = (Long) result[6];
+            Long reScheduled = (Long) result[7];
+            Long overdue = (Long) result[8];
+
+            // Fetch the manager details
+            User manager = userRepository.findBySectionIdAndRole(sectionId, Role.MANAGER);
+            String managerFirstname = manager != null ? manager.getFirstname() : "Unknown";
+            String managerLastname = manager != null ? manager.getLastname() : "Unknown";
+
+            SectionWorkPlanSummaryResponsePeriod response = SectionWorkPlanSummaryResponsePeriod.builder()
+                    .sectionId(sectionId)
+                    .sectionName(sectionName) // Set the section name
+                    .managerFirstname(managerFirstname)
+                    .managerLastname(managerLastname)
+                    .totalCount(totalCount)
+                    .completed(completed)
+                    .pending(pending)
+                    .inProgress(inProgress)
+                    .cancelled(cancelled)
+                    .reScheduled(reScheduled)
+                    .overdue(overdue)
+                    .build();
+            responseList.add(response);
+        }
+        return responseList;
+    }
 
 
 

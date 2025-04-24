@@ -192,4 +192,10 @@ public interface WorkPlanService {
 
     public List<BudgetVsActualResponse> getBudgetVsActualByYearAndSection(String year, Currency currency, Long sectionId);
 
+    public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummaryByDepartmentAndPeriod(Long departmentId, String week, String month, String year);
+
+    public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummaryByDepartmentAndMonth(Long departmentId, String month, String year);
+
+    public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummaryByDepartmentAndYear(Long departmentId, String year);
+
 }

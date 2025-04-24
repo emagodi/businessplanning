@@ -893,4 +893,37 @@ public class WorkPlanController {
     }
 
 
+    @GetMapping("/count/departmentId/{departmentId}/week/{week}/month/{month}/year/{year}")
+    @Operation(summary = "Get section workplan summary with names of managers for the week of that month and year ",
+            description = "Get section workplan summary with names of managers for the week of that month and year.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummary(
+            @PathVariable Long departmentId,
+            @PathVariable String week,
+            @PathVariable String month,
+            @PathVariable String year) {
+        return workPlanService.getWorkPlanSummaryByDepartmentAndPeriod(departmentId, week, month, year);
+    }
+
+
+    @GetMapping("/count/departmentId/{departmentId}/month/{month}/year/{year}")
+    @Operation(summary = "Get section workplan summary with names of managers for the month of that year ",
+            description = "Get section workplan summary with names of managers for the month of that year.")
+    public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummary(
+            @PathVariable Long departmentId,
+            @PathVariable String month,
+            @PathVariable String year) {
+        return workPlanService.getWorkPlanSummaryByDepartmentAndMonth(departmentId, month, year);
+    }
+
+    @GetMapping("/count/departmentId/{departmentId}/year/{year}")
+    @Operation(summary = "Get section workplan summary with names of managers for that year ",
+            description = "Get section workplan summary with names of managers for that year.")
+    public List<SectionWorkPlanSummaryResponsePeriod> getWorkPlanSummaryByDepartmentAndYear(
+            @PathVariable Long departmentId,
+            @PathVariable String year) {
+        return workPlanService.getWorkPlanSummaryByDepartmentAndYear(departmentId, year);
+    }
+
+
 }
