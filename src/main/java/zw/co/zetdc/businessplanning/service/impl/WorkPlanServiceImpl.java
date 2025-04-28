@@ -2462,6 +2462,59 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return responseList;
     }
 
+    @Override
+    public List<OverdueEmailResponse> getOverdueEmailSummaryByDepartment(Long departmentId) {
+        List<Map<String, Object>> results = workPlanRepository.findOverdueWorkPlansByDepartment(departmentId, Status.COMPLETED, Status.CANCELLED);
+
+        Map<Long, OverdueEmailResponse> sectionMap = new HashMap<>();
+
+        for (Map<String, Object> result : results) {
+            Long sectionId = (Long) result.get("sectionId");
+            String sectionName = (String) result.get("sectionName");
+
+            OverdueEmailResponse response = sectionMap.computeIfAbsent(sectionId, id -> {
+                OverdueEmailResponse newResponse = new OverdueEmailResponse();
+                newResponse.setSectionId(id);
+                newResponse.setSectionName(sectionName);
+                newResponse.setTotalWorkPlans(0);
+                newResponse.setOverdueWorkPlans(0);
+                newResponse.setPercentageOverdue(0.0);
+                newResponse.setSectionManager((String) result.get("sectionManager"));
+                newResponse.setTeamMembers(new ArrayList<>());
+                return newResponse;
+            });
+
+            response.setTotalWorkPlans(response.getTotalWorkPlans() + ((Number) result.get("totalWorkPlans")).intValue());
+            response.setOverdueWorkPlans(response.getOverdueWorkPlans() + ((Number) result.get("overdueWorkPlans")).intValue());
+            response.setPercentageOverdue((double) response.getOverdueWorkPlans() / response.getTotalWorkPlans() * 100); // Recalculate percentage
+
+            String teamMember = (String) result.get("teamMember");
+            int count = ((Number) result.get("memberCount")).intValue();
+            response.getTeamMembers().add(teamMember + "(" + count + ")");
+        }
+
+        return new ArrayList<>(sectionMap.values()); // Return all sections
+    }
+
+    private int getMonthAsInteger(String month) {
+        switch (month.toLowerCase()) {
+            case "January": return 1;
+            case "February": return 2;
+            case "March": return 3;
+            case "April": return 4;
+            case "May": return 5;
+            case "June": return 6;
+            case "July": return 7;
+            case "August": return 8;
+            case "September": return 9;
+            case "October": return 10;
+            case "November": return 11;
+            case "December": return 12;
+            default: throw new IllegalArgumentException("Invalid month: " + month);
+        }
+    }
+
+
 
 
 }

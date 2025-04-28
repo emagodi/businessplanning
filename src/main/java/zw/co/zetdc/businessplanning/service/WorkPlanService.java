@@ -210,4 +210,7 @@ public interface WorkPlanService {
 
     public List<Map<String, Object>> getBudgetUsageByYear(String year, Currency currency, Long departmentId);
 
+    List<OverdueEmailResponse> getOverdueEmailSummaryByDepartment(Long departmentId);
+
+
 }
