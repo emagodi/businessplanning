@@ -960,5 +960,45 @@ public class WorkPlanController {
         return workPlanService.getTeamMemberSummaryByYear(sectionId, year);
     }
 
+    @GetMapping("/department/budgetUsage/year/{year}/month/{month}/week/{week}/currency/{currency}/departmentId/{departmentId}")
+    @Operation(summary = "Get budget usage for each section in a department per week",
+            description = "Returns budget usage details for sections in the specified department for the given period.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Map<String, Object>>> getBudgetUsage(
+            @PathVariable String year,
+            @PathVariable String month,
+            @PathVariable String week,
+            @PathVariable Currency currency,
+            @PathVariable Long departmentId) {
+        List<Map<String, Object>> budgetUsage = workPlanService.getBudgetUsageByDepartment(year, month, week, currency, departmentId);
+        return ResponseEntity.ok(budgetUsage);
+    }
+
+    @GetMapping("/department/budgetUsage/year/{year}/month/{month}/currency/{currency}/departmentId/{departmentId}")
+    @Operation(summary = "Get budget usage for each section in a department per month",
+            description = "Returns budget usage details for sections in the specified department for the given period.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Map<String, Object>>> getBudgetUsageByMonth(
+            @PathVariable String year,
+            @PathVariable String month,
+            @PathVariable Currency currency,
+            @PathVariable Long departmentId) {
+        List<Map<String, Object>> budgetUsage = workPlanService.getBudgetUsageByMonth(year, month, currency, departmentId);
+        return ResponseEntity.ok(budgetUsage);
+    }
+
+
+    @GetMapping("/department/budgetUsage/year/{year}/currency/{currency}/departmentId/{departmentId}")
+    @Operation(summary = "Get budget usage for each section in a department per year",
+            description = "Returns budget usage details for sections in the specified department for the given period.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Map<String, Object>>> getBudgetUsageByYear(
+            @PathVariable String year,
+            @PathVariable Currency currency,
+            @PathVariable Long departmentId) {
+        List<Map<String, Object>> budgetUsage = workPlanService.getBudgetUsageByYear(year, currency, departmentId);
+        return ResponseEntity.ok(budgetUsage);
+    }
+
 
 }

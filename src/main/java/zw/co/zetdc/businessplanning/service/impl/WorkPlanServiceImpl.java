@@ -2352,6 +2352,117 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     }
 
 
+    @Override
+    @Transactional
+    public List<Map<String, Object>> getBudgetUsageByDepartment(String year, String month, String week, Currency currency, Long departmentId) {
+        // Fetch actual expenditure for sections in the specified department
+        List<Object[]> results = workPlanRepository.findAllSectionsWithActualExpenditureByDepartment(year, month, week, departmentId);
+        List<Map<String, Object>> responseList = new ArrayList<>();
+
+        // Calculate total actual expenditure for the department
+        double totalDepartmentExpenditure = results.stream()
+                .mapToDouble(result -> (Double) result[2]) // actualExpenditure
+                .sum();
+
+        // Create the response list with percentage calculations for each section
+        for (Object[] result : results) {
+            Long sectionId = (Long) result[0];
+            String sectionName = (String) result[1];
+            Double actualExpenditure = (Double) result[2];
+
+            // Calculate percentage contribution based on the total department expenditure
+            Double percentageUsage = (totalDepartmentExpenditure > 0)
+                    ? (actualExpenditure / totalDepartmentExpenditure) * 100
+                    : 0.0;
+
+            Map<String, Object> response = Map.of(
+                    "sectionId", sectionId,
+                    "sectionName", sectionName,
+                    "actualExpenditure", actualExpenditure,
+                    "percentageUsage", percentageUsage
+            );
+
+            responseList.add(response);
+        }
+
+        return responseList;
+    }
+
+
+    @Transactional
+    @Override
+    public List<Map<String, Object>> getBudgetUsageByMonth(String year, String month, Currency currency, Long departmentId) {
+        // Fetch actual expenditure for sections in the specified department and month
+        List<Object[]> results = workPlanRepository.findAllSectionsWithActualExpenditureByDepartmentAndMonth(year, month, departmentId);
+        List<Map<String, Object>> responseList = new ArrayList<>();
+
+        // Calculate total actual expenditure for the department
+        double totalDepartmentExpenditure = results.stream()
+                .mapToDouble(result -> (Double) result[2]) // actualExpenditure
+                .sum();
+
+        // Create the response list with percentage calculations for each section
+        for (Object[] result : results) {
+            Long sectionId = (Long) result[0];
+            String sectionName = (String) result[1];
+            Double actualExpenditure = (Double) result[2];
+
+            // Calculate percentage contribution based on the total department expenditure
+            Double percentageUsage = (totalDepartmentExpenditure > 0)
+                    ? (actualExpenditure / totalDepartmentExpenditure) * 100
+                    : 0.0;
+
+            Map<String, Object> response = Map.of(
+                    "sectionId", sectionId,
+                    "sectionName", sectionName,
+                    "actualExpenditure", actualExpenditure,
+                    "percentageUsage", percentageUsage
+            );
+
+            responseList.add(response);
+        }
+
+        return responseList;
+    }
+
+
+    @Transactional
+    @Override
+    public List<Map<String, Object>> getBudgetUsageByYear(String year, Currency currency, Long departmentId) {
+        // Fetch actual expenditure for sections in the specified department and year
+        List<Object[]> results = workPlanRepository.findAllSectionsWithActualExpenditureByDepartmentAndYear(year, departmentId);
+        List<Map<String, Object>> responseList = new ArrayList<>();
+
+        // Calculate total actual expenditure for the department
+        double totalDepartmentExpenditure = results.stream()
+                .mapToDouble(result -> (Double) result[2]) // actualExpenditure
+                .sum();
+
+        // Create the response list with percentage calculations for each section
+        for (Object[] result : results) {
+            Long sectionId = (Long) result[0];
+            String sectionName = (String) result[1];
+            Double actualExpenditure = (Double) result[2];
+
+            // Calculate percentage contribution based on the total department expenditure
+            Double percentageUsage = (totalDepartmentExpenditure > 0)
+                    ? (actualExpenditure / totalDepartmentExpenditure) * 100
+                    : 0.0;
+
+            Map<String, Object> response = Map.of(
+                    "sectionId", sectionId,
+                    "sectionName", sectionName,
+                    "actualExpenditure", actualExpenditure,
+                    "percentageUsage", percentageUsage
+            );
+
+            responseList.add(response);
+        }
+
+        return responseList;
+    }
+
+
 
 }
 

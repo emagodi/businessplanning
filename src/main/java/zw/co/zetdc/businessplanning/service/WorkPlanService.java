@@ -204,4 +204,10 @@ public interface WorkPlanService {
 
     public List<TeamMemberSummaryResponse> getTeamMemberSummaryByYear(Long sectionId, String year);
 
+    public List<Map<String, Object>> getBudgetUsageByDepartment(String year, String month, String week, Currency currency, Long departmentId);
+
+    public List<Map<String, Object>> getBudgetUsageByMonth(String year, String month, Currency currency, Long departmentId);
+
+    public List<Map<String, Object>> getBudgetUsageByYear(String year, Currency currency, Long departmentId);
+
 }

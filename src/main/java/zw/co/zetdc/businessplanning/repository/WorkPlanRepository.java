@@ -561,4 +561,55 @@ public interface WorkPlanRepository extends JpaRepository<WorkPlan, Long> {
                                                  @Param("cancelled") Status cancelled,
                                                  @Param("reScheduled") Status reScheduled);
 
+
+    @Query("""
+SELECT s.id AS sectionId, s.name AS sectionName, 
+       COALESCE(SUM(wp.actualExpenditure), 0) AS actualExpenditure
+FROM Section s
+JOIN s.departments d
+LEFT JOIN WorkPlan wp ON s.id = wp.sectionId 
+AND wp.year = :year 
+AND wp.month = :month 
+AND wp.week = :week 
+WHERE d.id = :departmentId
+GROUP BY s.id, s.name
+""")
+    List<Object[]> findAllSectionsWithActualExpenditureByDepartment(
+            @Param("year") String year,
+            @Param("month") String month,
+            @Param("week") String week,
+            @Param("departmentId") Long departmentId);
+
+
+    @Query("""
+SELECT s.id AS sectionId, s.name AS sectionName, 
+       COALESCE(SUM(wp.actualExpenditure), 0) AS actualExpenditure
+FROM Section s
+JOIN s.departments d
+LEFT JOIN WorkPlan wp ON s.id = wp.sectionId 
+AND wp.year = :year 
+AND wp.month = :month 
+WHERE d.id = :departmentId
+GROUP BY s.id, s.name
+""")
+    List<Object[]> findAllSectionsWithActualExpenditureByDepartmentAndMonth(
+            @Param("year") String year,
+            @Param("month") String month,
+            @Param("departmentId") Long departmentId);
+
+
+    @Query("""
+SELECT s.id AS sectionId, s.name AS sectionName, 
+       COALESCE(SUM(wp.actualExpenditure), 0) AS actualExpenditure
+FROM Section s
+JOIN s.departments d
+LEFT JOIN WorkPlan wp ON s.id = wp.sectionId 
+AND wp.year = :year 
+WHERE d.id = :departmentId
+GROUP BY s.id, s.name
+""")
+    List<Object[]> findAllSectionsWithActualExpenditureByDepartmentAndYear(
+            @Param("year") String year,
+            @Param("departmentId") Long departmentId);
+
 }
