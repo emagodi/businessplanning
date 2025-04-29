@@ -1014,6 +1014,9 @@ public class WorkPlanController {
 
 
     @GetMapping("/department/aboveBudgetEmail/week/{week}/month/{month}/year/{year}/department/{departmentId}/currency/{currency}")
+    @Operation(summary = "Get above budget for email notifications for week",
+            description = "Get above budget tasks for email notifications for week.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<List<AboveBudgetResponse>> getSectionsAboveBudget(
             @PathVariable String week,
             @PathVariable String month,
