@@ -612,7 +612,6 @@ GROUP BY s.id, s.name
             @Param("year") String year,
             @Param("departmentId") Long departmentId);
 
-
     @Query("""
     SELECT s.name AS sectionName,
            s.id AS sectionId,
@@ -620,6 +619,8 @@ GROUP BY s.id, s.name
            SUM(CASE WHEN wp.targetCompletionDate < CURRENT_DATE AND wp.status NOT IN (:completed, :cancelled) THEN 1 ELSE 0 END) AS overdueWorkPlans,
            (SUM(CASE WHEN wp.targetCompletionDate < CURRENT_DATE AND wp.status NOT IN (:completed, :cancelled) THEN 1 ELSE 0 END) * 100.0 / COUNT(wp)) AS percentageOverdue,
            CONCAT(u.firstname, ' ', u.lastname) AS sectionManager,
+           (SELECT u2.email FROM User u2 WHERE u2.role = 'SENIORMANAGER' AND u2.divisionId = wp.divisionId) AS seniorManagerEmail,
+           (SELECT u3.email FROM User u3 WHERE u3.role = 'MANAGER' AND u3.sectionId = s.id) AS sectionManagerEmail,
            tm.firstname AS teamMember,
            COUNT(tm.firstname) AS memberCount
     FROM Section s
@@ -633,6 +634,7 @@ GROUP BY s.id, s.name
     List<Map<String, Object>> findOverdueWorkPlansByDepartment(@Param("departmentId") Long departmentId,
                                                                @Param("completed") Status completed,
                                                                @Param("cancelled") Status cancelled);
+
 
 
 

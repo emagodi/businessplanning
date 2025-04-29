@@ -19,5 +19,7 @@ public class OverdueEmailResponse {
     private int overdueWorkPlans;
     private double percentageOverdue;
     private String sectionManager;
+    private String seniorManagerEmail;
+    private String sectionManagerEmail;
     private List<String> teamMembers;
 }

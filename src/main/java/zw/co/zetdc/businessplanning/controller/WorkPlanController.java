@@ -1001,12 +1001,12 @@ public class WorkPlanController {
     }
 
 
-    @GetMapping("/department/overdueEmail/year/{year}/departmentId/{departmentId}")
+    @GetMapping("/department/overdueEmail/departmentId/{departmentId}")
     @Operation(summary = "Get overdue tasks for email notifications for year",
             description = "Get overdue tasks for email notifications for year.")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<List<OverdueEmailResponse>> getOverdueEmailsByDepartment(
-            @PathVariable String year,
+
             @PathVariable Long departmentId) {
         List<OverdueEmailResponse> overdueTasks = workPlanService.getOverdueEmailSummaryByDepartment(departmentId);
         return ResponseEntity.ok(overdueTasks);
