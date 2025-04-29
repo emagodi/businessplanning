@@ -213,4 +213,6 @@ public interface WorkPlanService {
     List<OverdueEmailResponse> getOverdueEmailSummaryByDepartment(Long departmentId);
 
 
+    public List<AboveBudgetResponse> getSectionsAboveBudget(String week, String month, String year, Long departmentId, Currency currency);
+
 }

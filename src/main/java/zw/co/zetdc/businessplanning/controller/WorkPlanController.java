@@ -1013,4 +1013,16 @@ public class WorkPlanController {
     }
 
 
+    @GetMapping("/department/aboveBudgetEmail/week/{week}/month/{month}/year/{year}/department/{departmentId}/currency/{currency}")
+    public ResponseEntity<List<AboveBudgetResponse>> getSectionsAboveBudget(
+            @PathVariable String week,
+            @PathVariable String month,
+            @PathVariable String year,
+            @PathVariable Long departmentId,
+            @PathVariable Currency currency) {
+        List<AboveBudgetResponse> sections = workPlanService.getSectionsAboveBudget(week, month, year, departmentId, currency);
+        return ResponseEntity.ok(sections);
+    }
+
+
 }

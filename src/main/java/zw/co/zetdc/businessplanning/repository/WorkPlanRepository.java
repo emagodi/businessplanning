@@ -7,6 +7,7 @@ import zw.co.zetdc.businessplanning.entities.Scope;
 import zw.co.zetdc.businessplanning.entities.WorkPlan;
 import zw.co.zetdc.businessplanning.enums.Currency;
 import zw.co.zetdc.businessplanning.enums.Status;
+import zw.co.zetdc.businessplanning.payload.response.AboveBudgetResponse;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -635,6 +636,35 @@ GROUP BY s.id, s.name
                                                                @Param("completed") Status completed,
                                                                @Param("cancelled") Status cancelled);
 
+
+    @Query("""
+    SELECT new zw.co.zetdc.businessplanning.payload.response.AboveBudgetResponse(
+           s.name, 
+           s.id, 
+           SUM(wp.budget), 
+           SUM(wp.actualExpenditure),
+           (SUM(wp.actualExpenditure) - SUM(wp.budget)) / SUM(wp.budget) * 100, 
+           (SELECT u.firstname || ' ' || u.lastname FROM User u WHERE u.role = 'MANAGER' AND u.sectionId = s.id), 
+           (SELECT u.email FROM User u WHERE u.role = 'SENIORMANAGER' AND u.divisionId = wp.divisionId), 
+           (SELECT u.email FROM User u WHERE u.role = 'MANAGER' AND u.sectionId = s.id)
+    )
+    FROM Section s
+    JOIN s.departments d
+    JOIN WorkPlan wp ON s.id = wp.sectionId
+    WHERE d.id = :departmentId 
+    AND wp.currency = :currency
+    AND wp.year = :year 
+    AND wp.month = :month 
+    AND wp.week = :week 
+    AND wp.actualExpenditure > wp.budget
+    GROUP BY s.id, s.name
+""")
+    List<AboveBudgetResponse> findSectionsAboveBudget(
+            @Param("week") String week,
+            @Param("month") String month,
+            @Param("year") String year,
+            @Param("departmentId") Long departmentId,
+            @Param("currency") Currency currency);
 
 
 

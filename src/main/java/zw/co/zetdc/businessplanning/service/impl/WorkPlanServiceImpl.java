@@ -2498,6 +2498,13 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return new ArrayList<>(sectionMap.values()); // Return all sections
     }
 
+    @Override
+    public List<AboveBudgetResponse> getSectionsAboveBudget(String week, String month, String year, Long departmentId, Currency currency) {
+        return workPlanRepository.findSectionsAboveBudget(week, month, year, departmentId, currency);
+    }
+
+
+
 }
 
 
