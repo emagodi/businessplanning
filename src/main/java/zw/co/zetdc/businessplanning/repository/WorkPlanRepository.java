@@ -668,4 +668,73 @@ GROUP BY s.id, s.name
 
 
 
+
+
+    //Email things here
+
+    WorkPlan findFirstByDepartmentId(Long departmentId);
+
+    @Query("""
+        SELECT wp.id, wp.planName, tm.firstname, tm.lastname, wp.targetCompletionDate
+        FROM WorkPlan wp
+        JOIN wp.scopes s
+        JOIN s.assignedTeamMembers tm
+        WHERE wp.sectionId = :sectionId
+        AND wp.status NOT IN (:completedStatus, :cancelledStatus)
+        AND wp.targetCompletionDate < CURRENT_DATE
+    """)
+    List<Object[]> findOverdueTasksBySectionId(
+            @Param("sectionId") Long sectionId,
+            @Param("completedStatus") Status completedStatus,
+            @Param("cancelledStatus") Status cancelledStatus
+    );
+
+    @Query("""
+        SELECT tm.firstname, tm.lastname, COUNT(wp) AS workPlanCount
+        FROM WorkPlan wp
+        JOIN wp.scopes s
+        JOIN s.assignedTeamMembers tm
+        WHERE wp.sectionId = :sectionId
+        GROUP BY tm.id, tm.firstname, tm.lastname
+        ORDER BY workPlanCount DESC
+    """)
+    List<Object[]> findTeamMemberWithHighestWorkPlans(@Param("sectionId") Long sectionId);
+
+    @Query("""
+        SELECT tm.firstname, tm.lastname, COUNT(wp) AS workPlanCount
+        FROM WorkPlan wp
+        JOIN wp.scopes s
+        JOIN s.assignedTeamMembers tm
+        WHERE wp.sectionId = :sectionId
+        GROUP BY tm.id, tm.firstname, tm.lastname
+        ORDER BY workPlanCount ASC
+    """)
+    List<Object[]> findTeamMemberWithLowestWorkPlans(@Param("sectionId") Long sectionId);
+
+    @Query("""
+        SELECT wp.planName, tm.firstname, tm.lastname, wp.budget, wp.actualExpenditure, wp.currency
+        FROM WorkPlan wp
+        JOIN wp.scopes s
+        JOIN s.assignedTeamMembers tm
+        WHERE wp.sectionId = :sectionId
+        AND wp.actualExpenditure > wp.budget
+    """)
+    List<Object[]> findAboveBudgetWorkPlansBySectionId(@Param("sectionId") Long sectionId);
+
+    @Query(value = """
+        SELECT u.firstname, u.lastname, u.email 
+        FROM _user u 
+        WHERE u.role = 'SENIORMANAGER' 
+        AND u.division_id = :divisionId LIMIT 1
+    """, nativeQuery = true)
+    List<Object[]> findSeniorManagerByDivisionId(@Param("divisionId") Long divisionId);
+
+    @Query(value = """
+        SELECT u.firstname, u.lastname, u.email 
+        FROM _user u 
+        WHERE u.role = 'MANAGER' 
+        AND u.section_id = :sectionId LIMIT 1
+    """, nativeQuery = true)
+    List<Object[]> findSectionManagerBySectionId(@Param("sectionId") Long sectionId);
+
 }

@@ -55,6 +55,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         workPlan.setMonth(workPlanRequest.getMonth());
         workPlan.setWeek(workPlanRequest.getWeek());
         workPlan.setYear(workPlanRequest.getYear());
+        workPlan.setPlanName(workPlanRequest.getPlanName());
         workPlan.setWeeklyTarget(workPlanRequest.getWeeklyTarget());
         workPlan.setActualWorkDone(workPlanRequest.getActualWorkDone());
 
@@ -78,6 +79,7 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         workPlan.setDepartmentId(workPlanRequest.getDepartmentId());
         workPlan.setDivisionId(workPlanRequest.getDivisionId());
         workPlan.setStatus(workPlanRequest.getStatus());
+        workPlan.setUnit(workPlanRequest.getUnit());
         workPlan.setStartDate(workPlanRequest.getStartDate());
         workPlan.setTargetCompletionDate(workPlanRequest.getTargetCompletionDate());
         workPlan.setActualCompletionDate(workPlanRequest.getActualCompletionDate());
@@ -2502,6 +2504,115 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     public List<AboveBudgetResponse> getSectionsAboveBudget(String week, String month, String year, Long departmentId, Currency currency) {
         return workPlanRepository.findSectionsAboveBudget(week, month, year, departmentId, currency);
     }
+
+
+    //Email service
+
+    @Override
+    public EmailDepartmentSectionSummaryResponse getDepartmentSectionSummary(Long departmentId) {
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new EntityNotFoundException("Department not found"));
+
+        EmailDepartmentSectionSummaryResponse response = new EmailDepartmentSectionSummaryResponse();
+        response.setDepartmentId(departmentId);
+        response.setDepartmentName(department.getName());
+
+        // Fetch a WorkPlan associated with the Department to get the divisionId
+        WorkPlan workPlan = workPlanRepository.findFirstByDepartmentId(departmentId);
+
+        if (workPlan != null) {
+            // Find Senior Manager using the divisionId from the WorkPlan
+            List<Object[]> seniorManagerResults = workPlanRepository.findSeniorManagerByDivisionId(workPlan.getDivisionId());
+            if (!seniorManagerResults.isEmpty()) {
+                Object[] seniorManagerData = seniorManagerResults.get(0);
+                response.setSeniorManagerFullName((String) seniorManagerData[0] + " " + (String) seniorManagerData[1]);
+                response.setSeniorManagerEmail((String) seniorManagerData[2]);
+            }
+        }
+
+        List<EmailSectionSummary> sectionSummaries = new ArrayList<>();
+        List<Section> sections = sectionRepository.findByDepartmentsId(departmentId);
+
+        for (Section section : sections) {
+            EmailSectionSummary sectionSummary = new EmailSectionSummary();
+            sectionSummary.setSectionName(section.getName());
+
+            // Find Section Manager
+            List<Object[]> sectionManagerResults = workPlanRepository.findSectionManagerBySectionId(section.getId());
+            if (!sectionManagerResults.isEmpty()) {
+                Object[] sectionManagerData = sectionManagerResults.get(0);
+                sectionSummary.setSectionManagerFullName((String) sectionManagerData[0] + " " + (String) sectionManagerData[1]);
+                sectionSummary.setSectionManagerEmail((String) sectionManagerData[2]);
+            }
+
+            // Overdue Tasks
+            List<Object[]> overdueTaskResults = workPlanRepository.findOverdueTasksBySectionId(section.getId(), Status.COMPLETED, Status.CANCELLED);
+            List<EmailOverdueTask> overdueTasks = new ArrayList<>();
+            for (Object[] result : overdueTaskResults) {
+                EmailOverdueTask overdueTask = new EmailOverdueTask();
+                overdueTask.setWorkPlanId(((Number) result[0]).longValue());
+                overdueTask.setPlanName((String) result[1]);
+                List<String> teamMemberNames = new ArrayList<>();
+                teamMemberNames.add((String) result[2] + " " + (String) result[3]);
+                overdueTask.setTeamMemberNames(teamMemberNames);
+                overdueTask.setTargetCompletionDate((Date) result[4]);
+
+                Date targetCompletionDate = (Date) result[4];
+                Date currentDate = new Date();
+
+                // Calculate days overdue
+                long daysOverdue = ChronoUnit.DAYS.between(
+                        targetCompletionDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                );
+                overdueTask.setDaysOverdue(daysOverdue);
+
+                overdueTasks.add(overdueTask);
+            }
+            sectionSummary.setOverdueTasks(overdueTasks);
+
+            // Team Member with Highest Work Plans
+            List<Object[]> highestWorkPlanResults = workPlanRepository.findTeamMemberWithHighestWorkPlans(section.getId());
+            if (!highestWorkPlanResults.isEmpty()) {
+                EmailTeamMemberSummary teamMemberSummary = new EmailTeamMemberSummary();
+                teamMemberSummary.setTeamMemberName((String) highestWorkPlanResults.get(0)[0] + " " + (String) highestWorkPlanResults.get(0)[1]);
+                teamMemberSummary.setWorkPlanCount(((Number) highestWorkPlanResults.get(0)[2]).intValue());
+                sectionSummary.setTeamMemberWithHighestWorkPlans(teamMemberSummary);
+            }
+
+            // Team Member with Lowest Work Plans
+            List<Object[]> lowestWorkPlanResults = workPlanRepository.findTeamMemberWithLowestWorkPlans(section.getId());
+            if (!lowestWorkPlanResults.isEmpty()) {
+                EmailTeamMemberSummary teamMemberSummary = new EmailTeamMemberSummary();
+                teamMemberSummary.setTeamMemberName((String) lowestWorkPlanResults.get(0)[0] + " " + (String) lowestWorkPlanResults.get(0)[1]);
+                teamMemberSummary.setWorkPlanCount(((Number) lowestWorkPlanResults.get(0)[2]).intValue());
+                sectionSummary.setTeamMemberWithLowestWorkPlans(teamMemberSummary);
+            }
+
+            // Above Budget Work Plans
+            List<Object[]> aboveBudgetResults = workPlanRepository.findAboveBudgetWorkPlansBySectionId(section.getId());
+            List<EmailAboveBudgetWorkPlan> aboveBudgetWorkPlans = new ArrayList<>();
+            for (Object[] result : aboveBudgetResults) {
+                EmailAboveBudgetWorkPlan aboveBudgetWorkPlan = new EmailAboveBudgetWorkPlan();
+                aboveBudgetWorkPlan.setPlanName((String) result[0]);
+                List<String> teamMemberNames = new ArrayList<>();
+                teamMemberNames.add((String) result[1] + " " + (String) result[2]);
+                aboveBudgetWorkPlan.setTeamMemberNames(teamMemberNames);
+                aboveBudgetWorkPlan.setBudget((Double) result[3]);
+                aboveBudgetWorkPlan.setActualExpenditure((Double) result[4]);
+                aboveBudgetWorkPlan.setDifference(aboveBudgetWorkPlan.getActualExpenditure() - aboveBudgetWorkPlan.getBudget());
+                aboveBudgetWorkPlan.setCurrency(result[5].toString());
+                aboveBudgetWorkPlans.add(aboveBudgetWorkPlan);
+            }
+            sectionSummary.setAboveBudgetWorkPlans(aboveBudgetWorkPlans);
+
+            sectionSummaries.add(sectionSummary);
+        }
+
+        response.setSections(sectionSummaries);
+        return response;
+    }
+
 
 
 

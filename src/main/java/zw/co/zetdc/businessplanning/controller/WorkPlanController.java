@@ -1028,4 +1028,12 @@ public class WorkPlanController {
     }
 
 
+    //Email controller
+    @GetMapping("/department/Email/{departmentId}")
+    public ResponseEntity<EmailDepartmentSectionSummaryResponse> getDepartmentSectionSummary(
+            @PathVariable Long departmentId) {
+        EmailDepartmentSectionSummaryResponse summary = workPlanService.getDepartmentSectionSummary(departmentId);
+        return ResponseEntity.ok(summary);
+    }
+
 }

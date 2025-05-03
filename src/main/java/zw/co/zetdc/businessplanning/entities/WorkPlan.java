@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import zw.co.zetdc.businessplanning.enums.Currency;
 import zw.co.zetdc.businessplanning.enums.Status;
+import zw.co.zetdc.businessplanning.enums.Unit;
 import zw.co.zetdc.businessplanning.handlers.BaseEntity;
 
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class WorkPlan extends BaseEntity {
     private String week;
     private String year;
 
+    private String planName;
+
     private Integer weeklyTarget;
     private Integer actualWorkDone;
     private Double percentageComplete;
@@ -34,7 +37,7 @@ public class WorkPlan extends BaseEntity {
     private Double percentOfBudget;
 
     private Currency currency;
-
+    private Unit unit;
 
     private Status status;
     private Date startDate;

@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import zw.co.zetdc.businessplanning.entities.Scope;
+import zw.co.zetdc.businessplanning.enums.Currency;
 import zw.co.zetdc.businessplanning.enums.Status;
+import zw.co.zetdc.businessplanning.enums.Unit;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -23,6 +25,7 @@ public class WorkPlanResponse {
     private String month;
     private String week;
     private String year;
+    private String planName;
     private Integer weeklyTarget;
     private Integer actualWorkDone;
     private Double budget;
@@ -31,6 +34,8 @@ public class WorkPlanResponse {
     private Double percentOfBudget;
     private String remarks;
     private Status status;
+    private Unit unit;
+    private Currency currency;
     private Date startDate;
     private Date targetCompletionDate;
     private Date actualCompletionDate;

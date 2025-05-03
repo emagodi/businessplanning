@@ -215,4 +215,7 @@ public interface WorkPlanService {
 
     public List<AboveBudgetResponse> getSectionsAboveBudget(String week, String month, String year, Long departmentId, Currency currency);
 
+
+    EmailDepartmentSectionSummaryResponse getDepartmentSectionSummary(Long departmentId);
+
 }
