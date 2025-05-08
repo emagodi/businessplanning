@@ -1030,10 +1030,28 @@ public class WorkPlanController {
 
     //Email controller
     @GetMapping("/department/Email/{departmentId}")
+    @Operation(summary = "Email notification endpoint",
+            description = "Email notification endpoint.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
     public ResponseEntity<EmailDepartmentSectionSummaryResponse> getDepartmentSectionSummary(
             @PathVariable Long departmentId) {
         EmailDepartmentSectionSummaryResponse summary = workPlanService.getDepartmentSectionSummary(departmentId);
         return ResponseEntity.ok(summary);
     }
+
+    @GetMapping("/department/statusContribution/year/{year}/month/{month}/status/{status}/departmentId/{departmentId}")
+    @Operation(summary = "Section contribution to status for that month",
+            description = "Section contribution to status for that month.")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<Map<String, Object>>> getWorkPlanContribution(
+            @PathVariable String year,
+            @PathVariable String month,
+            @PathVariable Status status,
+            @PathVariable Long departmentId) {
+        List<Map<String, Object>> contributions = workPlanService.calculateWorkPlanContribution(year, month, status, departmentId);
+        return ResponseEntity.ok(contributions);
+    }
+
+
 
 }

@@ -2614,6 +2614,44 @@ public class WorkPlanServiceImpl implements WorkPlanService {
     }
 
 
+    @Override
+    @Transactional
+    public List<Map<String, Object>> calculateWorkPlanContribution(String year, String month, Status status, Long departmentId) {
+        List<WorkPlan> workPlans = workPlanRepository.findByDepartmentIdAndMonthAndYear(departmentId, month, year);
+
+        // Total work plans for the department
+        int totalWorkPlans = workPlans.size();
+
+        // Calculate contributions by section
+        Map<Long, Long> sectionCounts = workPlans.stream()
+                .collect(Collectors.groupingBy(WorkPlan::getSectionId, Collectors.counting()));
+
+        // Prepare response
+        List<Map<String, Object>> response = new ArrayList<>();
+
+        for (Map.Entry<Long, Long> entry : sectionCounts.entrySet()) {
+            Long sectionId = entry.getKey();
+            Long count = entry.getValue();
+
+            double percentage = totalWorkPlans > 0 ? (count.doubleValue() / totalWorkPlans) * 100 : 0;
+
+            Map<String, Object> sectionContribution = new HashMap<>();
+            sectionContribution.put("sectionId", sectionId);
+            sectionContribution.put("count", count);
+            sectionContribution.put("percentage", percentage);
+
+            // You can also fetch the section name if needed
+            String sectionName = sectionRepository.findById(sectionId).map(Section::getName).orElse("Unknown Section");
+            sectionContribution.put("sectionName", sectionName);
+
+            response.add(sectionContribution);
+        }
+
+        return response;
+    }
+
+
+
 
 
 }

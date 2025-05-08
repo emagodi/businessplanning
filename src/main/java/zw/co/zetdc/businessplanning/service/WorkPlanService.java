@@ -218,4 +218,5 @@ public interface WorkPlanService {
 
     EmailDepartmentSectionSummaryResponse getDepartmentSectionSummary(Long departmentId);
 
+    public List<Map<String, Object>> calculateWorkPlanContribution(String year, String month, Status status, Long departmentId);
 }
