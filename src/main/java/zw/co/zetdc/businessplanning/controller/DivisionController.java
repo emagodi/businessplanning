@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import zw.co.zetdc.businessplanning.entities.Department;
 import zw.co.zetdc.businessplanning.entities.Division;
+import zw.co.zetdc.businessplanning.entities.Section;
 import zw.co.zetdc.businessplanning.payload.request.DivisionRequest;
 import zw.co.zetdc.businessplanning.payload.request.DepartmentIdsRequest;
 import zw.co.zetdc.businessplanning.service.DivisionService;
@@ -87,4 +88,5 @@ public class DivisionController {
         Division division = divisionService.getDivisionWithDepartments(id);
         return division != null ? ResponseEntity.ok(division) : ResponseEntity.notFound().build();
     }
+
 }

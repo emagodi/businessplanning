@@ -17,4 +17,6 @@ public interface SectionService {
 
     void deleteSection(Long id);
 
+    public List<Section> getSectionsByDivision(Long divisionId);
+
 }

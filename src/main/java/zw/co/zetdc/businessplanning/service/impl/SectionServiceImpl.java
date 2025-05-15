@@ -4,17 +4,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import zw.co.zetdc.businessplanning.entities.Department;
-import zw.co.zetdc.businessplanning.entities.Section;  // Make sure to import the Section entity
-import zw.co.zetdc.businessplanning.entities.TeamMember;
-import zw.co.zetdc.businessplanning.entities.WorkPlan;
+import zw.co.zetdc.businessplanning.entities.*;
 import zw.co.zetdc.businessplanning.payload.request.SectionRequest;  // Make sure to import the SectionRequest payload
+import zw.co.zetdc.businessplanning.repository.DivisionRepository;
 import zw.co.zetdc.businessplanning.repository.SectionRepository;  // Make sure to import the Section repository
 import zw.co.zetdc.businessplanning.repository.TeamMemberRepository;
 import zw.co.zetdc.businessplanning.service.DepartmentService;
+import zw.co.zetdc.businessplanning.service.DivisionService;
 import zw.co.zetdc.businessplanning.service.SectionService;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -27,6 +28,8 @@ public class SectionServiceImpl implements SectionService {
     private final DepartmentService departmentService;
 
     private final TeamMemberRepository teamMemberRepository;
+
+    private final DivisionRepository divisionRepository;
 
 
     @Override
@@ -82,6 +85,20 @@ public class SectionServiceImpl implements SectionService {
                 }
             }
         }
+    }
+
+    @Override
+    public List<Section> getSectionsByDivision(Long divisionId) {
+        // Fetch the division and its associated departments
+        Division division = divisionRepository.findById(divisionId).orElse(null);
+        if (division != null) {
+            List<Section> sections = new ArrayList<>();
+            for (Department department : division.getAssignedDepartments()) {
+                sections.addAll(department.getAssignedSections());
+            }
+            return sections;
+        }
+        return Collections.emptyList(); // Return an empty list if division is not found
     }
 
 

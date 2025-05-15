@@ -69,4 +69,10 @@ public class SectionController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/division/{divisionId}/sections")
+    public ResponseEntity<List<Section>> getSectionsByDivision(@PathVariable Long divisionId) {
+        List<Section> sections = sectionService.getSectionsByDivision(divisionId);
+        return sections != null && !sections.isEmpty() ? ResponseEntity.ok(sections) : ResponseEntity.notFound().build();
+    }
+
 }
