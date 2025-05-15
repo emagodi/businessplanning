@@ -2696,6 +2696,40 @@ public class WorkPlanServiceImpl implements WorkPlanService {
         return overdueWorkPlanDetails;
     }
 
+    @Override
+    public List<WorkPlan> getWorkPlansByYearAndDivision(String year, Long division, String quarter, Status status) {
+        List<String> months = new ArrayList<>();
+
+        // Determine the months based on the quarter
+        switch (quarter.toUpperCase()) {
+            case "Q1":
+                months.add("January");
+                months.add("February");
+                months.add("March");
+                break;
+            case "Q2":
+                months.add("April");
+                months.add("May");
+                months.add("June");
+                break;
+            case "Q3":
+                months.add("July");
+                months.add("August");
+                months.add("September");
+                break;
+            case "Q4":
+                months.add("October");
+                months.add("November");
+                months.add("December");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid quarter: " + quarter);
+        }
+
+        // Fetch work plans based on year, division, months, and status
+        return workPlanRepository.findByYearAndDivisionIdAndMonthInAndStatus(year, division, months, status);
+    }
+
 
 }
 

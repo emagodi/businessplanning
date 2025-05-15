@@ -737,4 +737,6 @@ GROUP BY s.id, s.name
     """, nativeQuery = true)
     List<Object[]> findSectionManagerBySectionId(@Param("sectionId") Long sectionId);
 
+    List<WorkPlan> findByYearAndDivisionIdAndMonthInAndStatus(String year, Long divisionId, List<String> month, Status status);
+
 }

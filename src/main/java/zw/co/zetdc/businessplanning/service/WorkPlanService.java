@@ -222,4 +222,6 @@ public interface WorkPlanService {
 
     public List<Map<String, Object>> getOverdueWorkPlanDetailsBySection(Long sectionId);
 
+    public List<WorkPlan> getWorkPlansByYearAndDivision(String year, Long division, String quarter, Status status);
+
 }

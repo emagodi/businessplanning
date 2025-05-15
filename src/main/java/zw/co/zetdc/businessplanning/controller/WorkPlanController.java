@@ -1063,5 +1063,20 @@ public class WorkPlanController {
     }
 
 
+    @GetMapping("/workplans/year/{year}/division/{division}/quarter/{quarter}/status/{status}")
+    @Operation(summary = "Get work plans by year, division id, quarter, and status",
+            description = "Get all work plans for a particular quarter and status")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    public ResponseEntity<List<WorkPlan>> getWorkPlansByYearAndDivision(
+            @PathVariable String year,
+            @PathVariable Long division,
+            @PathVariable String quarter,
+            @PathVariable Status status) {
+
+        List<WorkPlan> workPlans = workPlanService.getWorkPlansByYearAndDivision(year, division, quarter, status);
+        return ResponseEntity.ok(workPlans);
+    }
+
+
 
 }
