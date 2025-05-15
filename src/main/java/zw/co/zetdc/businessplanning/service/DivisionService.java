@@ -26,4 +26,6 @@ public interface DivisionService {
 
 
     List<Department> addDepartmentsToDivision(Long divisionId, DepartmentIdsRequest request);
+
+    public Division getDivisionWithDepartments(Long divisionId);
 }

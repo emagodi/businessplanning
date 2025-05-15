@@ -104,4 +104,9 @@ public class DivisionServiceImpl implements DivisionService {
 
         return division.getAssignedDepartments(); // Return the updated list of departments
     }
+
+    @Override
+    public Division getDivisionWithDepartments(Long divisionId) {
+        return divisionRepository.findById(divisionId).orElse(null);
+    }
 }

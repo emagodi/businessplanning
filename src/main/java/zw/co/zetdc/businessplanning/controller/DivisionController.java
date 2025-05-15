@@ -79,4 +79,12 @@ public class DivisionController {
         List<Department> updatedDepartments = divisionService.addDepartmentsToDivision(divisionId, request);
         return new ResponseEntity<>(updatedDepartments, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}/departments")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SENIORMANAGER', 'MANAGER', 'HOD', 'USER')")
+    @Operation(summary = "List of departments in the division", description = "List of departments in the division")
+    public ResponseEntity<Division> getDivisionWithDepartments(@PathVariable Long id) {
+        Division division = divisionService.getDivisionWithDepartments(id);
+        return division != null ? ResponseEntity.ok(division) : ResponseEntity.notFound().build();
+    }
 }
