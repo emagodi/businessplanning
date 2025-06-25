@@ -29,6 +29,7 @@ import zw.co.zetdc.businessplanning.service.JwtService;
 import zw.co.zetdc.businessplanning.service.RefreshTokenService;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,24 +62,37 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .sectionId(request.getSectionId()) // Set the sectionId from the request
                 .departmentId(request.getDepartmentId())
                 .divisionId(request.getDivisionId())
-//                .departmentIds(request.getDepartmentIds())
                 .temporaryPassword(true) // Set the temporary password flag
                 .build();
 
         // Save the user to the repository
         user = userRepository.save(user);
 
-        System.out.println("This is the PASSWORD : " + generatedPassword);
+        // Generate and set OTP
+        String otp = generateOtp();
+        user.setOtp(otp);
+        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5)); // OTP valid for 5 minutes
+        userRepository.save(user); // Save OTP details
 
-        // Prepare email content
+        // Prepare OTP email content
+        String otpSubject = "Your OTP Code";
+        String otpBody = "Your account has been successfully created. Your OTP code is: " + otp;
+
+        // Create a MailBody object for OTP email
+        MailBody otpMailBody = new MailBody(user.getEmail(), otpSubject, otpBody);
+
+        // Send email with the OTP
+        emailService.sendSimpleMessage(otpMailBody);
+
+        // Prepare email content for account creation
         String subject = "Your Account Has Been Created";
         String body = "Your account has been successfully created. Your password is: " + generatedPassword;
 
-        // Create a MailBody object
+        // Create a MailBody object for account creation email
         MailBody mailBody = new MailBody(user.getEmail(), subject, body);
 
-        // Send email with the generated password
-        //emailService.sendSimpleMessage(mailBody);
+        // Optionally send email with the generated password
+         emailService.sendSimpleMessage(mailBody);
 
         // Generate JWT token for the user
         var jwt = jwtService.generateToken(user);
@@ -106,10 +120,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .divisionId(user.getDivisionId())
                 .temporaryPassword(user.isTemporaryPassword())
                 .tokenType(TokenType.BEARER.name())
-                .message("User created successfully")
+                .message("User created successfully. An OTP has been sent to your email.")
                 .build();
     }
 
+    // Generate OTP method
+    private String generateOtp() {
+        Random random = new Random();
+        int otp = 100000 + random.nextInt(900000); // Generate a 6-digit OTP
+        return String.valueOf(otp);
+    }
+
+    // Generate Random Password
     private String generateRandomPassword(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
         SecureRandom random = new SecureRandom();
@@ -127,7 +149,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         log.info("Starting authentication for identifier: {}", request.getEmail());
 
-        Authentication authentication;
         User user;
 
         try {
@@ -143,7 +164,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("Attempting to authenticate user: {}", user.getEmail());
 
             // Authenticate the user
-            authentication = authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword())
             );
 
@@ -174,20 +195,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build();
         }
 
-        // Generate tokens
-        String jwt = jwtService.generateToken(user);
-        String refreshToken = refreshTokenService.createRefreshToken(user.getId()).getToken();
+        // Generate OTP for the user
+        String otp = generateOtp();
+        user.setOtp(otp);
+        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5)); // OTP valid for 5 minutes
+        userRepository.save(user); // Save the OTP
 
-        // Extract roles
-        List<String> roles = user.getRole().getAuthorities()
-                .stream()
-                .map(SimpleGrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        // Send OTP to the user's email
+        String otpSubject = "Your OTP Code";
+        String otpBody = "Your OTP code is: " + otp;
+        MailBody mailBody = new MailBody(user.getEmail(), otpSubject, otpBody);
+        emailService.sendSimpleMessage(mailBody);
 
-        // Build and return the response
-        AuthenticationResponse response = AuthenticationResponse.builder()
-                .accessToken(jwt)
-                .roles(roles)
+        // Prompt the user to enter OTP
+        return AuthenticationResponse.builder()
+                .accessToken(null) // No access token yet
+                .roles(Collections.emptyList())
                 .email(user.getEmail())
                 .id(user.getId())
                 .firstname(user.getFirstname())
@@ -197,15 +220,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .departmentId(user.getDepartmentId())
                 .divisionId(user.getDivisionId())
                 .temporaryPassword(user.isTemporaryPassword())
-                .message("User Authenticated Successfully")
-                .refreshToken(refreshToken)
-                .tokenType(TokenType.BEARER.name())
+                .refreshToken(null) // No refresh token yet
+                .message("An OTP has been sent to your email. Please enter it to proceed.") // Prompt for OTP
                 .build();
-
-        log.info("Generated AuthenticationResponse for user: {}", response);
-        return response;
     }
-
 
     public User getUserById(Long id) {
         return userRepository.findById(id).orElse(null);

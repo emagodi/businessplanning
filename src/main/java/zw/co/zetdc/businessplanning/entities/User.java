@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import zw.co.zetdc.businessplanning.enums.Role;
 
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -54,6 +55,8 @@ public class User implements UserDetails { // make our app User a spring securit
 
     private Long divisionId;
 
+    private String otp;
+    private LocalDateTime otpExpiry;
 
 //    @ElementCollection
 //    private List<Long> departmentIds;

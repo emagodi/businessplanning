@@ -18,23 +18,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import zw.co.zetdc.businessplanning.entities.User;
+import zw.co.zetdc.businessplanning.enums.TokenType;
 import zw.co.zetdc.businessplanning.exception.AuthenticationException;
-import zw.co.zetdc.businessplanning.payload.request.AuthenticationRequest;
-import zw.co.zetdc.businessplanning.payload.request.RefreshTokenRequest;
-import zw.co.zetdc.businessplanning.payload.request.RegisterRequest;
-import zw.co.zetdc.businessplanning.payload.request.UserUpdateRequest;
+import zw.co.zetdc.businessplanning.exception.UserNotFoundException;
+import zw.co.zetdc.businessplanning.payload.request.*;
 import zw.co.zetdc.businessplanning.payload.response.AuthenticationResponse;
 import zw.co.zetdc.businessplanning.payload.response.RefreshTokenResponse;
+import zw.co.zetdc.businessplanning.repository.UserRepository;
 import zw.co.zetdc.businessplanning.service.AuthenticationService;
 import zw.co.zetdc.businessplanning.service.JwtService;
 import zw.co.zetdc.businessplanning.service.RefreshTokenService;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 @Tag(name = "AUTHENTICATION", description = "The Authentication APIs. Contains operations like login, logout, refresh-token etc.")
@@ -52,6 +56,8 @@ public class AuthenticationController {
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+
+    private final UserRepository userRepository;
 
     @PostMapping("/register")
     @Operation(summary = "Register New User",
@@ -225,6 +231,58 @@ public class AuthenticationController {
         } catch (Exception e) {
             // Handle the specific case for invalid old password
             return ResponseEntity.badRequest().body("Invalid old password.");
+        }
+    }
+
+    @PostMapping("/verifyOtp")
+    public ResponseEntity<?> verifyOtp(@RequestBody OtpVerificationRequest otpRequest) {
+        log.info("Verifying OTP for user: {}", otpRequest.getEmail());
+
+        User user = userRepository.findByEmail(otpRequest.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        // Check if OTP is valid and not expired
+        if (user.getOtp() == null || user.getOtpExpiry() == null || user.getOtpExpiry().isBefore(LocalDateTime.now())) {
+            log.warn("Invalid or expired OTP for user: {}", user.getEmail());
+            return ResponseEntity.badRequest().body("Invalid or expired OTP.");
+        }
+
+        if (user.getOtp().equals(otpRequest.getOtp())) {
+            // OTP verification successful, clear OTP
+            user.setOtp(null);
+            user.setOtpExpiry(null);
+            userRepository.save(user); // Save user changes to clear OTP
+
+            // Generate tokens
+            String jwt = jwtService.generateToken(user);
+            String refreshToken = refreshTokenService.createRefreshToken(user.getId()).getToken();
+
+            // Extract roles
+            List<String> roles = user.getRole().getAuthorities()
+                    .stream()
+                    .map(SimpleGrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+
+            // Build and return the response
+            return ResponseEntity.ok(AuthenticationResponse.builder()
+                    .accessToken(jwt)
+                    .roles(roles)
+                    .email(user.getEmail())
+                    .id(user.getId())
+                    .firstname(user.getFirstname())
+                    .lastname(user.getLastname())
+                    .cell(user.getCell())
+                    .sectionId(user.getSectionId())
+                    .departmentId(user.getDepartmentId())
+                    .divisionId(user.getDivisionId())
+                    .temporaryPassword(user.isTemporaryPassword())
+                    .message("User Authenticated Successfully")
+                    .refreshToken(refreshToken)
+                    .tokenType(TokenType.BEARER.name())
+                    .build());
+        } else {
+            log.warn("Invalid OTP entered for user: {}", user.getEmail());
+            return ResponseEntity.badRequest().body("Invalid OTP. Please try again.");
         }
     }
 
