@@ -30,6 +30,7 @@ import zw.co.zetdc.businessplanning.payload.response.AuthenticationResponse;
 import zw.co.zetdc.businessplanning.payload.response.RefreshTokenResponse;
 import zw.co.zetdc.businessplanning.repository.UserRepository;
 import zw.co.zetdc.businessplanning.service.AuthenticationService;
+import zw.co.zetdc.businessplanning.service.EmailService;
 import zw.co.zetdc.businessplanning.service.JwtService;
 import zw.co.zetdc.businessplanning.service.RefreshTokenService;
 
@@ -56,6 +57,8 @@ public class AuthenticationController {
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+
+    private final EmailService emailService;
 
     private final UserRepository userRepository;
 
@@ -284,6 +287,31 @@ public class AuthenticationController {
             log.warn("Invalid OTP entered for user: {}", user.getEmail());
             return ResponseEntity.badRequest().body("Invalid OTP. Please try again.");
         }
+    }
+
+    @PostMapping("/resend-otp")
+    @Operation(summary = "Resend OTP",
+            description = "Endpoint to resend OTP to the user's email.")
+    public ResponseEntity<String> resendOtp(@RequestBody OtpResendRequest otpRequest) {
+        log.info("Request to resend OTP for user: {}", otpRequest.getEmail());
+
+        User user = userRepository.findByEmail(otpRequest.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        // Generate a new OTP
+        String newOtp = authenticationService.generateOtp();
+        user.setOtp(newOtp);
+        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5)); // Set new expiry time
+        userRepository.save(user); // Save the updated user with new OTP
+
+        // Send the new OTP to the user's email
+        String otpSubject = "Your New OTP Code";
+        String otpBody = "Your new OTP code is: " + newOtp;
+        MailBody mailBody = new MailBody(user.getEmail(), otpSubject, otpBody);
+        emailService.sendSimpleMessage(mailBody);
+
+        log.info("New OTP sent to user: {}", user.getEmail());
+        return ResponseEntity.ok("New OTP has been sent to your email.");
     }
 
 }

@@ -19,4 +19,5 @@ public interface AuthenticationService {
 
     public void changePassword(String email, String currentPassword, String newPassword);
 
+    public String generateOtp();
 }
