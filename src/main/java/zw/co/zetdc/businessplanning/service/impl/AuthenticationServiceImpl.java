@@ -85,7 +85,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         emailService.sendSimpleMessage(otpMailBody);
 
         // Prepare email content for account creation
-        String subject = "Your Account Has Been Created";
+        String subject = "ZETDC Reporting System Account Creation";
         String body = "Your account has been successfully created. Your password is: " + generatedPassword;
 
         // Create a MailBody object for account creation email

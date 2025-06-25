@@ -305,7 +305,7 @@ public class AuthenticationController {
         userRepository.save(user); // Save the updated user with new OTP
 
         // Send the new OTP to the user's email
-        String otpSubject = "Your New OTP Code";
+        String otpSubject = "ZETDC Reporting System";
         String otpBody = "Your new OTP code is: " + newOtp;
         MailBody mailBody = new MailBody(user.getEmail(), otpSubject, otpBody);
         emailService.sendSimpleMessage(mailBody);
