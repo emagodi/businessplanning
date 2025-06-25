@@ -31,7 +31,7 @@ import zw.co.zetdc.businessplanning.handlers.ErrorResponse;
         servers = {
                 @Server(
                         description = "Development",
-                        url = "http://localhost:8080"
+                        url = "https://localhost:8080"
 
                 )
         },
